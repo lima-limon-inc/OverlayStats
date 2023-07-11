@@ -1,0 +1,33 @@
+Gentoo overlay containing audio production applications
+
+## We're looking for maintainers!
+This overlay is looking for maintainers.
+If you use this overlay and would like to (help) maintain it, please post a message in [this issue](https://github.com/gentoo-audio/audio-overlay/issues/507).
+
+## How to use this overlay
+- If you manage [`/etc/portage/repos.conf`](https://wiki.gentoo.org/wiki//etc/portage/repos.conf) manually add the following entry:
+```ini
+[audio-overlay]
+location = /<path>/<to>/<your>/<overlays>/audio-overlay
+sync-type = git
+sync-uri = https://github.com/gentoo-audio/audio-overlay.git
+auto-sync = yes
+```
+- If you use [eselect repository](https://wiki.gentoo.org/wiki/Eselect/Repository) enable this overlay using:
+```
+eselect repository enable audio-overlay
+```
+
+## Contact
+Join us at the `#audio-overlay` channel at `irc.libera.chat` or [create an issue](https://github.com/gentoo-audio/audio-overlay/issues/new).
+
+## Packages
+{% for category, category_packages in packages.items() %}
+### {{ category }}
+{% for package in category_packages %}
+#### {{ package.name }}
+Homepage: [{{ package.homepage }}]({{ package.homepage_url }})<br>
+{{ package.description }}<br>
+Available versions: {% for version in package.versions %}`{{ version }}`{% if not loop.last %}, {% endif %}{% endfor %}
+{% endfor %}
+{% endfor %}

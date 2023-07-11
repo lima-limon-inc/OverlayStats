@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>myrvogna@electrosphe.re</email>
+		<name>Octiabrina Terrien-Puig</name>
+	</maintainer>
+	<use>
+		<flag name="idle">Enable suspending and resuming an idle server</flag>
+		<flag name="eula">Automatically accept the Minecraft EULA (https://account.mojang.com/documents/minecraft_eula) on installation</flag>
+		<flag name="usercmd">Enable users with appropriate permissions to run commands as the server user</flag>
+	</use>
+</pkgmetadata>
+

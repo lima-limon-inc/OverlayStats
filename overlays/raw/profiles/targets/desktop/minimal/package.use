@@ -1,0 +1,2 @@
+app-emulation/qemu -vte -gtk
+media-libs/opencv -gtk

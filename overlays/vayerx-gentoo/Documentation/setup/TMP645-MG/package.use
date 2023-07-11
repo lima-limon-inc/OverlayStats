@@ -1,0 +1,43 @@
+app-admin/sudo -ldap -sendmail
+app-arch/bzip2 static-libs
+app-crypt/pinentry gnome-keyring
+app-editors/vim -X
+dev-lang/python sqlite
+dev-libs/elfutils static-libs
+dev-libs/libgpg-error static-libs
+dev-libs/openssl static-libs
+dev-libs/popt static-libs
+dev-python/PyQt4 webkit declarative
+dev-python/pystaff rich
+dev-python/spyder pylint sphinx-webengine
+dev-qt/qt3support accessibility
+dev-qt/qt-creator cmake valgrind
+dev-qt/qt-creator valgrind cmake
+dev-qt/qtdeclarative accessibility
+dev-qt/qtdeclarative webkit
+dev-ruby/rbstaff datamining gui
+dev-vcs/git tk
+dev-vcs/subversion -dso perl
+games-util/steam-client-meta flash steamfonts trayicon
+games-util/steam-games-meta mono s3tc
+kde-apps/gwenview kipi
+kde-apps/kdebase-runtime-meta -crash-reporter
+media-libs/chromaprint tools
+media-libs/libsdl2 haptic
+net-fs/samba -ldap -python smbsharemodes syslog
+net-libs/libssh server
+net-p2p/amule daemon stats upnp
+sci-mathematics/octave curl gnuplot
+sys-apps/util-linux static-libs
+sys-fs/cryptsetup static-libs -gcrypt
+sys-fs/lvm2 static-libs
+sys-fs/udev static-libs
+sys-libs/e2fsprogs-libs static-libs
+sys-libs/libseccomp static-libs
+sys-libs/ncurses static-libs
+sys-libs/zlib minizip
+sys-libs/zlib static-libs
+vayerx/develop -ruby
+vayerx/office burn -excessive -kde -rich
+virtual/libudev static-libs
+x11-drivers/xf86-video-intel -dri3 -sna uxa

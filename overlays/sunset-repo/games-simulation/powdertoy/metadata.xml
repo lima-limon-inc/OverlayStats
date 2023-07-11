@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>sunsetsergal@gmail.com</email>
+</maintainer>
+<upstream>
+<remote-id type="github">The-Powder-Toy/The-Powder-Toy</remote-id>
+</upstream>
+<use>
+<flag name="lto">Enable Link Time Optimization, runs smoother with more particles</flag>
+<flag name="curl">Enable online functionality using libcurl</flag>
+<flag name="fftw">Use Fast Fourier Transforms for a huge speedup in gravity computation</flag>
+</use>
+</pkgmetadata>

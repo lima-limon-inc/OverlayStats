@@ -1,0 +1,41 @@
+*python-3.7.9-r2
+::xor-overlay		add lto and threads use flags, better alphabetise the pgo use flag
+*python-3.7.9-r1
+::gentoo			add jobs fix, remove extra whitespace,update keywords, update patches
+::lto-overlay		simplify pgo, remove extra whitespace
+*python-3.7.9
+::gentoo			update keywords
+*python-3.7.8-r3
+::prototype99		update patch url
+*python-3.7.8-r2
+::gentoo			update patches
+::prototype99		make better use of PV
+*python-3.7.7-r2
+::genpi64			base ebuild
+::gentoo			update keywords
+::prototype99		remove PYVER variable, remove alpha code, make better use of HOMEPAGE, PN & PV, add virtual/mime-types support
+*python-2.7.18-r102
+::gentoo			fix scriptdir variable, add new symlinks
+::prototype99		make better use of variables
+*python-2.7.18-r101
+::gentoo			update patches, add an extra dependency, update symlink logic
+::prototype99		make better use of PN
+*python-2.7.18-r100
+::gentoo			base ebuild
+::prototype99
+-remove PYVER variable
+-add virtual/mime-types support
+-make better use of HOMEPAGE, PN & PV
+-improve patch logic
+-include patch info
+-improve gcc blocker
+-make gen-594768 fix more specific
+::stefantalpalaru
+-add lto, pgo use flags
+-use virtual/libffi
+-protect against old portage
+-improve parallelisation
+-remove broken tests
+-add more informative failure messages
+-optimise use of variables
+-don't prewrap lines

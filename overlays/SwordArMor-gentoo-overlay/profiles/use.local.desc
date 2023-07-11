@@ -1,0 +1,40 @@
+# This file is deprecated as per GLEP 56 in favor of metadata.xml. Please add
+# your descriptions to your package's metadata.xml ONLY.
+# * generated automatically using egencache *
+
+app-text/OCRmyPDF:jbig2enc - Uses media-libs/jbig2enc for better compression algorithm
+app-text/docbook-sgml-utils:jadetex - Add support for app-text/jadetex (for processing tex files produced by the TeX backend of Jade)
+dev-python/dublintraceroute:analysis - Additional analysis functionality, uses dev-python/pandas and dev-python/matplotlib
+dev-python/matrix-nio:e2e - Enable matrix end-to-end encryption
+net-analyzer/AS-Stats:as-stats-gui - Use the improved webUI
+net-analyzer/AS-Stats:ip2as - Use the perl module ip2as.pm
+net-analyzer/mtr:ipinfo - Disable support for IP address lookups
+net-analyzer/mtr:jansson - Enable JSON output support through dev-libs/jansson
+net-analyzer/net-snmp:elf - Enable the use of elf utils to check uptime on some systems
+net-analyzer/net-snmp:kmem - Enable usage of /dev/kmem
+net-analyzer/net-snmp:mfd-rewrites - Use MFD rewrites of mib modules where available
+net-analyzer/net-snmp:netlink - Use dev-libs/libnl to fetch TCP statistics instead of using /proc/net/tcp (Linux only).
+net-analyzer/net-snmp:pcap - Install snmppcap which reads from PCAP files and writes to the SNMP transport
+net-analyzer/net-snmp:pci - Use libpci (from sys-apps/pciutils) to look up network interface description. This feature is only available on Linux.
+net-analyzer/net-snmp:rpm - Enable monitoring of app-arch/rpm. This flag requires the bzip2 and zlib flags to be enabled as well.
+net-analyzer/net-snmp:smux - Enable support for the legacy smux protocol (superseded by agentx)
+net-analyzer/net-snmp:ucd-compat - Build UCD compatibility library. Increases significantly the install size.
+net-dialup/freeradius-client:scp - Add service type hints derived from username prefix
+net-dialup/freeradius-client:shadow - Enable shadow password support
+net-firewall/ipt_netflow:dot1d - Enable bridge support (to override interfaces)
+net-firewall/ipt_netflow:dot1q - Enable tagged VLAN support
+net-firewall/ipt_netflow:natevents - Netflow NAT translation events (NEL) support
+net-im/dino:gpg - Enable OpenPGP encryption plugin
+net-im/dino:http - Enable HTTP file upload plugin
+net-im/dino:omemo - Enable OMEMO encryption plugin
+net-misc/bird:client - Build the ncurses/readline full featured CLI
+net-misc/bird:libssh - Enables net-libs/libssh binding, mendatory for RPKI support
+net-misc/routinator:rta - Enables the command rta for validating Resource Tagged Assertions as described in draft-michaelson-rpki-rta
+net-wireless/hostapd:crda - Add CRDA support
+net-wireless/hostapd:internal-tls - Use internal TLSv1 implementation instead of depending on OpenSSL, LibreSSL or GnuTLS
+net-wireless/hostapd:logwatch - Install support files for sys-apps/logwatch
+net-wireless/hostapd:netlink - Adding support for using netlink to create VLANs
+net-wireless/hostapd:suiteb - Adding support for NSA Suite B Cryptography
+net-wireless/hostapd:wps - Add support for Wi-Fi Protected Setup
+www-apps/converse-js:omemo - Enable OMEMO encryption with www-apps/libsignal-protocol-javascript.
+x11-libs/vte:mouse - Enable mouse support.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+This module is intended to provide a general-purpose date and datetime type for perl. You have a Class::Date class for absolute date and datetime, and have a Class::Date::Rel class for relative dates.
+
+Note that this module is fairly ancient and dusty. You might want to take a look at DateTime and its related modules for a more standard, and maintained, Perl date manipulation solution.
+</longdescription>
+</pkgmetadata>

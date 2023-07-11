@@ -1,0 +1,38 @@
+[FileDialogSize]
+Height #-os_x11_height-#=466
+Width #-os_x11_width-#=747
+
+#?cl_ver>=3.6.8.8&&install.cl_install_scaling==hi#
+#-sum(iconsize,,64)-#
+#!cl_ver#
+#-sum(iconsize,,48)-#
+#cl_ver#
+
+#?cl_ver>=3.6.8.8&&install.cl_install_scaling==hi#
+#-sum(mainthickness,,40)-#
+#-sum(menuthickness,,68)-#
+#-sum(iconwidth,,68)-#
+#!cl_ver#
+#-sum(mainthickness,,32)-#
+#-sum(menuthickness,,56)-#
+#-sum(iconwidth,,52)-#
+#cl_ver#
+
+#-sum(menuwidth,,iconwidth*13+2)-#
+
+[KFileDialog Settings]
+Recent Files[$e]=start-here-blue.svg,/usr/share/pixmaps/calculate/start-here-blue.svg
+Recent URLs[$e]=/usr/share/pixmaps/calculate/
+
+[PlasmaViews][Panel 1][Defaults]
+thickness=#-sum(mainthickness,mainthickness)-#
+
+[PlasmaViews][Panel 2]
+alignment=132
+panelVisibility=1
+
+[PlasmaViews][Panel 2][Defaults]
+length=#-sum(menuwidth,menuwidth)-#
+maxLength=#-sum(menuwidth,menuwidth)-#
+minLength=#-sum(menuwidth,menuwidth)-#
+thickness=#-sum(menuthickness,menuthickness)-#

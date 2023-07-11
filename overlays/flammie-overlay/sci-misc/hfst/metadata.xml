@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<!-- <herd>some-herd</herd> -->
+<maintainer type="person">
+	<email>flammie@gentoo.org</email>
+	<description>I maintain the overlay but no main tree commit rights</description>
+</maintainer>
+<longdescription>
+	A finite-state library for some open source tools in the category of
+	finite-state morphology (NLP). Helsinki Finite-State Technology contains
+	both libraries and tools for most common finite-state NLP applications.
+</longdescription>
+</pkgmetadata>

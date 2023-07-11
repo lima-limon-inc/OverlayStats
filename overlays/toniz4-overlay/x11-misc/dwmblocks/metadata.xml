@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM 'http://www.gentoo.org/dtd/metadata.dtd'>
+<pkgmetadata>
+	<maintainer type="person">
+		<email>cassioavila@yandex.com</email>
+		<name>Cássio Ribeiro Alves de Ávila</name>
+	</maintainer>
+	<use>
+		<flag name="statuscmd">
+				apply statuscmd patch (need dwm statuscmd-signal patch to work)
+		</flag>
+	</use>
+</pkgmetadata>

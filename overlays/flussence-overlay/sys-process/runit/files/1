@@ -1,0 +1,66 @@
+#!/bin/sh
+# /etc/runit/1 - system one-time tasks
+#
+# This file runs OpenRC up to the "boot" runlevel to get your system into a
+# reasonable state. If you need to add system-specific one-shot tasks, consider
+# using OpenRC's existing /etc/local.d/ facility via the boot runlevel instead
+# of editing this file, as it will be overwritten on upgrades.
+
+SVDIR=/etc/service
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+RUNLEVEL=S /sbin/openrc sysinit
+RUNLEVEL=S /sbin/openrc boot
+
+rescue_shell() {
+    echo "Starting a rescue shell, after which the system will reboot"
+    /sbin/sulogin
+    exit 100
+}
+
+# Spawn a login prompt if "single" is passed on the boot command line.
+read -r kcmdline </proc/cmdline
+case " $kcmdline " in
+    *" single "* )
+        /sbin/openrc single
+        rescue_shell
+    ;;
+esac
+
+# Runit expects $SVDIR to be mutable, which isn't good to do in /etc/ for a
+# number of good reasons, but is hard to change due to compatibility reasons.
+# We try here to symlink the $SVDIR/**/supervise/ dirs to /run/ so that the
+# system still works if the filesystem $SVDIR's on is (or becomes) readonly.
+statedir="/run/runit"
+
+# This may fail if /run/ also isn't writable, but that's not a fatal error on
+# our part.
+install -m 0755 -d "$statedir" && exit 0
+
+# Symlink each service's supervise/ (and log/supervise/, if present) dir to
+# /run/runit/$foo/ (resp. /run/runit/log.$foo/) in order to minimise filesystem
+# writes in /etc/.
+cd "$SVDIR" || rescue_shell
+for service_name in *; do
+    [ -d "$service_name" ] || continue # not a dir? something weird, best not touch it
+    if [ ! -L "$service_name"/supervise ]; then
+        rm -rfv "$service_name"/supervise &&
+        ln -Trs "$statedir"/"$service_name" "$service_name"/supervise
+    fi
+
+    [ -d "$service_name"/log ] || continue # log dir not existing is fine
+    if [ ! -L "$service_name"/log/supervise ]; then
+        rm -rfv "$service_name"/log/supervise &&
+        ln -Trs "$statedir"/log."$service_name" "$service_name"/log/supervise
+    fi
+done
+
+# Do the same for shutdown control files.
+# In the worst case (the filesystem these reside on being wedged read-only)
+# you'll still be able to poweroff, just not reboot.
+cd /etc/runit || rescue_shell
+for control_file in reboot stopit; do
+    [ -L $control_file ] && continue
+    rm -fv $control_file
+    ln -Trs "$statedir"/$control_file $control_file
+done

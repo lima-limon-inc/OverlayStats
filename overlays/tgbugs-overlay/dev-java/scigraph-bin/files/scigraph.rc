@@ -1,0 +1,72 @@
+#!/sbin/openrc-run
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+: ${SVCGROUP:=scigraph}
+: ${SVCUSER:=scigraph}
+: ${SERVICES_CONFIG:="/var/lib/scigraph/services.yaml"}
+: ${SERVICES_LOG_LOC:="/var/log/${SVCNAME}"}
+
+clean_opts() {
+    if [ ${JVM_VERSION} -gt "1" ]; then
+        echo $(echo "${SERVICES_OPTS}" | sed -e '/^[ ]*\/\//d' -e 's|[ ]*//.*| |' -e 's|^| |' | tr -d "\n");
+        echo "-Xlog:gc:${SERVICES_LOG_LOC}/gc.log -Xlog:gc*:${SERVICES_LOG_LOC}/gcd.log"
+    else
+        echo $(echo "${SERVICES_OPTS_8}" | sed -e '/^[ ]*\/\//d' -e 's|[ ]*//.*| |' -e 's|^| |' | tr -d "\n");
+        echo "-Xloggc:${SERVICES_LOG_LOC}/gc.log"
+    fi
+    echo "-XX:HeapDumpPath=${SERVICES_LOG_LOC}/heap.dump"
+}
+
+JAVA_HOME=$(java-config -O)
+[ -n "${GENTOO_VM}" ] && JAVA_HOME=$(java-config --select-vm="${GENTOO_VM}" -O)
+
+description="${SVCNAME} daemon"
+command="${JAVA_HOME}/bin/java"
+
+JVM_VERSION="$(${command} -version 2>&1 | head -n1 | cut -d\" -f2 | cut -d. -f1)"
+if [ ${JVM_VERSION} -gt "1" ]; then
+    SVC_JVM_OPENS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
+else
+    SVC_JVM_OPENS=""
+fi
+
+SVC_JAR="/usr/share/scigraph-services/scigraph-services.jar"
+SERVICES_FOLDER="/usr/share/scigraph-services"
+SERVICES_LOG="${SERVICES_LOG_LOC}/sysout.log"
+SERVICES_OPTS="$(clean_opts)"
+
+command_background="true"
+run_dir=${run_dir:-/run}
+pidfile="${run_dir}/${SVCNAME}/pid"
+command_args="${SVC_JVM_OPENS} ${SERVICES_OPTS} -jar \"${SVC_JAR}\" server ${SERVICES_CONFIG}"
+start_stop_daemon_args="
+--wait=5000
+--group ${SVCGROUP}
+--user ${SVCUSER}
+--stdout ${SERVICES_LOG}
+--stderr ${SERVICES_LOG}
+--env DISPLAY=${DISPLAY}"
+
+depend() {
+    after net
+}
+
+checkconfig () {
+    [ -f ${SERVICES_CONFIG} ] || (echo "Config error. Please correct!" ; return 1)
+}
+
+start_pre() {
+    checkconfig || return 1
+    if [ ! -d "${SERVICES_LOG_LOC}" ]; then
+        mkdir -p ${SERVICES_LOG_LOC}
+    fi
+    if [ ! -f "${SERVICES_LOG}" ]; then
+       touch "${SERVICES_LOG}"
+    fi
+    chown -R ${SVCUSER}:${SVCGROUP} ${SERVICES_LOG_LOC}
+    if [ ! -f "/tmp/.X${DISPLAY//:}-lock" ] ; then
+        Xvfb ${DISPLAY} -screen 0 1024x768x24 &
+    fi
+    checkpath --directory --mode 0700 --owner root:root "${run_dir}/${SVCNAME}"
+}

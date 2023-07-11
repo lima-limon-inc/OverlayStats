@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+Perl 5.8.0 misses subtraction and intersection of characters, which is described in Unicode Regular Expressions (UTS #18). This module provides a mimic syntax of character classes including subtraction and intersection, taking advantage of look-ahead assertions.
+
+The syntax provided by this module is considerably incompatible with the standard Perl's regex syntax.
+
+Any whitespace character (that matches /\s/) is allowed between any tokens. Square brackets ('[' and ']') are used for grouping. A literal whitespace and square brackets must be backslashed (escaped with a backslash, '\'). You cannot put literal ']' at the start of a group.
+</longdescription>
+</pkgmetadata>

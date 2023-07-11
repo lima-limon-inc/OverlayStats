@@ -1,0 +1,5 @@
+#!/bin/sh
+tty=${PWD##*getty-}
+[ -c "/dev/$tty" ] || tty=tty1
+
+exec utmpset -w $tty

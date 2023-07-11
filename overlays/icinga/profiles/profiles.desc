@@ -1,0 +1,2 @@
+amd64		default/linux/amd64/17.1/icinga			stable
+amd64		default/linux/amd64/17.1/no-multilib/icinga	stable

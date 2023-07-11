@@ -1,0 +1,17 @@
+app-emulation/q4wine
+app-office/libreoffice-bin
+app-portage/layman
+dev-util/kdevelop
+games-util/steam-meta
+kde-apps/okular
+mail-client/thunderbird-bin
+media-gfx/gimp
+media-sound/picard
+net-im/skypeforlinux
+net-im/telegram-desktop-bin
+sys-firmware/intel-microcode
+sys-fs/cryptsetup
+vayerx/lxde
+www-client/firefox-bin
+www-client/google-chrome
+x11-misc/sddm

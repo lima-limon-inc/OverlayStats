@@ -1,0 +1,4 @@
+FACTORIO_PATH="/opt/factorio-%SLOT%"
+FACTORIO_OPTS="--start-server-load-latest --server-settings config/server-settings.json --use-server-whitelist true --server-whitelist config/server-whitelist.json"
+FACTORIO_USER="factorio"
+FACTORIO_GROUP="factorio"

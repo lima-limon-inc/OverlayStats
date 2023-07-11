@@ -1,0 +1,643 @@
+#!/bin/bash
+
+save=/run/power.save
+Lwifi=/run/wifi.lock
+
+die(){
+	echo "$0: $*. Aborting..."
+	caller
+	exit 1
+}
+
+onbatt(){
+	local i ac
+	ac=false
+	for i in /sys/class/power_supply/*; do
+		[ "$(< "$i/online")" = 1 ] && ac=true
+		[ "$(< "$i/present")" = 1 -a "$(< "$i/type")" = Battery -a "$(< "$i/capacity")" != 0 ] || continue
+		case "$(< "$i/status")" in
+		Discharging|Critical)return 0;;
+		Unknown|Charging|Full)return 1;;
+		esac
+	done 2>/dev/null
+	$ac && return 1
+	grep -sq "state:.*off-line" /proc/acpi/ac_adapter/*/state || grep -sq "AC Power.*: 0" /proc/pmu/info
+}
+
+#case "$(< /sys/devices/virtual/dmi/id/uevent)" in
+#*:pvrThinkPad102nd:*)
+#	tpt10bat=/usr/share/ya-layout/tpt10-bat/tpt10-bat
+#	[ -x $tpt10bat ] && ! grep -qs Battery /sys/class/power_supply/*/type &&
+#	onbatt(){
+#		$tpt10bat -1 2>&1 |grep -q "Discharging\|Unknown"
+#	}
+#;;
+#esac
+
+# vs.eof
+rd(){
+	unset $1
+	read $1 || [ -v $1 ]
+}
+
+save1(){
+	[[ -e "$2" ]] || return 1
+	local f y=$1 x=
+	shift
+	for f in "${@}"; do
+		rd x <$f &&
+		x=${x#*'['} &&
+		x=${x%%']'*} &&
+		[[ "$x" != "$y" ]] &&
+		echo "$y" >$f &&
+		$echo "$x -> $y => $f" &&
+		echo "echo '$x' >'$f'"
+	done >>$save
+	return 0
+}
+
+save1g(){
+	[[ -e "$2" ]] || return 1
+	local f y=$1 x=
+	shift
+	for f in "${@}"; do
+		rd x <$f &&
+		x=${x#*'['} &&
+		x=${x%%']'*} &&
+		[[ "$x" -gt "$y" ]] &&
+		echo "$y" >$f &&
+		$echo "$x -> $y => $f" &&
+		echo "echo '$x' >'$f'"
+	done >>$save
+	return 0
+}
+
+save1v(){
+	[[ -e "$2" ]] || return 1
+	local f y=$1 x=
+	shift
+	for f in "${@}"; do
+		rd x <$f &&
+		x=${x#*'['} &&
+		x=${x%%']'*} &&
+		[[ "$x" != "$y" ]] &&
+		echo "$y" >$f &&
+		$echo "$x -> $y => $f" &&
+		echo "[[ \"\$(< '$f')\" == '$y' ]] && echo '$x' >'$f'"
+	done >>$save
+	return 0
+}
+
+fchk(){
+	[ -e $1 ] || touch $1 || die "file '$1' create error"
+	[ "$(stat $1 -c '%u:%g:%f')" = 0:0:8180 ] || die "file '$1' insecure! check & remove"
+	[ -s $1 ]
+}
+
+altlock(){
+	fchk $1
+	{
+		flock $3 1 || die "$1 busy"
+		sleep $2 &
+		lockpid=$!
+	} >>$1
+	return 0
+}
+
+altunlock(){
+	[ -n "$lockpid" ] && kill $lockpid
+}
+
+_root(){
+	[ "$EUID:$UID" = 0:0 ] || die "mut be run as root"
+}
+
+balance(){
+	[ "$batt" = true ] || /usr/sbin/irqbalance -o -f -t 1 &
+}
+
+rf_blk='echo 1';rf_unblk='echo 0';rff=soft
+#rf_blk='echo 0';rf_unblk='echo 1';rff=state
+
+_iw_list(){
+	local i v f
+	on=
+	on1=
+	off=
+	off1=
+	off_=
+	off_1=
+	rf=
+	for i in /sys/class/net/*/wireless; do
+		i="${i%/*}"
+		f="$i/carrier"
+		[ -r "$f" ] || continue
+		[ -n "$phy" ] && [[ "$(readlink -f "$i/phy80211")" != *"/$phy" ]] && continue
+		i="${i##*/}"
+		case "$(< "$f")" in
+		0)v=off;;
+		1)v=on;;
+		'')v=off_;;
+		*)continue;;
+		esac
+		[ -S "/run/wpa_supplicant/$i" ] && v+='1'
+		declare -g $v="${!v} $i"
+	done
+	for i in /sys/class/rfkill/*/type; do
+		[ -r "$i" ] && [ "$(< "$i")" = wlan ] || continue
+		for f in /sys/class/net/*/*/rfkill*/type; do
+			[ "$i" -ef "$f" ] && continue 2
+		done
+		rf+=" ${i%/type}"
+	done
+}
+
+_iw_cfg(){
+	local s x
+	disable_periodic_scan=false
+	disable_roaming_scan=false
+	EnableNetworkConfiguration=false
+	while read s; do
+#		s="${s//#*/}"
+		s="${s//[ 	]/}"
+		s="${s/=[tT][rR][uU][eE]/=1}"
+		case "$s" in
+			disable_periodic_scan=1|disable_roaming_scan=1|EnableNetworkConfiguration=1)declare -g "${s%=1}"=true;;
+		esac
+	done </etc/iwd/main.conf
+	_iw_cfg(){ true;}
+}
+
+# sync runtime/permanent store
+wifi_sync(){
+	local d=/run/iwd d1=/var/lib/iwd1 i j
+	if [ -e $d/RUNTIME-OK ]; then
+		for i in $d/*.*; do
+			[ -f "$i" ] || continue
+			j="$d1/${i##*/}"
+			! [ -e "$j" ] || [ "$i" -ot "$j" -o "$i" -nt "$j" ] || ! cmp -s "$i" "$j" && cp -a "$i" "$j"
+		done
+		for i in $d1/*.*; do
+			[ -f "$i" ] || continue
+			j="$d1/${i##*/}"
+			[ -e "$j" ] || unlink "$i"
+		done
+	elif [ -d $d1 ] && [ /var/lib/iwd -ef $d ]; then
+		[ -d $d ] || mkdir $d || return
+		cp -a $d1/*.* $d/ || {
+			[ -d $d1 ] || return
+			for i in $d1/*.*; do
+				[ -f "$i" ] || continue
+				cp -a "$i" $d/ || return
+			done
+		}
+		touch $d/RUNTIME-OK
+	fi
+	wifi_sync(){ true;}
+}
+
+_kill_iwd(){
+	killall -w iwd
+}
+
+# dhcpcd 8.1.1 sometimes idle 100%. control
+# todo? - on connect, but dhcp init will be slower
+_stop_dhcp(){
+	local i
+	for i in "${@}"; do
+		dhcpcd "$i" -xbqk ||
+		dhclient "$i" -r -pf /run/dhclient-"$i".pid
+	done
+}
+
+_start_dhcp(){
+	_iw_cfg
+	local t=$disable_periodic_scan i r=false x s
+	for i in "${@}"; do
+		x=
+		if which dhcpcd; then
+			$t || x='bt 0'
+			dhcpcd "$i" -NqL$x && r=true
+		elif which dhclient; then
+			$t || x=' -nw'
+			pgrep -x dhclient -F /run/dhclient-"$i".pid ||
+			dhclient "$i"$x -pf /run/dhclient-"$i".pid && r=true
+		else
+			r=true
+		fi
+	done
+	$t && ! $r && wifi_save
+}
+
+# iwd blacklist easy to block my phone, when I off/on ap,
+# so one-touch restart is required swiss knife
+wifi_restart(){
+	local i= j x p
+	# rt: network daemons must be hot & not swappable
+	chrt -par 1 $$
+	_iw_list
+	[ -n "$on$off$off_" ] && {
+		_iw_cfg
+		$EnableNetworkConfiguration || {
+			_stop_dhcp  $on $off $off_ &
+			i=$!
+		}
+		_kill_iwd &
+		wait $! $i
+		_iw_list
+	}
+	for i in $off_$off_1; do
+		for i in /sys/class/net/"$i"/phy80211/rfkill*/$rff; do
+			$rf_unblk >"$i"
+		done
+	done
+	for i in $rf; do
+		$rf_unblk >"$i/$rff"
+	done
+	[ -n "$off1$off_1" ] && wpa_cli scan &
+	[ -n "$on$off$off_$rf" ] && {
+		wifi_sync
+		/usr/libexec/iwd &>/dev/null &
+		p=$!
+		# on 1 of my card iwd scan on start, on 2 - no
+		# on 3 - iface present only after iwd start
+		_iw_cfg
+		local dhcp=$EnableNetworkConfiguration
+		for j in 0 .1 .1 .1 .1 .1 .1 .1 .1 .1 .1 1 3 0; do
+			_iw_list
+			[ -z "$on$off" ] && sleep $j && continue
+			$dhcp || {
+				_start_dhcp $on $off $off_ >/dev/null &
+				dhcp=true
+			}
+			$disable_periodic_scan || {
+				$dhcp && break
+				sleep $j
+				continue
+			}
+			x=
+			[ -n "$off_" ] && {
+				# "x" - workaround bug [0.21]
+				iwctl version x || {
+					# waiting is migrated
+					(pgrep -x iwd | grep -qx $p) || ! which pgrep || break
+					echo quit|iwctl ||
+					{
+						sleep $j
+						continue
+					}
+				}
+				_iw_list
+			}
+			[ -n "$on$off_" ] && {
+				iwctl device list
+				_iw_list
+			}
+			[ -n "$on" ] && {
+				for i in $on; do
+					iwctl station "$i" show || x+=" $i"
+				done
+				[ -z "$x" ] && _iw_list
+			}
+			for i in $off; do
+				$force || {
+					iwctl station "$i" show|grep "Scanning[ \t]*yes\|State[ \t]*connect" && continue
+					[ "$j" = 0 ] && x+=" $i" && continue
+				}
+				echo "$i force scan" >&2
+				iwctl station "$i" scan || x+=" $i"
+			done
+			[ -z "$x$off_" ] && break
+			sleep $j
+		done >/dev/null
+	}
+}
+
+# poweroff no-carrier (if disable_periodic_scan=1)
+# don't know how2 selective poweroff wpa_supplicant
+wifi_save(){
+	local i=
+	_iw_list
+	[ -z "$off$off1" ] && return
+	# iwd, but autoscan (no disable_periodic_scan=1)
+	[ -n "$off" ] && {
+		_iw_cfg
+		$disable_periodic_scan || off=
+	}
+	# wpa_supplicant: off only on battery, as no disable scan
+	[ "$batt" = true ] || off1=
+	for i in $off$off1; do
+		for i in /sys/class/net/"$i"/phy80211/rfkill*/$rff; do
+			$rf_blk >"$i"
+		done
+	done
+	# pre-kill -> faster restart
+	[ -z "$on" -a -n "$off" ] && {
+		_iw_cfg
+		$EnableNetworkConfiguration || _stop_dhcp $off
+		_kill_iwd && wifi_sync
+	}
+}
+
+# rescan no-carrier
+wifi_restore(){
+	local i
+	_iw_list
+	# wpa_supplicant only
+	for i in $off_1; do
+		for i in /sys/class/net/"$i"/phy80211/rfkill*/$rff; do
+			$rf_unblk >"$i"
+		done
+	done
+	[ -n "$off1$off_1" ] && wpa_cli scan &
+	# iwd: rfkilled/poweroff still ignored to hand restart
+	[ -n "$off" ] && pgrep -x iwd && for i in $off; do
+		iwctl station "$i" scan &
+	done
+}
+
+# run async to screensaver (for example - if wifi disconnected [blank])
+wifi_sleep(){
+    _root
+    fchk $save.lock
+    {
+	flock 3
+	if [ -s "$save" ]; then
+		wifi_save
+	else
+		_iw_cfg
+		$disable_roaming_scan && $disable_periodic_scan && wifi_save
+	fi
+	wifi_sync
+    } 3>>$save.lock
+}
+
+jiff(){
+	sleep 0.1
+}
+
+restore(){
+    _root
+    fchk $save.lock
+    {
+	flock -s 3
+	[ -e $save.lock1 ] && {
+		$force || return
+		unlink $save.lock1
+	}
+	local f x i s b=false
+	for s in ${save}1 $save; do
+		fchk $s || continue
+		$echo $s
+		(. $s)
+		true >$s
+	done
+	wifi_restore
+    } 3>>$save.lock
+}
+
+save(){
+    _root
+    fchk $save.lock
+    {
+	flock 3
+	wifi_save
+	fchk $save && return
+	$force && touch $save.lock1
+	local f i x x1 x2
+	echo '#' >>$save
+	save1v 0 /sys/class/leds/*/brightness
+	save1 N /sys/module/drm_kms_helper/parameters/poll
+	save1 1 /proc/sys/kernel/sched_energy_aware
+	save1 min_power /sys/class/scsi_host/*/link_power_management_policy
+	save1 powersupersave /sys/module/pcie_aspm/parameters/policy
+	# safer, 3 for RH
+	save1g 2 /sys/module/ahci/parameters/mobile_lpm_policy
+	save1 1 /sys/kernel/rcu_normal
+	save1 0 /sys/kernel/rcu_expedited
+	save1 2 /sys/block/*/queue/rq_affinity
+	save1 1 /sys/class/powercap/intel-rapl*/enabled
+	case "$(grep -c1 ^vendor_id /proc/cpuinfo)" in
+	*GenuineIntel)
+		# disable hw prefetching if equal
+		i=0
+		x1=
+		for x in `rdmsr -a 0x1a4`; do
+			[ "$x" != "${x1:=$x}" ] && i=0 && break
+			i=$[i+1]
+		done
+		[ "$i" != 0 ] && x=$[x|15] && [ "$x" != "$x1" ] && wrmsr -a 0x1a4 $x && echo "wrmsr -a 0x1a4 $x1" >>$save
+	;;
+	esac
+	# must be ordered
+#	save1 passive /sys/devices/system/cpu/intel_pstate/status
+	for i in /sys/devices/system/cpu/cpu*/cpufreq; do
+		save1 powersave "$i/scaling_governor"
+		    rd x <"$i/cpuinfo_min_freq" && {
+			save1 "$x" "$i/scaling_max_freq"
+			#[ "$(< "$i/scaling_cur_freq")" = "$x" ] ||  echo "$x" >"$i/scaling_cur_freq"
+		}
+	done
+	[ -n "$light" ] &&
+	    for i in /sys/class/backlight/*; do
+		rd x <"$i/max_brightness" &&
+#			rd x1 <"$i/actual_brightness" && [ "$x1" -gt "$x" ] &&
+			x=$[x*light/100] &&
+			save1g $x "$i/brightness"
+	done
+	save1 1 /sys/devices/system/cpu/intel_pstate/no_turbo
+	save1 0 /sys/devices/system/cpu/cpufreq/boost
+	save1 power /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference ||
+	    save1 15 /sys/devices/system/cpu/cpu*/power/energy_perf_bias || {
+		f=x86_energy_perf_policy
+		$f -r|while read i; do
+			x="${i%%:*}"
+			x="${x#cpu}"
+			[ "$x" = "$[x]" ] || continue
+			i="${i##* }"
+			echo "$f -c $x $[i]" >>$save
+#			$f -c $x 15
+		done
+		$echo "$f 15"
+		$f 15
+	}
+	# cannot restore original state on HP250G
+	false &&
+	for i in /sys/class/thermal/cooling_device*; do
+		rd x <$i/max_state && [ "$x" -gt 0 ] &&
+		f="$i/cur_state" && rd x1 <$f && [ "$x" -gt "$x1" ] || continue
+		case "$(< $i/type)" in
+		    Processor);;
+		    intel_powerclamp)[ "$x1" = -1 ] && x1=0 || continue;;
+		    *)continue;;
+		esac
+		echo "$x" >$f &&
+		$echo "$x1 -> $x => $f" &&
+		echo "echo $x1 >$f" >>$save
+	done
+	###### add here, as next is cores off
+	[ -n "$cores$sockets$threads" ] && {
+		echo balance >>$save
+		sync &
+		i=$!
+		save+=1
+		fchk $save || (. $save)
+		jiff
+		wait $i
+		c=/sys/devices/system/cpu/cpu
+_cpu_off(){
+	local i x=- n="$2"
+	[ "$[n-1]" -lt "$n" ] && x='' && for i in $c*/topology/$1; do
+			[ -e "$i" ] && x=$(< "$i") && [ -n "$x" -a "$x" -ge "$n" ] && [[ "$3" != *" $x "* ]] && save1 0 "${i%top*}online"
+	done
+	[ -n "$x" ]
+}
+		[ -n "$sockets" ] && {
+			local on=' '
+			# unswitch unswitchable sockets
+			if [[ "$sockets" == -* ]]; then
+				[ "$sockets" = - ] && sockets=0 || sockets=${sockets#-}
+				for i in $c*/topology/physical_package_id; do
+					! [ -e "${i%top*}online" ] && x=$(< "$i") && [ -n "$x" ] &&  on+="$x "
+				done
+			fi
+			_cpu_off physical_package_id "$sockets" "$on"
+		}
+		[ -n "$cores" ] &&
+		if [[ "$cores" == -* ]]; then
+			[ "$cores" = - ] && cores='*'
+			x2=
+			for i in $c*/cache/index${cores#-}/shared_cpu_list; do
+				while [ -e "$i" ] && x=$(< "$i") && x1="${x##*[^0-9]}" && [ "$x" != "$x1" ] && [ "$x1" != "$x2" ]; do
+					save1 0 "$c$x1/online"
+					x2=$x1
+				done
+			done
+		elif ! _cpu_off core_id "$cores"; then
+			# no kernel features? alt
+			for i in $c*/online; do
+				[ -e "$i" ] || break
+				[ "$cores" -gt 0 ] || save1 0 "$i"
+				cores=$[cores-1]
+			done
+		fi
+		[ "$threads" = 1 ] && for i in $c*/topology/thread_siblings_list; do
+			[ -e "$i" ] && x=$(< "$i") && [[ "$i" != "$c${x%%[^0-9]*}/"* ]] && save1 0 "${i%top*}online"
+		done
+		echo jiff >>$save
+		# single CPU must be balanced. fixme
+		#balance
+	}
+	###### DO NOT add here
+    } 3>>$save.lock
+}
+
+umask 077
+
+force=false
+echo=true
+cores=
+light=
+pw=
+# wifi: restart|off|auto
+wifi=
+lockpid=
+lockflag=
+phy=
+
+while [ -n "$*" ]; do
+case "$1" in
+light|cores|sockets|threads)declare $1="$2";shift;;
+verbose)
+	_echo(){ echo "${@}" >&2;}
+	echo=_echo
+;;
+xss|xss-auto)
+	shift
+	case "$1" in
+	on);;
+	off|disabled)pw=restore;;&
+	*)shift;continue;;
+	esac
+;;&
+powersave|save|power|low|xss)pw=save;;
+performance|perf|restore|high)pw=restore;;
+auto|bat|batt|xss-auto)
+	case "$batt" in
+	true|false);;
+	*)	onbatt=onbatt
+		batt=false
+		[ -n "$2" ] && onbatt="$2"
+		eval "$onbatt" && batt=true
+	;;
+	esac
+;;&
+bat|batt)pw=$batt;;
+auto|xss-auto)$batt && pw=save || pw=restore;;
+force)force=true;;
+wifi);;
+#wifi-sleep)lockflag=-n;;&
+wifi-restart|wifi-restart-1)[ -e $Lwifi ] && unlink $Lwifi;;&
+wifi-restart|wifi-restart-1|wifi-sleep|wifi-sync)
+#	altlock $Lwifi 60 "$lockflag"
+	${1//-/_}
+#	altunlock
+;;
+wifi-first)
+	phy=$(cd /sys/class/ieee80211 && echo phy*) && phy=${phy%%/*} || phy=
+;;
+wifi-last)
+	phy=$(cd /sys/class/ieee80211 && echo phy*) && phy=${phy##* } || phy=
+;;
+iwmon)
+	exec stdbuf -i0 -o0 -e0 iwmon -ys --noies
+	exit 1
+;;
+*)
+echo "Simple control powersave <-> default & check battery state.
+Designed for use in parallel with screen locker on laptop.
+Usage: $0 {<opt>} <cmd>
+opt is:
+ light <brightness_percent>
+ sockets <num|-|-num>
+	'sockets 0' keep minimum CPU sockets & cores or 'sockets -' off all
+	unswitchable sockets (= all cores can offline).
+ cores <num|-|-cache_level>
+	'cores 0' minimum cores or 'cores -' one core & thread per top cache
+	(L2|L3); simple 1 core do save power if system mostly do nothing;
+	1 core per cache can give more saving and performance in case of
+	some concurrent workloads still affect cache/ram transition:
+	more (+1 per cache) cores ON, but less bus/RAM usage,
+	useful on splitted L2|L3 caches (NUMA, x7-Z8700 silvermont, ...).
+ threads 1
+ verbose
+ force
+ wifi-first
+ wifi-last
+cmd is:
+ powersave|save|power|low
+ performance|perf|restore|high
+ auto [<onbatt_test>]
+ bat|batt
+ xss[-auto] [on|off|...]
+ iwmon
+ wifi-restart
+ wifi-sleep
+ wifi-sync
+Add to sudo:
+ echo '%plugdev ALL=(ALL) NOPASSWD: /usr/sbin/ya-nrg' >/etc/sudoers.d/ya-nrg
+  or
+ echo 'ALL ALL=(ALL) NOPASSWD: /usr/sbin/ya-nrg' >/etc/sudoers.d/ya-nrg
+To wifi power-off - add 'disable_periodic_scan=true' (optional -
+'disable_roaming_scan=true') to /etc/iwd/main.conf.
+Avoid iwd to touch SSD: ln -s /var/lib/iwd /run/iwd, permanent /var/lib/iwd1.
+PS 'cores 0'|'cores 1'|'cores -'|'sockets -'|'sockets - cores -'
+   - subject  to test power consumption per hardware & [idle] workload.
+"
+pw=
+;;
+esac
+shift
+done
+
+${pw:-false}

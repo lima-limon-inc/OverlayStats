@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+# Copyright 2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+name="vintagestory daemon"
+description=""
+command=/usr/bin/mono
+retry=15
+command_background=1
+directory="/opt/vintagestory-server"
+pidfile="/run/${RC_SVCNAME}.pid"
+
+command_user="vintagestory"
+command_group="vintagestory"
+
+DATAPATH="/var/lib/vintagestory"
+
+command_args="/opt/vintagestory-server/VintagestoryServer.exe --dataPath ${DATAPATH}"
+
+start_pre() {
+	checkpath -d -m 0750 -o "${command_user}:${command_group}" \
+		"${DATAPATH}"
+}

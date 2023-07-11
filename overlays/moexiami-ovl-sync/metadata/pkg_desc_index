@@ -1,0 +1,3 @@
+app-crypt/libscrypt 1.21-r1: Shared library to impliment the scrypt algorithm
+net-proxy/shadowsocks-simple-obfs 0.0.5: A simple obfuscating tool designed as plugin server of shadowsocks
+net-vpn/strongswan 5.7.1-r2: IPsec-based VPN solution, supporting IKEv1/IKEv2 and MOBIKE

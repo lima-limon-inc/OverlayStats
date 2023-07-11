@@ -1,0 +1,65 @@
+# Copyright 2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{10..11} )
+
+inherit distutils-r1 pypi
+
+DESCRIPTION="Astropy affiliated package for accessing Virtual Observatory data and services"
+HOMEPAGE="https://pyvo.readthedocs.io"
+
+LICENSE="BSD"
+SLOT="0"
+KEYWORDS="~amd64 ~x86"
+IUSE="all doc examples intersphinx"
+PROPERTIES="test_network"
+RESTRICT="test
+	intersphinx? ( network-sandbox )"
+REQUIRED_USE="intersphinx? ( doc )"
+
+RDEPEND=">=dev-python/astropy-4.1[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	all? ( dev-python/pillow[${PYTHON_USEDEP}] )
+"
+BDEPEND="dev-python/setuptools-scm[${PYTHON_USEDEP}]
+	doc? (
+		${RDEPEND}
+		dev-python/sphinx-astropy[${PYTHON_USEDEP}]
+		media-gfx/graphviz
+	)
+	test? (
+		dev-python/pytest-astropy-header[${PYTHON_USEDEP}]
+		dev-python/pytest-doctestplus[${PYTHON_USEDEP}]
+		dev-python/pytest-remotedata[${PYTHON_USEDEP}]
+		dev-python/pillow[${PYTHON_USEDEP}]
+		dev-python/requests-mock[${PYTHON_USEDEP}]
+	)
+"
+
+distutils_enable_tests pytest
+#distutils_enable_sphinx docs dev-python/sphinx-astropy
+
+python_compile_all() {
+	if use doc; then
+		VARTEXFONTS="${T}"/fonts MPLCONFIGDIR="${T}" PYTHONPATH="${BUILD_DIR}"/install/$(python_get_sitedir) \
+			emake "SPHINXOPTS=$(usex intersphinx '' '-D disable_intersphinx=1')" -C docs html
+		HTML_DOCS=( docs/_build/html/. )
+	fi
+}
+
+python_install_all() {
+	if use examples; then
+		docompress -x "/usr/share/doc/${PF}/examples"
+		docinto examples
+		dodoc -r examples/.
+	fi
+
+	distutils-r1_python_install_all
+}
+
+python_test() {
+	epytest ${PN} --remote-data
+}

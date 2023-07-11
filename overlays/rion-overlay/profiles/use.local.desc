@@ -1,0 +1,72 @@
+# This file is deprecated as per GLEP 56 in favor of metadata.xml.
+# Please add your descriptions to your package's metadata.xml ONLY.
+# * generated automatically using pmaint *
+
+app-crypt/qca:botan - Enable botan plugin
+app-crypt/qca:gcrypt - Enable gcrypt plugin
+app-crypt/qca:gpg - Enable GnuPG plugin
+app-crypt/qca:logger - Enable logger plugin
+app-crypt/qca:nss - Enable NSS plugin
+app-crypt/qca:pkcs11 - Enable PKCS#11 plugin
+app-crypt/qca:sasl - Enable SASL plugin
+app-crypt/qca:softstore - Enable softstore plugin
+app-misc/qtnote:unity - Enable Unity/Ubuntu plugin
+app-text/qstardict:plugin_stardict - build stardict plugin
+app-text/qstardict:plugin_swac - 
+app-text/qstardict:plugin_web - build web plugin
+media-sound/qomp:cuteradioplugin - cuteRadio plugin
+media-sound/qomp:lastfmplugin - Last.FM plugin
+media-sound/qomp:mprisplugin - MPRIS plugin
+media-sound/qomp:myzukaruplugin - myzuka.ru plugin
+media-sound/qomp:notificationsplugin - notifications plugin
+media-sound/qomp:poiskmplugin - poiskm.me plugin
+media-sound/qomp:tunetofileplugin - Tune To File plugin
+media-sound/qomp:urlplugin - URL Plugin
+media-sound/qomp:yandexmusicplugin - Yandex.Music plugin
+net-im/psi:aspell - Enable spellchecking using app-text/aspell
+net-im/psi:enchant - Enable spellchecking using app-text/enchant
+net-im/psi:extras - Enable Psi+ patchset
+net-im/psi:hunspell - Enable spellchecking using app-text/hunspell
+net-im/psi:iconsets - Install additional iconsets, some of them have no clear licensing
+net-im/psi:keyring - Enable storing password in system keyring manager
+net-im/psi:webengine - Enable themed, html-based chatlogs using dev-qt/qtwebengine
+net-im/psi:xscreensaver - Use X screensaver protocol extension to monitor idle/active status based on mouse/keyboard events
+net-im/psi-plugins-meta:attention - Enable Psi plugin for making attention (XEP-0224)
+net-im/psi-plugins-meta:autoreply - Enable Psi plugin to gnerate automatic replies.
+net-im/psi-plugins-meta:birthdayreminder - Enable Psi plugin to remind contact's birthdays
+net-im/psi-plugins-meta:chess - Enable Psi plugin to play chess with your friends
+net-im/psi-plugins-meta:cleaner - Enable Psi plugin for profile cleaning for specified contacts.
+net-im/psi-plugins-meta:clientswitcher - Enable Psi plugin for client version masking
+net-im/psi-plugins-meta:conferencelogger - Enable Psi plugin which saves logs of conferences
+net-im/psi-plugins-meta:contentdownloader - Enable Psi plugin for downloading extras
+net-im/psi-plugins-meta:enummessages - Enable Psi plugin to enumarate messages added to chat
+net-im/psi-plugins-meta:extendedmenu - Enable Psi plugin which adds special submenu to contacts
+net-im/psi-plugins-meta:extendedoptions - Enable Psi plugin for UI for some hidden options
+net-im/psi-plugins-meta:gnupg - Enable Psi plugin for GnuPG message encryption
+net-im/psi-plugins-meta:gomokugame - Enable Psi plugin for Gomoku game
+net-im/psi-plugins-meta:historykeeper - Enable Psi plugin to keep certain contacts history clean
+net-im/psi-plugins-meta:icqdie - Enable Psi plugin generating weird replies to icq transport contacts.
+net-im/psi-plugins-meta:image - Enable Psi plugin for sending in-band images
+net-im/psi-plugins-meta:imagepreview - Enable Psi plugin to preview images in chat log
+net-im/psi-plugins-meta:jabberdisk - Enable Psi plugin for file sharing via jabber disk
+net-im/psi-plugins-meta:juick - Enable Psi plugin for juick.com service
+net-im/psi-plugins-meta:messagefilter - Enable Psi plugin to filter out messages by various conditions
+net-im/psi-plugins-meta:omemo - Enable Psi plugin for OMEMO
+net-im/psi-plugins-meta:openpgp - Enable Psi plugin to manager OpenPGP keys and settings
+net-im/psi-plugins-meta:otr - Enable Psi plugin for OTR message ecnryption
+net-im/psi-plugins-meta:pepchangenotify - Enable Psi plugin to show PEP change notifications
+net-im/psi-plugins-meta:qipxstatuses - Enable Psi plugin for QIP xStatus to xmpp user moods translation
+net-im/psi-plugins-meta:screenshot - Enable Psi plugin to quickly make screenshots
+net-im/psi-plugins-meta:skins - Enable Psi plugin for skins support.
+net-im/psi-plugins-meta:stopspam - Enable Psi plugin for spam blocking
+net-im/psi-plugins-meta:storagenotes - Enable Psi plugin for Jabber notes protocol extension
+net-im/psi-plugins-meta:translate - Enable Psi plugin to fix incorrect input
+net-im/psi-plugins-meta:videostatus - Enable Psi plugin for settings some status during video watching
+net-im/psi-plugins-meta:watcher - Enable Psi plugin for watching on contacts
+net-im/psimedia:demo - Build demo application and its version of the plugin
+net-im/psimedia:extras - Enable Psi+ mode (required when built for Psi+)
+net-im/psimedia:psi - Build a plugin for net-im/psi
+net-libs/jdns:tools - Enable jdns test tools
+net-libs/srt:encryption - Enable encryption of the SRT stream
+net-print/samsung-unified-driver:network - Enable network printing support
+www-servers/civetweb:server - Build standalone server

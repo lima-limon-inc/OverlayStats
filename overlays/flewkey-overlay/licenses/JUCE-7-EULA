@@ -1,0 +1,556 @@
+JUCE 7 End User License Agreement
+
+IMPORTANT NOTICE: PLEASE READ CAREFULLY BEFORE DOWNLOADING, INSTALLING OR USING
+THE SOFTWARE:
+
+Welcome to JUCE 7! This JUCE 7 end-user licence agreement (Agreement) is a legal
+agreement between you (Licensee or you) and Raw Material Software Limited (RMS,
+Licensor, us or we) for the JUCE 7 Framework, which includes both the JUCE Code
+and the Projucer and DemoRunner Software, and the associated media. For the
+purposes of this Agreement, JUCE Personal, JUCE Pro, JUCE Indie, JUCE Education,
+shall be described as “Code”, and Projucer and DemoRunner shall be described as
+“Software” and the Code and Software may be described as “Framework”. Users of
+JUCE 6 should refer to the JUCE 6 End-User License Agreement. Users of JUCE 5
+should refer to the JUCE 5 End-User License Agreement. Users of JUCE 4 should
+refer to the JUCE 4 End-User License Agreement.
+
+IMPORTANT NOTICE TO ALL USERS:
+
+BY CLICKING ON THE "ACCEPT" BUTTON LINKING TO THESE TERMS, OR BY DOWNLOADING,
+INSTALLING OR USING THE JUCE FRAMEWORK, YOU AGREE TO THE TERMS OF THIS
+AGREEMENT, AND ALL INCORPORATED TERMS INCLUDING THE JUCE PRIVACY POLICY AND
+WEBSITE TERMS OF SERVICE, AS APPLICABLE, WHICH WILL BIND YOU. IF YOU DO NOT
+AGREE TO THE TERMS OF THIS AGREEMENT, WE WILL NOT LICENSE THE JUCE FRAMEWORK TO
+YOU AND YOU MUST DISCONTINUE THE INSTALLATION OR DOWNLOAD PROCESS OR CEASE USE
+OF THE JUCE FRAMEWORK. If you are accepting the terms of this Agreement on
+behalf of a company or other legal entity, you represent and warrant that you
+have the authority to bind that company or other legal entity to the terms of
+this Agreement and, in such event, “you” and “Licensee” will refer to that
+company or other legal entity. You affirm that you are at least 18 years of age.
+If you are not 18 years of age but you are at least the age of 13, you may use
+the JUCE Framework only if your parent or guardian agrees to be bound by this
+Agreement. Parents and guardians of users under the age of 18 agree to the terms
+of this Agreement, and any reference to “you” shall include the parent or
+guardian.
+
+You should print a copy of this Licence for future reference.
+
+Each JUCE licence comes with similar, yet slightly different features, which are
+fully explained in the chart found here. A truncated version of the chart is
+found directly below.  JUCE Personal Free	JUCE Indie $40	JUCE Pro $130
+Education Free Splash screen	‘Made with JUCE’ splashscreen	Custom animation
+or none	Custom animation or none	‘Made with JUCE’ splash screen Revenue
+or funding limit	$50k	$500k	No limit	No limit Minimum
+commitment	 	1 month	1 month	 One-off perpetual price
+$800	$2,600	 
+
+Each type of JUCE licence also comes with different Minimum Commitments, Revenue
+Limits and Fees, as discussed below.
+
+REVENUE LIMITS AND MINIMUM COMMITMENTS
+
+There are different licences and options for use of the JUCE Code, and each
+licence has different Minimum Commitments, Revenue Limits and features. To see
+the full set of features and functionality of each licence, please visit
+https://juce.com/get-juce. The following describes the Minimum Commitments and
+Revenue Limits for each licence. Revenue Limits are based on gross revenue,
+meaning all monies collected, including through funding, whether it be received
+in connection with your JUCE Applications or not, without offsets of any kind.
+
+JUCE Personal
+
+JUCE Personal comes with one licence seat and aims to provide individuals with
+the opportunity to utilize JUCE free of charge. We provide this licensing option
+to grow the base of developers who can engage with JUCE and explore its
+capabilities. To this end, there is no Minimum Commitment. However, you may only
+use your JUCE Personal to release Applications up to a Revenue Limit of $50,000
+(USD or currency conversion equivalent). This means that if gross revenue is
+generated or raised by you in the amount of $50,000 or more, which is gross
+revenue, without offsets of any kind and based on overall monies collected, then
+you may only continue to release your Application in connection with your JUCE
+Personal licence if (a) you license your Application as an open-source project
+under the GNU License, as further described in clause 1.9 below, or (b) you
+upgrade to JUCE Indie or JUCE Pro, as applicable. If you want to distribute your
+Application, but don’t want to release your Application under the GNU License,
+then you must upgrade to either JUCE Indie or JUCE Pro.
+
+JUCE Indie
+
+JUCE Indie is for smaller companies and teams generating less than a Revenue
+Limit of $500k per year in gross revenue or funding. Companies qualifying for
+JUCE Indie can acquire multiple licences for $40/month per developer under the
+subscription plan or $800 for a one-off perpetual licence per developer. We
+require a 1-month Minimum Commitment for the JUCE Indie subscription plan. You
+may release Applications with your JUCE Indie licence up to a Revenue Limit of
+$500,000. This means that if your company’s total gross revenue earned or raised
+exceeds $500,000, then you will be required to either upgrade to JUCE Pro,
+license your Application as an open-source project under the GNU License, or
+stop using the Framework and distributing your Applications.
+
+JUCE Pro
+
+JUCE Pro is for businesses and teams and is also offered as a per-developer
+licence, with a Fee required for each developer on a team or within a business
+who uses JUCE Pro. Companies can acquire the JUCE Pro license for $130/month per
+developer under the subscription plan or $2,600 for a one-off perpetual licence
+per developer. We require a 1-month Minimum Commitment for the JUCE Pro
+subscription plan. There is no Revenue Limit for use of JUCE Pro.
+
+JUCE Education
+
+JUCE Education is offered to bona fide educational institutions and comes with a
+number of seats as requested by the educational institution. JUCE Education is
+free and does not come with any Minimum Commitments or Revenue Limits. You agree
+to submit any requested documentation to show proof of a bona fide educational
+institute.
+
+What are the Projucer and the DemoRunner?
+
+The Projucer and DemoRunner are not to be confused with the JUCE Code. The
+Projucer is rather a Software project management tool to be used with the JUCE
+Code that helps you organize your Code. The DemoRunner is a simple app
+showcasing the capabilities of the JUCE Code. Both are included in your JUCE
+licence. The Projucer and the DemoRunner are referred to as “Software,” and the
+JUCE Code together with the Projucer and DemoRunner Software are collectively
+referred to as “Framework” throughout this Agreement.
+
+What is the GNU General Public License?
+
+If you exceed your Revenue Limit for JUCE Personal and don’t want to upgrade to
+a JUCE Indie or JUCE Pro license, then to distribute your Applications you must
+release the source code under the open-source GNU General Public License v.3 as
+described in this Agreement.
+
+During the term of this Agreement, you expressly acknowledge and agree that if
+you are a JUCE Personal, JUCE Indie user and the Revenue Limit thresholds,
+above, are exceeded, then you may no longer use that tier of the Framework to
+distribute Applications, and to continue distributing Applications you must
+either: (a) purchase a different JUCE licence (if eligible); (b) cease
+distributing your Applications; (c) license your Applications under the GNU
+License. We may monitor your compliance with and enforce these restrictions and
+requirements as described in clause 10.4 below.
+
+1. Grant and scope of Licence for the Framework
+
+1.1. We do not sell the Framework to you. The Framework is licensed to you as
+described in this Agreement and we remain the owners of the Framework at all
+times. Provided you adhere to the terms of this Agreement, including payment of
+Fees and Minimum Commitments, we grant you a non-exclusive, non-transferable
+(except as provided in clause 11.2 below) licence to download, develop, and
+modify the Code to enable the development of the Applications on the terms of
+this Agreement, and to download the Software to be used in connection with the
+Code.
+
+1.2. The following five JUCE modules are governed by the permissive ISC License:
+juce_core, juce_audio_devices, juce_audio_basics, juce_events, juce_blocks.
+
+1.3. Each JUCE licence includes New Features and Minor Updates for that specific
+JUCE license and all previous versions of JUCE, but does not include New
+Releases.
+
+1.4. Each JUCE licence comes with a specific number of seats for users to
+utilise the Framework, and you agree that only one user may utilise the
+Framework per seat offered in your specific JUCE licence for the purposes of
+coding and development. Note: if you have a JUCE Pro license and are installing
+JUCE on multiple computers and such computers are only being used for
+compilation and testing, such usage is included in your JUCE Pro license and no
+additional seats are required.
+
+1.5. You may not use a JUCE subscription licence to license Applications owned
+by a third party. Where the Licensee Content is not owned by the licence holder
+the licence holder must have a perpetual licence.
+
+1.6. You may not use JUCE Personal, JUCE Indie, JUCE Pro or JUCE Education
+simultaneously. You may not combine or integrate your Licensee Content developed
+with one tier of the Code (e.g., JUCE Personal) simultaneously with any of your
+Licensee Content that you develop with another tier (e.g., JUCE Indie or JUCE
+Pro).
+
+1.7. You may sell or distribute Applications using the Code that incorporates
+your Licensee Content to end users, provided that you adhere to the terms in
+this Agreement, including paying applicable Fees once you hit your Revenue
+Limit. You may not sell, sublicense, or otherwise distribute the Code or
+Software on their own.
+
+1.8. Where you have licensed JUCE Education, you may be requested to provide
+certain documentation before being approved, and RMS reserves the right in its
+sole discretion to decline authorization for JUCE Education.
+
+1.9. Remember, unless you upgrade to JUCE Indie or JUCE Pro, if you exceed the
+Revenue Limit for JUCE Personal and you want to continue distributing
+Applications, then you must do so under the GNU GPLv3 License. The GNU GPLv3 is
+an open-source licence and requires, among other things, that you make your
+source code available and license modified files and larger derived works
+(including all linked code) under the same terms of the GNU License. Please
+review the terms of the GNU GPLv3 License carefully.
+
+1.10. You may not create Applications directed toward Children, unless you fully
+comply with the COPPA rules, including without limitation obtaining verifiable
+parental consent, as further described in clause 10 below. You are responsible
+for any liabilities arising out of a violation of COPPA.
+
+1.11. Each particular type of JUCE license comes with certain features as
+described further in this chart, and you agree to only use the JUCE Framework as
+is allowed under your particular JUCE licence, including not removing the JUCE
+splash screen if you have the JUCE Personal or JUCE Education licence.
+
+2. Restrictions
+
+Except as expressly set out in this Agreement or as permitted by any local law,
+you undertake:
+
+2.1. not, in whole or in part, to copy the Framework except where such copying
+is incidental to normal use of the Framework;
+
+2.2. not to rent, lease, sub-license, loan, translate, merge, adapt, vary or
+modify the Framework nor permit the Framework or any part of it to be combined
+with, or become incorporated in, any other programs or frameworks;
+
+2.3. not to do anything that could cause or result in the Framework being
+subject to any open source licence (or similar licence) that requires as a
+condition of use, modification or distribution that the Framework or other
+software combined or distributed with the Framework be:
+
+2.3.1.disclosed or distributed in source code form; 2.3.2. licensed for the
+purpose of making derivative works; or 2.3.3. redistributable at no charge.
+please note if you are interested in an open source option, please review the
+JUCE Personal licence terms referenced in clause 1.9 above
+
+2.4. not to disassemble, de-compile, reverse engineer or create derivative works
+based on the whole or any part of the Framework nor attempt to do any such
+things except to the extent expressly permitted by applicable law;
+
+2.5. to maintain accurate and up-to-date records of the number and locations of
+all copies of the Framework;
+
+2.6. to comply with all applicable laws, including all technology control or
+export laws and regulations;
+
+2.7. to supervise and control use of the Framework and ensure that the Framework
+is used by your employees and representatives in accordance with the terms of
+this Agreement;
+
+2.8. not to use the Framework in connection with any Licensee Content,
+Application or otherwise that infringes or misappropriates any third party
+right, including any intellectual property, property, privacy, contract or other
+proprietary right or for any other illegal or immoral purpose;
+
+2.9. not to delete or in any manner alter any of our copyright, trademark or
+other proprietary rights notices or markings appearing on or in the Framework;
+
+2.10.not otherwise use, copy, transfer or distribute the Framework or part of
+it, except as expressly permitted by this Agreement, in any manner which is
+inconsistent with this Agreement.
+
+3. Fees and Minimum Commitments
+
+3.1. Where you have purchased a JUCE subscription licence, you agree to pay the
+subscription Fee from the first day of purchase, and recurring every month on
+the same day, for the Minimum Commitment, where applicable. Through purchasing a
+subscription you authorise RMS to send instructions to the financial institution
+that issued your payment card to take Fees from your card account in accordance
+with this Agreement.
+
+3.2. We may change the Fees associated with our subscription plans from time to
+time, or may upgrade a subscription license to the latest New Release of the
+Framework. These changes will be communicated to you in advance. Subject to
+applicable law, you accept the new Fee or New Release by continuing to use the
+Framework after the change has taken effect. You have the right to reject a Fee
+change or New Release by terminating your subscription prior to the change going
+into effect.
+
+3.3. Where you have purchased a perpetual licence you agree to pay the Fee as
+notified to you on the Website at the time you purchase your JUCE licence.
+
+3.4. All payments of Fees are non-refundable.
+
+3.5. All Fees payable under this Agreement are exclusive of VAT or any relevant
+local sales taxes, for which you shall be responsible.
+
+3.6. Without limiting all available remedies, in the event RMS discovers that
+you have been using the Code in breach of this Agreement, or have exceeded your
+Revenue Limit in breach of this Agreement, you shall be liable for the amount of
+Fees due if you had properly purchased a JUCE subscription licence, the amount
+of any audit, and internal administration costs in the amount of no less than
+£1,000.
+
+4. Support
+
+4.1. We shall have no obligation to provide support and maintenance services to
+you. You may participate in our online support forum in accordance with our
+forum policies in place from time to time. Further support and maintenance
+services may be offered at our sole discretion, and may be offered as a feature
+of the JUCE licence you purchase.
+
+4.2. You acknowledge and agree that we have no obligation under this Agreement
+to provide New Features, Minor Updates, or New Releases of the Framework.
+
+5. Intellectual Property Rights
+
+5.1. You acknowledge that all Intellectual Property Rights in the Framework and
+all copies thereof throughout the world belong to us, that rights in the
+Framework are licensed (not sold) to you, and that you have no rights in, or to,
+the Framework other than the right to use it in accordance with the terms of
+this Agreement.
+
+5.2. You shall own all modifications you make to the Code, and all Intellectual
+Property Rights therein, that are created and incorporated in the Application,
+subject to our continuing ownership of the Framework and all associated
+Intellectual Property Rights in the Framework.
+
+6. Disclaimer of Warranty
+
+6.1. The Framework is provided “as is” without warranty of any kind, including
+without limitation any warranties that the Framework or Application will be
+uninterrupted, error-free or otherwise free from infringement. All other
+conditions, warranties or other terms whether express or implied, or
+incorporated into this Agreement or any collateral contract, whether by statute,
+common law or otherwise, including without limitation warranty of
+merchantability or fitness for a particular purpose are hereby excluded to the
+fullest extent permitted by law, including the implied conditions, warranties or
+other terms as to satisfactory quality, fitness for purpose or the use of
+reasonable skill and care.
+
+6.2. You acknowledge that the Framework has not been developed to meet your
+individual requirements and that it is therefore your responsibility to ensure
+that the facilities and functions of the Framework meet your requirements.
+
+7. Limitation of Liability and Indemnification
+
+7.1. Neither RMS nor its parent company, subsidiaries, employees, partners or
+contractors shall in any circumstances whatsoever be liable to you, whether in
+contract, tort (including negligence), breach of statutory duty, or otherwise,
+arising under or in connection with this Agreement for any indirect,
+consequential or special loss or damage, including but not limited to, for:
+
+7.1.1. loss of profits, sales, business, or revenue; business interruption;
+7.1.2. loss of anticipated savings; 7.1.3. loss or corruption of content, data
+or information; 7.1.4. loss of business opportunity, goodwill or reputation;
+7.1.6. any indirect or consequential loss or damage; or 7.1.7. any computer
+failure or malfunction, corruption to or loss of data or files, or any and all
+other commercial damage or loss.
+
+7.2. Nothing in this Agreement shall limit or exclude our liability for: 7.2.1.
+death or personal injury resulting from our negligence; 7.2.2. fraud or
+fraudulent misrepresentation; 7.2.3. any other liability that cannot be excluded
+or limited by law.
+
+7.3. Subject to clause 7.1 and 7.2, our maximum aggregate liability under or in
+connection with this Agreement whether in contract, tort (including negligence)
+or otherwise, shall in all circumstances be limited to the Fees paid by you to
+RMS in the month before the claim arose or $15, whichever is greater.
+
+7.4. You agree to indemnify, defend and hold us and our licensors, partners,
+affiliates, contractors, officers, directors, employees and agents harmless from
+any third party claims, liabilities, losses, costs and expenses (including legal
+expenses) or otherwise arising directly or indirectly from (i) the Licensee
+Content or your Applications; (ii) your use, handling, or operation of the
+Framework otherwise than in accordance with this Agreement, or (iii) any
+violation of applicable laws by you, including without limitation COPPA
+violations.
+
+7.5. This clause 7 shall survive and shall not be rendered ineffective by the
+termination or expiry of this Agreement for whatever reason.
+
+8. Term and Termination
+
+8.1. Where you have purchased a JUCE perpetual licence, this Agreement shall
+remain in effect in perpetuity for the version originally acquired (and any New
+Features or Minor Updates acquired under that version) unless terminated by us
+in advance in accordance with this Agreement.
+
+8.2. Where you have purchased a JUCE subscription licence, this Agreement shall
+remain in effect for the Minimum Commitment and shall renew automatically on a
+monthly basis following expiry of the Minimum Commitment, subject to payment of
+any applicable Fees.
+
+8.3. Where you have licensed a JUCE Education licence, this Agreement shall
+renew automatically on a monthly basis and remain in effect until the JUCE
+Education licence is terminated or you no longer qualify for the JUCE Education
+licence.
+
+8.4. Where you have purchased a subscription licence and you fail to pay the
+subscription Fee when it falls due then your JUCE licence will terminate. Where
+your licence is terminated before the end of the Minimum Commitment then you, in
+any event, are still responsible for paying the subscription Fee for the
+remaining term of the Minimum Commitment.
+
+8.5. We may terminate this Agreement immediately by written notice to you if you
+commit a breach of this Agreement which you fail to remedy (if remediable)
+within 14 days after written notice requiring you to do so.
+
+8.6. Upon termination for any reason:
+
+8.6.1. all rights granted to you under this Agreement shall cease, including
+without limitation, the rights to deal with the Framework incorporated within
+the Application; 8.6.2. you must cease all activities authorized by this
+Agreement, including distribution of your Application that incorporates the
+Framework;
+
+9. Communications Between Us
+
+9.1. If you wish to contact us in writing, or if any condition in this Agreement
+requires you to give us notice in writing, you can send this to us by email at
+info@juce.com. We will confirm receipt of this by contacting you by email.
+
+9.2. If we have to contact you or give you notice in writing, we will do so by
+the email associated with your JUCE licence or by pre-paid post to the address
+you provide to us in your order for the Framework.
+
+10. Data, Privacy and Publicity
+
+10.1. We may collect and process information about you and your use of our
+Framework, some of which may amount to personal data. Personal data will be
+collected and processed in accordance with our Privacy Policy.
+
+10.2. You may not use the Framework in connection with any Application that may
+be “directed to children” as defined under the Children’s Online Privacy
+Protection Act (“COPPA”) unless you fully comply with COPPA and all other
+similar applicable laws. You are fully liable for, and will defend, hold
+harmless and indemnify RMS and its affiliates against any and all liability
+arising from or relating to COPPA in connection with any Application directed to
+Children.
+
+10.3. You agree that RMS may use your name and logo to publicize that you are
+using the JUCE Framework in your Applications. You may opt out of this publicity
+by emailing RMS at info@juce.com and we will use best efforts to remove all uses
+of your name or logo within a commercially reasonable time.
+
+10.4 To ensure compliance with this Agreement, you agree that within thirty (30)
+days from the date of our request, you shall provide all pertinent records and
+information requested in order to verify that your installation and use of any
+and all Frameworks are in compliance with this Agreement, along with a signed
+verification that all such information is complete and correct. You also agree
+we may audit applicable records concerning your use of Framework during normal
+business hours upon notice to you, at our cost, except in the event the audit
+reveals an underpayment or breach of this Agreement, you shall be liable for the
+cost of the audit.
+
+11. Other Important Terms
+
+11.1. We may transfer our rights and obligations under this Agreement to another
+organisation, but this will not affect your rights or our obligations under this
+Agreement.
+
+11.2. You may transfer your rights or your obligations under this Agreement to
+another person or entity provided that you are in full compliance with this
+Agreement and provided that you first contact RMS in writing and follow the
+required steps for transfer.
+
+11.3.This Agreement and any document expressly referred to in it constitutes the
+entire agreement between you and us. You acknowledge that you have not relied on
+any statement, promise or representation made or given by or on behalf of us
+which is not set out in this Agreement or any document expressly referred to in
+it.
+
+11.4. If we fail to insist that you perform any of your obligations under this
+Agreement, or if we do not enforce our rights against you, or if we delay in
+doing so, that will not mean that we have waived our rights against you and will
+not mean that you do not have to comply with those obligations. If we do waive a
+default by you, we will only do so in writing, and that will not mean that we
+will automatically waive any later default by you.
+
+11.5. Each of the conditions of this Agreement operates separately. If any court
+or competent authority decides that any of them are unlawful or unenforceable,
+the remaining conditions will remain in full force and effect.
+
+11.6. Governing Law and Jurisdiction.
+
+11.6.1. If you are a UK, EU, EEA or Swiss citizen, this Licence shall be
+governed by the laws of England and Wales without regard to its conflict of law
+rules and you consent to the exclusive jurisdiction of the courts located in
+London, UK.
+
+11.6.2. If you are a US citizen, this Licence shall be governed by the laws of
+California without regard to its conflict of laws rules and you consent to the
+exclusive jurisdiction of the state and federal courts located in Santa Clara
+County.
+
+11.6.3. If you live outside the US, UK and EU, EEA or Switzerland, you agree to
+the laws and jurisdiction of California as noted above in clause 11.6.2 above.
+
+11.6.4. You may have additional rights as a consumer under your local law.
+
+12. Definitions. The definitions and rules of interpretation in this clause
+apply in this Licence:
+
+12.1. Application(s): desktop or mobile applications developed using the JUCE
+Code, which incorporates the Licensee Content.
+
+12.2. Code: means the JUCE 7 code, specifically, JUCE Personal, JUCE Pro, JUCE
+Indie, JUCE Education, and any New Features and Minor Updates thereto.
+
+12.3. COPPA: means the Children’s Online Privacy Protection Act of 1998, 15
+U.S.C. 6501–6505, as may be updated and amended.
+
+12.4. Children: mean children under the age of 13, or as otherwise defined by
+applicable law.
+
+12.5. Customizations: mean the enhancements, modifications, improvements, or any
+other changes made by RMS to either JUCE or the Licensee code, as specified.
+
+12.6. Fee: the licence fee payable by you to us for use of the Framework as
+detailed further in clause 3 and on the Website.
+
+12.7. GNU License: the GNU General Public License v.3, which governs the terms
+of your JUCE Personal or Indie license if you exceed the Revenue Limit.
+
+12.8. ISC License: the permissive ISC license, which governs the following five
+modules: juce_core, juce_audio_devices, juce_audio_basics, juce_event,
+juce_blocks.
+
+12.9. Intellectual Property Rights: patents, utility models, rights to
+inventions, copyright and related rights, trademarks and service marks, trade
+names and domain names, rights in get-up, goodwill and the right to sue for
+passing off or unfair competition, rights in designs, rights in computer
+software, database rights, rights to preserve the confidentiality of information
+(including know-how and trade secrets) and any other intellectual property
+rights, including all applications for (and rights to apply for and be granted),
+renewals or extensions of, and rights to claim priority from, such rights and
+all similar or equivalent rights or forms of protection which subsist or will
+subsist, now or in the future, in any part of the world.
+
+12.10. Licensee Content: any content created, owned or used by the Licensee in
+connection with the Framework.
+
+12.11. Minimum Commitment: the minimum length of time you must license your JUCE
+Code in order to be eligible for the JUCE licence, depending on the type of your
+JUCE licence.
+
+12.12. Minor Update: any release of bug fixes and small improvements within the
+same version of the JUCE Framework licensed by you (e.g., JUCE 7.1.1 to JUCE
+7.1.2).
+
+12.13. New Features: any release of a new feature within the same version of the
+JUCE Framework licensed by you (e.g., JUCE 7.1 to JUCE 7.2), but not including
+New Releases or other features not included in your specific type of JUCE
+license.
+
+12.14. New Releases: any new release of a new version of the JUCE Framework,
+that is not included in this license Agreement, which contains such significant
+differences from the previous versions as to be generally accepted in the
+marketplace as constituting a new product (e.g., JUCE 7 to JUCE 8).
+
+12.15. Framework: the Code and Software.
+
+12.16. Revenue Limit: the total gross annual revenue limit in USD (or the
+currency conversion equivalent thereof), of a business, whether it be a sole
+trader, team, or registered company, which shall be calculated as any and all
+revenue raised, donated towards, earned, or otherwise received in connection
+with your business, whether or not in connection with your Applications, before
+your JUCE licence requires either payment or separate license terms.
+
+12.17. Software: the Projucer software management tool to be used with the JUCE
+Code that helps you organize your Code and any New Features and Minor Updates
+thereto, and the DemoRunner software and any New Features and Minor Updates
+thereto.
+
+12.19. Website: means juce.com, and its associated web pages.
+
+12.20. Distributing/Releasing applications: To distribute/release an Application
+means to provide copies of the Application to end users. You are free to develop
+Applications and make modifications to copies of JUCE and use them privately,
+without ever releasing/distributing them. This applies to organizations
+(including companies), too; an organization can make Applications and modified
+versions of JUCE and use them internally without ever releasing/distributing
+them outside the organization.

@@ -1,0 +1,34 @@
+# upstream underneath gui-libs not net-libs
+net-libs/libwpe
+net-libs/libwpe-backend
+
+# please use gentoo-asus as a replacement for gentoo-g14-next
+sys-kernel/gentoo-g14-next
+
+# deprecated, please use sys-power/asusctl as a replacement
+sys-power/rog-core
+
+# please use sys-power/asusctl as it was renamed on 04-11-2021
+sys-power/asus-nb-ctrl
+
+# please use "sys-kernel/gentoo-sources-rog" as a replacement
+sys-kernel/gentoo-sources-g14
+
+# currently under review (not installable in the current version)
+# app-editors/imhex
+
+# masked due slot-change (please uninstall before update!)
+<=sys-power/asusctl-3.7.2-r1
+<=gnome-extra/gnome-shell-extension-asusctl-gex-3.7.2
+
+# masked rainloop because of a critical security flaw (use snappymail as a replacement), 
+# see: https://blog.sonarsource.com/rainloop-emails-at-risk-due-to-code-flaw/
+www-apps/rainloop
+www-apps/rainloop-community
+
+# masked as you should know what you're installing - use at own risk
+dev-util/ghidra-bin
+
+# masked during stabilization (use at own risk!)
+=sys-power/asusctl-4.7.0_rc1
+=sys-power/asusctl-4.7.0_rc2

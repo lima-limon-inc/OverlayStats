@@ -1,0 +1,61 @@
+--- a/ConfigFile.cc	2010-12-04 17:07:50.000000000 +0100
++++ b/ConfigFile.cc	2010-12-04 17:07:25.000000000 +0100
+@@ -33,6 +33,7 @@
+  *  different values.
+  */
+ 
++#include "string.h"
+ #include "ConfigFile.hh"
+ 
+ //! Constructor
+--- a/Logger.hh	2010-12-04 17:20:19.000000000 +0100
++++ b/Logger.hh	2010-12-04 17:20:49.000000000 +0100
+@@ -15,6 +15,7 @@
+ #include <list>
+ #include <string>
+ #include <fstream>
++#include <stdlib.h>
+ 
+ #include <time.h>
+ #include <pwd.h>
+--- a/OptionResult.hh	2010-12-04 17:21:35.000000000 +0100
++++ b/OptionResult.hh	2010-12-04 17:22:02.000000000 +0100
+@@ -12,6 +12,7 @@
+ #define OPTIONRESULT_HH 1
+ 
+ #include <string>
++#include <stdlib.h>
+ #include <map>
+ #include "Exceptions.hh"
+ 
+--- a/Options.hh	2010-12-04 17:22:37.000000000 +0100
++++ b/Options.hh	2010-12-04 17:23:01.000000000 +0100
+@@ -11,6 +11,7 @@
+ #ifndef OPTIONS_HH
+ #define OPTIONS_HH 1
+ 
++#include <string.h>
+ #include <list>
+ #include <map>
+ #include <set>
+--- a/FileSystem.cc	2010-12-04 17:24:02.000000000 +0100
++++ b/FileSystem.cc	2010-12-04 17:24:12.000000000 +0100
+@@ -55,7 +55,7 @@
+   {
+     // Check to see if path was given
+ 
+-    char * end_of_path = strrchr(filename, PATH_DELIMINATOR);
++    const char * end_of_path = strrchr(filename, PATH_DELIMINATOR);
+     
+     if (end_of_path)
+     {
+--- a/Options.cc	2010-12-04 17:24:53.000000000 +0100
++++ b/Options.cc	2010-12-04 17:25:15.000000000 +0100
+@@ -25,6 +25,7 @@
+  *  written to stderr is prefixed with (stderr).
+  */
+ 
++#include <cstdio>
+ #include "Options.hh"
+ 
+ //! Constructor takes command line options in standard argc, argv format

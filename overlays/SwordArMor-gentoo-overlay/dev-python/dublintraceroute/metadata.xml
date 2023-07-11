@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<name>Alarig Le Lay</name>
+		<email>alarig@swordarmor.fr</email>
+	</maintainer>
+	<use>
+		<flag name="analysis">
+			Additional analysis functionality, uses
+			<pkg>dev-python/pandas</pkg> and <pkg>dev-python/matplotlib</pkg>
+		</flag>
+	</use>
+</pkgmetadata>

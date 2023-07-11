@@ -1,0 +1,10 @@
+*mesa-20.0.8-r3
+::prototype99	add python3_10 support
+*mesa-20.0.8-r2
+::prototype99	add python3_9 support
+*mesa-20.0.8-r1
+::bobwya				extend python support
+::musl					add musl workaround
+::oiledmachine-overlay	base ebuild
+::poly-c				add zink support
+::prototype99			improve python use flags, remove 9999 specific code

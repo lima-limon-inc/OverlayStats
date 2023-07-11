@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">haversine</remote-id>
+    <remote-id type="github">mapado/haversine</remote-id>
+    <maintainer status="unknown">
+      <email>julien.deniau@mapado.com</email>
+      <name>Julien Deniau</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

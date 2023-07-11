@@ -1,0 +1,142 @@
+# ChangeLog for sys-kernel/gentoo-sources
+# Copyright 1999-2022 Gentoo Authors; Distributed under the GPL v2
+# $Header: $
+
+  05 May 2022; AstroFloyd <AstroFloyd@gmail.com>
+  gentoo-sources-4.9.76-r1.ebuild, gentoo-sources-5.4.38.ebuild:
+  sys-kernel/gentoo-sources: upgrade v4.9.76-r1 and v5.4.38 to EAPI 8.
+
+*gentoo-sources-5.15.23 (13 Feb 2022)
+
+  13 Feb 2022; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-5.15.23.ebuild:
+  sys-kernel/gentoo-sources: version bump to v5.15.23.
+
+*gentoo-sources-5.10.76-r1 (18 Jan 2022)
+
+  18 Jan 2022; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-5.10.76-r1.ebuild, metadata.xml:
+  sys-kernel/gentoo-sources: add v5.10.76-r1 to repo.
+
+*gentoo-sources-5.4.38 (08 May 2020)
+
+  08 May 2020; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-5.4.38.ebuild,
+  -gentoo-sources-4.1.12.ebuild, -gentoo-sources-4.12.12.ebuild,
+  -gentoo-sources-4.4.6.ebuild, -gentoo-sources-4.9.16.ebuild,
+  gentoo-sources-4.9.76-r1.ebuild:
+  sys-kernel/gentoo-sources: add v5.4.38 to repo.
+
+*gentoo-sources-4.9.76-r1 (17 Jan 2018)
+
+  17 Jan 2018; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-4.9.76-r1.ebuild, gentoo-sources-4.1.12.ebuild,
+  gentoo-sources-4.4.6.ebuild:
+  sys-kernel/gentoo-sources: version bump of local copy
+
+  17 Sep 2017; AstroFloyd <AstroFloyd@gmail.com> -gentoo-sources-4.12.5.ebuild,
+  +gentoo-sources-4.12.12.ebuild, metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.12.5 (17 Sep 2017)
+
+  17 Sep 2017; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-4.12.5.ebuild,
+  metadata.xml:
+  Version bump local copy of gentoo-sources
+
+  30 Mar 2017; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-4.9.6-r1.ebuild, +gentoo-sources-4.9.16.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.9.16 (30 Mar 2017)
+
+  30 Mar 2017; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-4.9.16.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.9.6-r1 (30 Mar 2017)
+
+  30 Mar 2017; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-4.9.6-r1.ebuild, metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.4.26 (20 Dec 2016)
+
+  20 Dec 2016; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-4.4.26.ebuild,
+  metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.4.6 (04 Jul 2016)
+
+  04 Jul 2016; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-4.4.6.ebuild,
+  metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.1.12 (29 Nov 2015)
+
+  29 Nov 2015; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-4.1.12.ebuild,
+  metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-4.0.5 (15 Jul 2015)
+
+  15 Jul 2015; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-3.14.14.ebuild, +gentoo-sources-4.0.5.ebuild, metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.18.9 (23 May 2015)
+
+  23 May 2015; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-3.10.17.ebuild, -gentoo-sources-3.12.13.ebuild,
+  +gentoo-sources-3.18.9.ebuild:
+  Version bump
+
+*gentoo-sources-3.16.5 (23 Nov 2014)
+
+  23 Nov 2014; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-3.16.5.ebuild,
+  metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.14.14 (17 Oct 2014)
+
+  17 Oct 2014; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-3.14.14.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.12.13 (10 Apr 2014)
+
+  10 Apr 2014; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-3.10.7-r1.ebuild, +gentoo-sources-3.12.13.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.10.17 (04 Nov 2013)
+
+  04 Nov 2013; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-3.10.17.ebuild, metadata.xml:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.10.7-r1 (19 Oct 2013)
+
+  19 Oct 2013; AstroFloyd <AstroFloyd@gmail.com>
+  +gentoo-sources-3.10.7-r1.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.10.7 (18 Sep 2013)
+
+  18 Sep 2013; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-2.6.38-r6.ebuild, -gentoo-sources-3.0.6.ebuild,
+  -gentoo-sources-3.2.1-r2.ebuild, -gentoo-sources-3.3.8.ebuild,
+  -gentoo-sources-3.4.9.ebuild, -gentoo-sources-3.6.11.ebuild,
+  +gentoo-sources-3.10.7.ebuild:
+  Version bump local copy of gentoo-sources
+
+*gentoo-sources-3.6.11 (26 Jan 2013)
+
+  26 Jan 2013; AstroFloyd <AstroFloyd@gmail.com> +gentoo-sources-3.6.11.ebuild:
+  Added gentoo-sources-3.6.11.ebuild
+
+  26 Jan 2013; AstroFloyd <AstroFloyd@gmail.com>
+  -gentoo-sources-2.6.22-r10.ebuild, -gentoo-sources-2.6.23-r8.ebuild,
+  -gentoo-sources-2.6.30-r5.ebuild, -gentoo-sources-2.6.31-r6.ebuild,
+  -gentoo-sources-2.6.31-r10.ebuild, -gentoo-sources-2.6.32-r7.ebuild,
+  -gentoo-sources-2.6.33-r2.ebuild, -gentoo-sources-2.6.34-r1.ebuild,
+  -gentoo-sources-2.6.36-r5.ebuild, -gentoo-sources-2.6.37-r4.ebuild,
+  +metadata.xml:
+  Removed ancient versions (<2.6.38)

@@ -1,0 +1,15 @@
+box: gentoo/stage3:systemd
+
+build:
+    steps:
+        - script:
+            name: Installing repoman
+            code: emerge --sync && emerge repoman
+
+        - script:
+            name: Checking ebuilds
+            code: repoman -Sd --without-mask full
+
+        - script:
+            name: Testing ebuild
+            code: find -iname '*.ebuild' -exec ebuild {} clean compile install \;

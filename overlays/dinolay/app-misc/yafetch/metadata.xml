@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer type="person">
+        <email>ari.web.xyz@gmail.com</email>
+        <name>Ari Archer</name>
+    </maintainer>
+    <use>
+        <flag name="config">Add a config file</flag>
+        <flag name="clang">Use clang the the C code compiler</flag>
+        <flag name="gcc">Use gcc the the C code compiler</flag>
+        <flag name="hardened">Harden the package</flag>
+        <flag name="lto">Use Link Time Optimisation (LTO)</flag>
+        <flag name="optimised">Enable optimisations of code via -Ox flag and few others</flag>
+        <flag name="errors">Enable pedantic flags and error on all warnings</flag>
+        <flag name="aggresive-pre-strip">Aggresively strip the binary after compiling</flag>
+        <flag name="fonts">Include fonts as a dependency</flag>
+        <flag name="test">Test yafetch</flag>
+        <flag name="debug">Add debug symbols</flag>
+        <flag name="debug-log">Add debug logging</flag>
+        <flag name="march">Use -march=native flag</flag>
+    </use>
+    <decription>Yet another fetch ...</decription>
+    <longdescription>
+        Yet another fetch ...
+    </longdescription>
+</pkgmetadata>
+

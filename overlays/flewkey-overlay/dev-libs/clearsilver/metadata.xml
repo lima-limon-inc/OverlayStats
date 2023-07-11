@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>flewkey@2a03.party</email>
+<name>Ryan Fox</name>
+</maintainer>
+<use>
+<flag name="compression">Enable HTML compression support</flag>
+<flag name="gettext">Enable gettext message translation</flag>
+<flag name="apache">Build Apache 1.3.x module</flag>
+<flag name="csharp">Build the C# module</flag>
+</use>
+</pkgmetadata>

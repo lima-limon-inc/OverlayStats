@@ -1,0 +1,91 @@
+## /etc/kernels/kernel.conf
+
+## Use uclibc to build smaller initrd
+## first do 'crossdev ${ARCH}-pc-linux-uclibc --stage3'
+#CTARGET="${CTARGET/-pc-linux-gnu/-pc-linux-uclibc}"
+
+CF(){
+	KERNEL_CONFIG="${KERNEL_CONFIG} $*"
+}
+
+CPUFLAG(){
+	grep "^flags" /proc/cpuinfo | grep -Pq "\s$1[\s\n]"
+	return $?
+}
+
+#KERNEL_IMAGE_FILES="/bin/mount"
+
+# embed default cmdline
+CF CMDLINE_BOOL
+# yet another way to configure (KERNEL_CONFIG_*)
+: ${KERNEL_CONFIG_CMDLINE:=root=/dev/ram0 init=/linuxrc ramdisk=8192 detect_root vga=0x0f04 quiet zswap.enabled=1 zswap.compressor=lz4}
+
+## ignore errors in modules. may be dangerous
+## exclude "stable" branch to avoid system death
+[[ "${PN}" != gentoo-* ]] &&  KERNEL_MODULES_MAKEOPT="-i"
+
+## VIA CPU: e_powersaver considered as "dangerous", but you can try (IMHO no bad)
+## just: once loaded, do not try to replace by acpi-cpufreq: e_powersaver
+## masking MSR speedstep flag (IMHO only reboot)
+#CF X86_E_POWERSAVER ACPI_PROCESSOR +X86_ACPI_CPUFREQ
+## remove grouping and namespaces, simple role server/desctop
+#CF -GROUP_SCHED -CGROUPS -USER_NS -PID_NS -NET_NS
+## force >4G RAM & usage on x86_32 (pae required)
+#CF HIGHMEM64G HIGHPTE
+## <=1G
+#CF NOHIGHMEM
+## x86_32 faster, no xen, <=4G
+#CF -X86_PAE
+## may be fatal for ocfs2/drbd
+#CF IOSCHED_CFQ DEFAULT_CFQ
+## application server: 100HZ
+#CF HZ_100
+## speedup desktop build
+#CF "-.*PCMCIA.* -MCA -EISA"
+## remove old IDE (concurrent with ATA)
+#CF -IDE
+## extensions
+CF NETFILTER_XT_MATCH_CONNLIMIT_ACTIVE NETFILTER_XT_TARGET_NOTRACK_NEW NET_SCH_PSP_PKT_GAP NET_SCH_INGRESS_TC2MARK
+## I use (PSPacer hard dependend clocks)
+CF NET_SCH_PSP_HARDCHAIN
+
+## add maximum overhead & features into U32 classifyers
+#CF CLS_U32_MARK NET_CLS_IND CLS_U32_PERF
+
+## additional CFLAGS may be placed here
+#KERNEL_CFLAGS="-mtune=native"
+
+## for useflag "custom-arch", very experimental
+#KERNEL_CFLAGS="-march=native"
+
+## busybox, etc (size vs. system-wide)
+#KERNEL_UTILS_CFLAGS="-march=native -Os -pipe -fomit-frame-pointer -fno-asynchronous-unwind-tables -fno-move-loop-invariants"
+
+## user-mode
+#KERNEL_ARCH="um"
+
+## for distro|portable build - both
+#[[ "${PN}" == vanilla-* ]] && [[ -n "${CFLAGS##*-march=*}" ]] && KERNEL_ARCH=x86_64
+## or
+#[[ "${PN}" == vanilla-* ]] && KERNEL_ARCH=x86_64 && KERNEL_CFLAGS+=" -march=nocona -mtune=generic" && CF GENERIC_CPU
+
+#CF MK8
+#CF MCORE2
+
+# force (hybrid) 64 bit + all ABIs 
+#KERNEL_ARCH=x86 && CF 64BIT IA32_EMULATION X86_X32
+
+## build *config
+#KERNEL_MAKE_ADD="Kconfig= menuconfig nconfig gconfig -i"
+
+## dirty fast way to respect CONFIG_CHECK
+#KERNEL_RESPECT="nouveau-drm drbd-kernel"
+
+INSTALL_MOD_STRIP="--strip-debug"
+#export INSTALL_MOD_STRIP
+
+# use genkernel config, ignore all ebuild configs
+#external_kconfig(){ cat /usr/share/genkernel/defaults/kernel*config >"$S"/.config; }
+
+# running config vs. defconfig; faster configure, but possible some entropy (or not?)
+#external_kconfig(){ [ -e /proc/config.gz ] && zcat /proc/config.gz >"$S/.config"; false;}

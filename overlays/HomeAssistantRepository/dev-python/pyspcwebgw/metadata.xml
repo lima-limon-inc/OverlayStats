@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">pyspcwebgw</remote-id>
+    <remote-id type="github">mbrrg/pyspcwebgw</remote-id>
+    <maintainer status="unknown">
+      <email>mbrrg@users.noreply.github.com</email>
+      <name>Martin Berg</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

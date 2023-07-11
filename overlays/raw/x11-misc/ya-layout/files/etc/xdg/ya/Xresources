@@ -1,0 +1,24 @@
+Xft.autohint: true
+! hintnone, hintslight, hintmedium, hintfull
+Xft.hintstyle: hintfull
+Xft.hinting: true
+! lcdnone, lcddefault, lcdlight, lcdlegacy
+Xft.lcdfilter: lcddefault
+Xft.rgba: rgb
+Xft.antialias: true
+XTerm.*.faceName: Monospace
+XTerm.*.faceNameDoublesize: Monospace:style=Bold
+XTerm.*.reverseVideo: true
+XTerm.*.selectToClipboard: true
+XTerm.*.jumpScroll: true
+XTerm.*.fastScroll: true
+XTerm.*.multiScroll: true
+XTerm.*.saveLines: 1000
+XTerm.*.scrollBar: true
+XTerm.*.rightScrollBar: true
+XTerm.*.locale: UTF-8
+!XTerm*menuLocale:
+XTerm.*.titleModes: 14
+!XTerm.*.allowC1Printable: true
+XTerm.*.localeFilter: /usr/bin/luit
+*font: -misc-fixed-medium-r-normal-*-10-*-*-*-*-*-*-*

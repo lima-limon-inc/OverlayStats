@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="embed">Embed data in library binary
+(Warning: This increases the executable size by about 1Mb unless
+unneeded language data files are manually removed from
+the &quot;data&quot; directory before compiling)</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">hyphenation</remote-id>
+		<remote-id type="github">ekmett/hyphenation</remote-id>
+	</upstream>
+</pkgmetadata>

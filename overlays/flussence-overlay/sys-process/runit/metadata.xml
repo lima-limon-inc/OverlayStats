@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<longdescription lang="en">
+		runit is a process supervision suite with a focus on being usable as a sysvinit replacement.
+		It provides similar functionality to other packages like <pkg>sys-apps/s6</pkg> and
+		<pkg>sys-process/daemontools</pkg>, and a compatibility/migration path for the latter.
+		As this package only provides an init and service manager, it still depends on
+		<pkg>sys-apps/openrc</pkg> for the rc layer inbetween.
+	</longdescription>
+	<maintainer type="person">
+		<email>gentoo+bugs@flussence.eu</email>
+		<name>flussence</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://skarnet.org/lists/#supervision</bugs-to>
+		<doc>http://smarden.org/runit/</doc>
+	</upstream>
+</pkgmetadata>

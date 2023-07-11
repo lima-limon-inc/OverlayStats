@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">horimote</remote-id>
+    <remote-id type="github">benleb/horimote</remote-id>
+    <maintainer status="unknown">
+      <email>git@benleb.de</email>
+      <name>Ben Lebherz &amp; Auke Willem Oosterhoff</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

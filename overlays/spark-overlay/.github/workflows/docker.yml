@@ -1,0 +1,64 @@
+name: "Test ebuilds in Docker container"
+
+on:
+  # ebuild installation tests can take very long time, so run tests nightly
+  # Run after daily build time of ghcr.io/leo3418/gentoo-stage3-amd64-java
+  schedule:
+    - cron: '30 4 * * *'
+  # Allow tests to be triggered manually
+  workflow_dispatch:
+
+jobs:
+  test-cases:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-case:
+          - spark
+          - h2o
+        unstable: ['', '~amd64']
+        # The Kotlin ebuilds do not depend on too many ebuilds in ::gentoo,
+        # accepting the unstable keyword globally is trivial
+        include:
+          - test-case: kotlin-latest
+          - test-case: kotlin-1.5
+          - test-case: kotlin-1.4
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/run-test-case
+        env:
+          UNSTABLE: ${{ matrix.unstable }}
+        with:
+          test-case: ${{ matrix.test-case }}
+
+  leaf-ebuilds:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.may-fail }}
+    strategy:
+      fail-fast: false
+      matrix:
+        test-case:
+          - leaf-ebuilds
+          - leaf-ebuilds-binary
+        unstable: ['', '~amd64']
+        may-fail: [false]
+        include:
+          - test-case: leaf-ebuilds-test
+            may-fail: true
+          - test-case: leaf-ebuilds-test
+            unstable: '~amd64'
+            may-fail: true
+          - test-case: leaf-ebuilds-binary-test
+            may-fail: true
+          - test-case: leaf-ebuilds-binary-test
+            unstable: '~amd64'
+            may-fail: true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-leaf-ebuilds-job
+      - uses: ./.github/actions/run-test-case
+        env:
+          UNSTABLE: ${{ matrix.unstable }}
+        with:
+          test-case: ${{ matrix.test-case }}

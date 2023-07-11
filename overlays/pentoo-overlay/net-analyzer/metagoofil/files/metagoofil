@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /usr/share/metagoofil
+python3 ./metagoofil.py "$@"

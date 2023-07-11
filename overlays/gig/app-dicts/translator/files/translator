@@ -1,0 +1,6 @@
+#!/bin/bash
+params=""
+for i in $@; do
+    params="${params} $i"
+done
+python /usr/share/translator/translator.py $params

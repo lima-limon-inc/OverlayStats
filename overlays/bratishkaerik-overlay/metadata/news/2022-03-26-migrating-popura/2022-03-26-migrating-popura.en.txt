@@ -1,0 +1,15 @@
+Title: net-p2p/popura has been moved to GURU overlay
+Author: BratishkaErik <bratishkaerik@getgoogleoff.me>
+Posted: 2022-03-26
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: net-p2p/popura
+
+net-p2p/popura has been moved to GURU overlay (the same overlay where you can find net-p2p/yggdrasil-go).
+
+Run these commands (root):
+
+    eselect repository enable guru && emaint sync -r guru
+    emerge -avu1 popura::guru
+
+All done!

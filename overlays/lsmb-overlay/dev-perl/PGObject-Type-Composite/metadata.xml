@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+This is a type handler for mapping composite types (as values) in PostgreSQL
+to classes in a Perl application.  It allows you to define types in the database
+and map them into Perl classes.
+</longdescription>
+</pkgmetadata>

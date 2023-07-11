@@ -1,0 +1,53 @@
+#
+# Shorewall -- /etc/shorewall/rules
+#
+# For information on the settings in this file, type "man shorewall-rules"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-rules.html
+#
+##############################################################################################################################################################
+#ACTION		SOURCE		DEST		PROTO	DPORT	SPORT	ORIGDEST	RATE	USER	MARK	CONNLIMIT	TIME	HEADERS	SWITCH	HELPER
+
+?SECTION ALL
+?SECTION ESTABLISHED
+?SECTION RELATED
+?SECTION INVALID
+?SECTION UNTRACKED
+?SECTION NEW
+Broadcast(DROP)		net	fw
+
+# netbios-ns,netbios-ssn,microsoft-ds
+DROP			net	fw		tcp	137,139,445
+
+# $event, $interval, $count, $successive, $bltime, $disposition, $level
+AutoBL(PSCAN,60,10,5,3600,DROP,warn)\
+			net	fw
+
+# ICMP
+DROP			net	fw	icmp	8
+#Ping(DROP):info:ping	net	fw
+AllowICMPs:info		net	fw
+
+# SSH
+ACCEPT:info		net	fw		tcp	22	-	-	s:ssh:6/min:5
+
+# Psi
+ACCEPT:info		net	fw		tcp	8010	-	-	s:psi:3/min:5
+
+# Gerrit
+ACCEPT			net	fw		tcp	29418,8080
+
+# OpenArena
+ACCEPT			net	fw		udp	27960
+
+# AlienArena
+ACCEPT			net	fw		udp	27910,37279
+
+ACCEPT			net	fw		tcp	2100,9990
+
+# UT 2004
+ACCEPT			net	fw		udp	7777,7778,7787,7788,10777,11777
+
+# FreeCiv
+ACCEPT			net	fw		tcp	5556

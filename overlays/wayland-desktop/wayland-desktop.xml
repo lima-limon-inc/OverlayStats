@@ -1,0 +1,13 @@
+<repositories encoding="unicode" version="1.1">
+	<repo priority="50" quality="experimental">
+		<name>wayland-desktop</name>
+		<description>Gentoo overlay for Wayland related ebuilds</description>
+		<homepage>https://github.com/bsd-ac/wayland-desktop</homepage>
+		<owner>
+			<email>floss@bsd.ac</email>
+			<name>epsilonKNOT</name>
+			<name>Aisha Tammy</name>
+		</owner>
+		<source type="git">https://github.com/bsd-ac/wayland-desktop.git</source>
+	</repo>
+</repositories>

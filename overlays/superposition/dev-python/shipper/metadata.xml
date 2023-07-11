@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>phil_miess@yahoo.com</email>
+</maintainer>
+<longdescription lang="en">
+shipper is a power distribution tool for developers with multiple projects who do frequent releases. It automates the tedious process of shipping a software release and (if desired) templating a project web page. It can deliver releases in correct form to SourceForge, Berlios, and Savannah, and knows how to post a release announcement via freecode-submit.
+</longdescription>
+<use>
+	<flag name="lftp">Install <pkg>net-ftp/lftp</pkg> for shipping to ftp sites.</flag>
+	<flag name="twython">Install <pkg>dev-python/twython</pkg> for shipping notices to twitter</flag>
+	<flag name="irker">Install <pkg>net-irc/irker</pkg> for shipping notices to IRC channels.</flag>
+</use>
+</pkgmetadata>

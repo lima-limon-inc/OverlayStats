@@ -1,0 +1,25 @@
+# List of maintained packages
+- app-editors:
+  - app-editors/vscode-bin
+- app-emulation:
+  - app-emulation/vmware-modules
+  - app-emulation/vmware-workstation
+- dev-db:
+  - dev-db/dbeaver-bin
+- dev-util:
+  - dev-util/clion
+  - dev-util/datagrip
+  - dev-util/dataspell
+  - dev-util/goland
+  - dev-util/icecream-sundae
+  - dev-util/icemon
+  - dev-util/idea-ultimate
+  - dev-util/jetbrains-gateway
+  - dev-util/phpstorm
+  - dev-util/pycharm-professional
+  - dev-util/rubymine
+  - dev-util/webstorm
+- net-misc:
+  - net-misc/postman-bin
+-sys-devel:
+  - sys-devel/icecream

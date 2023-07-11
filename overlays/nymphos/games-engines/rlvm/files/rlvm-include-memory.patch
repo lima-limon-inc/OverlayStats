@@ -1,0 +1,20 @@
+--- a/src/systems/base/system.h
++++ b/src/systems/base/system.h
+@@ -33,6 +33,7 @@
+ #include <boost/filesystem/path.hpp>
+ 
+ #include <map>
++#include <memory>
+ #include <sstream>
+ #include <string>
+ #include <utility>
+--- a/src/utilities/file.h
++++ b/src/utilities/file.h
+@@ -30,6 +30,7 @@
+ 
+ #include <boost/filesystem.hpp>
+ 
++#include <memory>
+ #include <iosfwd>
+ #include <string>
+ #include <vector>

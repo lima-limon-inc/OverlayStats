@@ -1,0 +1,11 @@
+DEFINED_PHASES=configure install postinst
+DEPEND=acct-group/rancid acct-user/rancid dev-tcltk/expect net-misc/iputils net-misc/openssh || ( net-misc/netkit-telnetd net-misc/telnet-bsd )
+DESCRIPTION=Really Awesome New Cisco confIg Differ
+EAPI=7
+HOMEPAGE=https://shrubbery.net/rancid/
+KEYWORDS=~amd64 ~x86
+LICENSE=BSD
+RDEPEND=acct-group/rancid acct-user/rancid dev-tcltk/expect net-misc/iputils net-misc/openssh || ( net-misc/netkit-telnetd net-misc/telnet-bsd )
+SLOT=0
+SRC_URI=https://shrubbery.net/pub/rancid/rancid-3.13.tar.gz
+_md5_=126d791f22c53ecd5c00a31ca1196501

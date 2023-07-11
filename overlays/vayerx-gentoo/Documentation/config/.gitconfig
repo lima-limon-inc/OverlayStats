@@ -1,0 +1,85 @@
+[alias]
+	br = branch
+	ch = cherry-pick
+	ci = commit
+	co = checkout
+	df = diff --word-diff=color
+	dff = diff --color-words=[^[:space:]]
+	dt = difftool --tool=git-meld
+	fe = fetch --prune --tags --all
+	lf = log --pretty=vayfull --color=always
+	lg = log --pretty=vay --first-parent --color=always
+	lm = log --pretty=vaymed --color=always
+	lv = log --pretty=vaylong --first-parent --color=always
+	lvf = log --pretty=vaylong --color=always
+	me = merge --no-ff --no-commit --strategy=recursive --strategy-option=patience
+	mt = mergetool
+	pnh = push --force-with-lease
+	re = rebase --rebase-merges
+	rl = rev-list
+	rup = remote update
+	shf = show --color-words=[^[:space:]]
+	sh = show --word-diff=color
+	sta = stash save
+	st = status
+	stu = status --untracked-files=no
+
+[branch]
+	autosetuprebase = remote
+
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "diff"]
+	frag = magenta bold
+	meta = yellow bold
+	new = green bold
+	old = red bold
+	whitespace = red reverse
+
+[commit]
+	status = false
+	gpgSign = true
+
+[core]
+	eol = native
+	excludesfile = ~/.gitexclude
+	pager = cat
+	whitespace = trailing-space,space-before-tab,cr-at-eol
+
+[diff]
+	renames = copies
+	algorithm = patience
+#	external = git-meld
+
+[log]
+	date = iso
+
+[merge]
+	ff = false
+	tool = meld
+	conflictStyle = diff3
+
+[pretty]
+	vay = %Cgreen%h %Creset%s%Creset
+	vaymed = %Cgreen%h %Cred%ad %Creset%s
+	vaylong = %Cgreen%h %Cred%an %Cgreen%aD %Creset%s
+	vayfull = %Cgreen%h %Cred%an %Cgreen%ad %Cred%cn %Cgreen%cd %Creset%s
+
+[pull]
+	ff = only
+	rebase = merges
+
+[push]
+	default = tracking
+
+[rebase]
+	autoStash = true
+
+[status]
+	color = auto
+
+[user]
+	name = Vasiliy Yeremeyev

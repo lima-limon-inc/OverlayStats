@@ -1,0 +1,1 @@
+../../../usr/libexec/ya-layout/cell-chat.pl

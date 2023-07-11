@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<longdescription>
+		Utility functions for writing command-line programs including
+		parsing of numbers with restrictions and enumerations
+		for command-line arguments,
+		verbosity controlled output,
+		escaping shell arguments, exit with message.
+		
+		The package has very light dependencies and is Haskell 98.
+	</longdescription>
+</pkgmetadata>

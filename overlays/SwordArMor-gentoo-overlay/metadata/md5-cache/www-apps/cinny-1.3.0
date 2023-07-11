@@ -1,0 +1,14 @@
+DEFINED_PHASES=install postinst prerm setup unpack
+DEPEND=app-admin/webapp-config
+DESCRIPTION=Yet another matrix client
+EAPI=7
+HOMEPAGE=https://cinny.in/ https://github.com/ajbura/cinny/
+INHERIT=webapp
+IUSE=vhosts
+KEYWORDS=~amd64 ~x86
+LICENSE=MIT
+RDEPEND=app-admin/webapp-config
+SLOT=1.3.0
+SRC_URI=https://github.com/ajbura/cinny/releases/download/v1.3.0/cinny-v1.3.0.tar.gz
+_eclasses_=webapp	1aad5c010cfdf11d0376c80467b0de4c
+_md5_=7bdf639cded554288985716140887f3d

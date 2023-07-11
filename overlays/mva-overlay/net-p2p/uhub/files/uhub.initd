@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+extra_started_commands="reload"
+
+description="High performance peer-to-peer hub for the ADC network"
+description_reload="Reload uHub configuration and re-read log file"
+
+command="/usr/bin/uhub"
+command_args="${UHUBOPTIONS}"
+pidfile="/run/uhub.pid"
+
+depend() {
+	need net
+	use dns logger netmount
+}
+
+stop_post() {
+	rm ${pidfile}
+}
+
+reload() {
+	ebegin "Reloading uHub configuration"
+	kill -HUP `cat ${pidfile}` >/dev/null 2>&1
+	eend $? "Failed to reload uHub"
+}

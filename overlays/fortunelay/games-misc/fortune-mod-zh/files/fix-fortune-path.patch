@@ -1,0 +1,11 @@
+--- a/usr/games/fortune-zh
++++ b/usr/games/fortune-zh
+@@ -2,7 +2,7 @@
+ # fortune-zh
+ set -e
+ 
+-FORTUNE="/usr/games/fortune"
++FORTUNE="/usr/bin/fortune"
+ [ -x $FORTUNE ] || ( echo "E: Please install package 'fortune-mod'."; false )
+ 
+ # The old version (1.*) of fortune-zh contains only tang300 and song100.

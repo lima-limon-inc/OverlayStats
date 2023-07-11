@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>sci-astronomy@gentoo.org</email>
+		<name>Gentoo Astronomy Project</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">liberfa/pyerfa</remote-id>
+		<remote-id type="pypi">pyerfa</remote-id>
+	</upstream>
+</pkgmetadata>

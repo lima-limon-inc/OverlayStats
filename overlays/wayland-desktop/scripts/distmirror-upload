@@ -1,0 +1,2 @@
+
+rsync -av DISTDIR/ PORTAGE_TMPDIR/portage/*/*/work/ floss:~/files/gentoo-distfiles/

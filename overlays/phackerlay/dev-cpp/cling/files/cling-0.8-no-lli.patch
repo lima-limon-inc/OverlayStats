@@ -1,0 +1,91 @@
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 124f0c72fd7..2bf7bf352f4 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -143,22 +143,7 @@ endif()
+ add_custom_target(llvm-test-depends DEPENDS ${LLVM_TEST_DEPENDS})
+ set_target_properties(llvm-test-depends PROPERTIES FOLDER "Tests")
+
+-add_lit_testsuite(check-llvm "Running the LLVM regression tests"
+-  ${CMAKE_CURRENT_BINARY_DIR}
+-  PARAMS llvm_site_config=${CMAKE_CURRENT_BINARY_DIR}/lit.site.cfg
+-         llvm_unit_site_config=${CMAKE_CURRENT_BINARY_DIR}/Unit/lit.site.cfg
+-  DEPENDS ${LLVM_TEST_DEPENDS}
+-  )
+-set_target_properties(check-llvm PROPERTIES FOLDER "Tests")
+-
+-add_lit_testsuites(LLVM ${CMAKE_CURRENT_SOURCE_DIR}
+-  PARAMS llvm_site_config=${CMAKE_CURRENT_BINARY_DIR}/lit.site.cfg
+-         llvm_unit_site_config=${CMAKE_CURRENT_BINARY_DIR}/Unit/lit.site.cfg
+-  DEPENDS ${LLVM_TEST_DEPENDS}
+-  )
+-
+ # Setup a legacy alias for 'check-llvm'. This will likely change to be an
+ # alias for 'check-all' at some point in the future.
+ add_custom_target(check)
+-add_dependencies(check check-llvm)
+ set_target_properties(check PROPERTIES FOLDER "Tests")
+diff --git a/tools/LLVMBuild.txt b/tools/LLVMBuild.txt
+index bcf58842eac..3b032169fae 100644
+--- a/tools/LLVMBuild.txt
++++ b/tools/LLVMBuild.txt
+@@ -20,7 +20,6 @@ subdirectories =
+  bugpoint
+  dsymutil
+  llc
+- lli
+  llvm-ar
+  llvm-as
+  llvm-bcanalyzer
+diff --git a/tools/lli/CMakeLists.txt b/tools/lli/CMakeLists.txt
+deleted file mode 100644
+index f02e19313b7..00000000000
+--- a/tools/lli/CMakeLists.txt
++++ /dev/null
+@@ -1,46 +0,0 @@
+-if ( LLVM_INCLUDE_UTILS )
+-  add_subdirectory(ChildTarget)
+-endif()
+-
+-set(LLVM_LINK_COMPONENTS
+-  CodeGen
+-  Core
+-  ExecutionEngine
+-  IRReader
+-  Interpreter
+-  MC
+-  MCJIT
+-  Object
+-  OrcJIT
+-  RuntimeDyld
+-  SelectionDAG
+-  Support
+-  Target
+-  TransformUtils
+-  native
+-  )
+-
+-if( LLVM_USE_OPROFILE )
+-  set(LLVM_LINK_COMPONENTS
+-    ${LLVM_LINK_COMPONENTS}
+-    OProfileJIT
+-    )
+-endif( LLVM_USE_OPROFILE )
+-
+-if( LLVM_USE_INTEL_JITEVENTS )
+-  set(LLVM_LINK_COMPONENTS
+-    ${LLVM_LINK_COMPONENTS}
+-    DebugInfoDWARF
+-    IntelJITEvents
+-    Object
+-    )
+-endif( LLVM_USE_INTEL_JITEVENTS )
+-
+-add_llvm_tool(lli
+-  lli.cpp
+-  OrcLazyJIT.cpp
+-
+-  DEPENDS
+-  intrinsics_gen
+-  )
+-export_executable_symbols(lli)

@@ -1,0 +1,11 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.textedit, featherpad)-#
+
+[Added Associations]
+text/plain=featherpad.desktop;
+
+[Default Applications]
+text/plain=featherpad.desktop;

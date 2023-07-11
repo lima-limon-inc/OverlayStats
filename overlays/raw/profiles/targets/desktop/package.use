@@ -1,0 +1,29 @@
+sys-process/cronie anacron
+app-text/djvu xml
+# vaapi: vs. ffmpeg-5
+media-video/vlc vlm -qt4 -vaapi
+dev-db/sqlite secure-delete
+app-office/abiword math latex
+net-p2p/mldonkey bittorrent fasttrack gd gnutella magic
+media-gfx/imagemagick opencl
+app-cdr/cdrdao gcdmaster
+dev-db/sqlite tools tcl
+app-office/libreoffice collada pdfimport
+kde-plasma/plasma-desktop legacy-systray
+media-tv/kodi -gbm -wayland
+# until figure-out test-programs
+net-wireless/bluez test-programs experimental
+net-fs/samba -addc system-mitkrb5 -cluster
+media-libs/mesa gles1 gles2 wayland
+net-wireless/gnuradio audio
+app-emulation/qemu vte gtk
+dev-qt/qtgui gtk
+#app-crypt/pinentry gnome-keyring
+app-crypt/pinentry gtk
+media-libs/opencv gtk
+# required for [wifi] mozillas -> networkmanager
+net-wireless/wpa_supplicant dbus
+# just want full & smooth visuals
+media-fonts/infinality-ultimate-meta ms
+# airplay
+net-dns/avahi mdnsresponder-compat dbus

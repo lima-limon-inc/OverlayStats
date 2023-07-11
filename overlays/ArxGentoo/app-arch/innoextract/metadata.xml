@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>daniel@constexpr.org</email>
+		<name>Daniel Scharrer</name>
+	</maintainer>
+	<longdescription>Inno Setup is a tool to create installers for Microsoft Windows applications. Inno Extracts allows to extract such installers under non-windows systems without running the actual installer using wine.</longdescription>
+	<use>
+		<flag name='debug'>Enable debug logging and the --debug command-line option.</flag>
+		<flag name='lzma'>Enable support for extracting lzma-compressed installers using <pkg>app-arch/xz-utils</pkg>.</flag>
+	</use>
+	<upstream>
+		<maintainer status='active'>
+			<email>daniel@constexpr.org</email>
+			<name>Daniel Scharrer</name>
+		</maintainer>
+		<bugs-to>https://innoextract.constexpr.org/issues</bugs-to>
+		<changelog>https://constexpr.org/innoextract/changelog</changelog>
+		<doc lang="en">https://constexpr.org/innoextract/innoextract.1</doc>
+		<remote-id type='github'>dscharrer/innoextract</remote-id>
+	</upstream>
+</pkgmetadata> 

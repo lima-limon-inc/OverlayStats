@@ -1,0 +1,13 @@
+app-admin/lsyncd
+dev-db/mysqltuner
+dev-java/openjdk-bin
+net-im/skypeforlinux
+net-im/telegram-desktop
+net-im/zoom
+sci-mathematics/octave
+sys-cluster/hadoop-bin
+sys-devel/gcc:9.3.0
+sys-firmware/intel-microcode
+vayerx/lxde
+virtual/resolvconf
+www-client/google-chrome

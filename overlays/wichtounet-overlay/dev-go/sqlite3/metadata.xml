@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd>no-herd</herd>
+	<maintainer>
+		<email>baptiste.wicht@gmail.com</email>
+		<name>Baptiste Wicht</name>
+	</maintainer>
+	<longdescription lang="en">
+		This package provide a sqlite3 driver for go applications.
+	</longdescription>
+</pkgmetadata>

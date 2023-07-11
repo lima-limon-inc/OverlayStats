@@ -1,0 +1,16 @@
+Title: Пакет dev-zig/zls (aka dev-util/zls) был перемещён в GURU оверлей
+Author: Eric Joldasov <bratishkaerik@getgoogleoff.me>
+Posted: 2022-11-06
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: dev-zig/zls
+Display-If-Installed: dev-util/zls
+
+Пакет "dev-util/zls" был переименован в "dev-zig/zls", затем перемещён в GURU оверлей.
+
+Выполните эти команды от рута:
+
+    eselect repository enable guru && emaint sync -r guru
+    emerge -av dev-zig/zls::guru
+
+All done!

@@ -1,0 +1,94 @@
+#!/sbin/openrc-run
+# Copyright 1999-2018 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+: ${LOG_LEVEL:=info}
+: ${SVCGROUP:=scibot}
+: ${SVCUSER:=scibot}
+: ${SCIBOT_LOG_LOC:="/var/log/scibot"}
+: ${SOURCE_LOG_LOC:="${SICBOT_LOG_LOC}/logs"}
+
+run_dir=${run_dir:-/run}
+BOOKMARKLET_LOG="${SCIBOT_LOG_LOC}/bookmarklet.log"
+SYNC_LOG="${SCIBOT_LOG_LOC}/bookmarklet-sync.log"
+
+socket="unix:/run/scibot-bookmarklet/socket"
+pidfile="${run_dir}/${SVCNAME}/pid"
+command="/usr/bin/gunicorn"
+command_args="--bind ${socket}
+--daemon
+--pid ${pidfile}
+--name scibot-bookmarklet
+--workers 4
+--worker-class gevent
+--timeout 600
+--group ${SVCGROUP}
+--user ${SVCUSER}
+--log-level ${LOG_LEVEL}
+--log-file ${BOOKMARKLET_LOG}
+--capture-output
+scibot.bookmarklet_server:app"
+retry='TERM/30/KILL/5'
+start_stop_daemon_args="--group ${SVCGROUP} --user ${SVCUSER}"
+
+sync_pidfile="${run_dir}/${SVCNAME}/sync.pid"
+sync_command="/usr/bin/scibot-sync" # >> ${SYNC_LOG} 2>&1"
+#sync_command_args=">> ${SYNC_LOG} 2>&1"
+
+command_owner="${SVCUSER}:${SVCGROUP}"
+
+depend() {
+    after net
+}
+
+start_pre() {
+    OOPS=0
+    if [ -z "${SCIBOT_GROUP}" ]; then
+        eend 1 "SCIBOT_GROUP not set in /etc/conf.d/${SVCNAME}"
+        OOPS=1
+    fi
+    if [ -z "${SCIBOT_USERNAME}" ]; then
+        eend 1 "SCIBOT_USERNAME not set in /etc/conf.d/${SVCNAME}"
+        OOPS=1
+    fi
+    if [ -z "${SCIBOT_API_TOKEN}" ]; then
+        eend 1 "SCIBOT_API_TOKEN not set in /etc/conf.d/${SVCNAME}"
+        OOPS=1
+    fi
+    if [ ${OOPS} -ne 0 ]; then
+        return 1
+    fi
+    checkpath --directory --owner ${command_owner} --mode 0775 "/run/scibot-bookmarklet"
+    checkpath --directory --owner ${command_owner} --mode 0775 "${SOURCE_LOG_LOC}"
+}
+
+start() {
+    ebegin "Starting scibot bookmarklet sync"
+	start-stop-daemon --start --pidfile ${sync_pidfile} \
+		--group ${SVCGROUP} --user ${SVCUSER} \
+ 		--background --stdout ${SYNC_LOG} --stderr ${SYNC_LOG} \
+		--make-pidfile --env SCIBOT_SYNC=${SCIBOT_SYNC} \
+		--wait 250 --exec ${sync_command}
+    eend $? "Failed to start scibot bookmarklet sync see ${SYNC_LOG}" || return 1
+    ebegin "Starting scibot bookmarklet"
+	start-stop-daemon --start --pidfile ${pidfile} \
+		--group ${SVCGROUP} --user ${SVCUSER} \
+		--env SCIBOT_SYNC=${SCIBOT_SYNC} \
+		--env SCIBOT_USERNAME=${SCIBOT_USERNAME} \
+		--env SCIBOT_GROUP=${SCIBOT_GROUP} \
+		--env SCIBOT_API_TOKEN=${SCIBOT_API_TOKEN} \
+		--env SOURCE_LOG_LOC=${SOURCE_LOG_LOC} \
+		--exec ${command} -- ${command_args}
+    eend $? "Failed to start scibot bookmarklet" || stop_sync
+}
+
+stop_sync() {
+    ebegin "Stopping scibot bookmarklet sync"
+    start-stop-daemon --stop --quiet --pidfile ${sync_pidfile}
+    eend $? "Failed to stop scibot bookmarklet sync"
+}
+
+stop() {
+    default_stop
+    stop_sync
+}

@@ -1,0 +1,14 @@
+# fast, but small (-Os + some from O2/O3)
+
+USE="-vtv nopie nossp -pie -ssp"
+
+_FLAGS="$_FLAGS -O2 -Os -fconserve-stack --param=max-grow-copy-bb-insns=1"
+#_FLAGS="$_FLAGS -fno-omit-frame-pointer"
+# O2
+# _FLAGS="$_FLAGS -fschedule-insns2 -finline-small-functions -findirect-inlining"
+# O3
+_FLAGS="$_FLAGS -fgcse-after-reload -fpredictive-commoning -ftree-loop-distribute-patterns -funswitch-loops -ftree-vectorize"
+# O3 4.8
+_FLAGS="$_FLAGS -fvect-cost-model -ftree-partial-pre"
+# 4.9
+#_FLAGS="$_FLAGS -fno-var-tracking-assignments"

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+This is a database-facing, low-level library for managing database function
+calls for PostgreSQL.  It enables ORM-alternatives by allowing a call-level
+integration rather than a data-structure-level integration.
+</longdescription>
+</pkgmetadata>

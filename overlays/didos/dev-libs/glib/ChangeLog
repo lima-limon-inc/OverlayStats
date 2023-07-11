@@ -1,0 +1,13 @@
+*glib-2.65.0-r2
+::prototype99	add python 3_10 support
+*glib-2.65.0-r1
+::prototype99	remove pointless extra function and variables, stop using l10n-r1
+*glib-2.65.0
+::gentoo		update gtk-doc dependency
+::pg_overlay	base ebuild
+::prototype99
+-add compatibility with more util-linux packages
+-only change meson options when there's actually a change from the default
+-change systemtap use flag to trace
+-do not set default arguments
+::rindeal		improve python compatibility, add an actual homepage, add libmount, man use flags, add L10N support

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<repositories version="1.0">
+  <repo quality="experimental" status="unofficial">
+    <name>cosmicmod-overlay</name>
+    <description>CosmicMod Overlay</description>
+    <homepage>https://github.com/cosmicoz/cosmicmod-overlay</homepage>
+    <owner type="person">
+      <email>oz@cosmicmod.net</email>
+      <name>Oz</name>
+    </owner>
+    <source type="git">https://github.com/cosmicoz/cosmicmod-overlay.git</source>
+  </repo>
+</repositories>

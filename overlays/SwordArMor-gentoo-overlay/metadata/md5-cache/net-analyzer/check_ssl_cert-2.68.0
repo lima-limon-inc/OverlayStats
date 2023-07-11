@@ -1,0 +1,13 @@
+DEFINED_PHASES=install
+DEPEND=app-alternatives/bc net-misc/curl sys-apps/coreutils sys-apps/file net-dns/bind-tools net-analyzer/nmap dev-libs/openssl
+DESCRIPTION=A shell script to check an SSL/TLS connection
+EAPI=8
+HOMEPAGE=https://github.com/matteocorti/check_ssl_cert
+INHERIT=bash-completion-r1
+KEYWORDS=~amd64
+LICENSE=GPL-3
+RDEPEND=app-alternatives/bc net-misc/curl sys-apps/coreutils sys-apps/file net-dns/bind-tools net-analyzer/nmap dev-libs/openssl
+SLOT=0
+SRC_URI=https://github.com/matteocorti/check_ssl_cert/releases/download/v2.68.0/check_ssl_cert-2.68.0.tar.bz2
+_eclasses_=toolchain-funcs	14a8ae365191b518fad51caad7a08f3e	multilib	d1408425c7c4a7669b9b17735404b693	bash-completion-r1	59cf54afadd3b37d31d9d85c7d7d8067
+_md5_=35bf97e7394b0e4ab1067674be8fc1b7

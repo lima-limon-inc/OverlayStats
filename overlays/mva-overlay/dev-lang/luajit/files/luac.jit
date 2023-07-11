@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+help() {
+	echo "This binary is only wrapper for LuaJIT-not-ready software"
+	echo "You should use 'luajit -b' if you want to compile bytecode manually."
+	exit 0;
+}
+
+out="luac.out"
+i=1
+args=()
+
+if [[ ${#} = 0 ]]; then help; fi
+for arg in "${@}"; do
+case "${arg}" in
+	-o)
+		shift "${i}"
+		out="${1}"
+		shift 1
+		i=0
+		;;
+	-v)
+		luajit -v
+		exit 0;
+		;;
+	-p)
+		out="/dev/null"
+		;;
+	--help)
+		help
+		;;
+	*)
+		args+=("${arg}")
+		;;
+esac
+let i=+1
+done;
+luajit -b "${args[@]}" /dev/stdout | tee "${out}"

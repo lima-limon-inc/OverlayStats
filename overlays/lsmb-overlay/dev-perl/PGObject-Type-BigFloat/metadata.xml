@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+BigFloat type handler, allowing for mapping numeric, double, and float types
+in PostgreSQL to BigFloat objects in Perl, for arbitrary precision arithmetic.
+</longdescription>
+</pkgmetadata>

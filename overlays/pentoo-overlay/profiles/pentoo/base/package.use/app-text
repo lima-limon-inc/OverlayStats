@@ -1,0 +1,8 @@
+app-text/hunspell l10n_en
+app-text/texlive-core xetex
+
+#build pdfsig
+app-text/poppler nss
+
+#required by dev-python/jsbeautifier
+app-text/editorconfig-core-c -cli

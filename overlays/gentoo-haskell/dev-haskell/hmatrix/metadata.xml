@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="no-random-r">When enabled, hmatrix will not depend on the random_r() C function, it is needed for musl libc support.</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">hmatrix</remote-id>
+		<remote-id type="github">haskell-numerics/hmatrix</remote-id>
+	</upstream>
+</pkgmetadata>

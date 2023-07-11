@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer type="person">
+        <email>ari.web.xyz@gmail.com</email>
+        <name>Ari Archer</name>
+    </maintainer>
+    <upstream>
+        <remote-id type="pypi">pyfzf</remote-id>
+    </upstream>
+    <decription>A python wrapper for fzf</decription>
+    <longdescription>
+        A python wrapper for fzf
+    </longdescription>
+</pkgmetadata>
+

@@ -1,0 +1,4 @@
+  07 Dec 2019; AstroFloyd <AstroFloyd@gmail.com> -ChangeLog,
+  -qwtpolar-1.1.1-r5.ebuild, metadata.xml:
+  x11-libs/qwtpolar: remove ebuilds.  Since qt5 has long been supported in
+  portage now.

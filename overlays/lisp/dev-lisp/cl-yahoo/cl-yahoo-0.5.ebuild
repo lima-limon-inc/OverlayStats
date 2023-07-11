@@ -1,0 +1,18 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=6
+
+inherit common-lisp-3
+
+DESCRIPTION="CL-YAHOO is a Common Lisp interface to the Yahoo! API"
+HOMEPAGE="http://www.cliki.net/cl-yahoo"
+SRC_URI="mirror://gentoo/${P}.tar.gz"
+
+LICENSE="BSD"
+SLOT="0"
+KEYWORDS="~amd64 ~ppc ~sparc ~x86"
+IUSE=""
+
+RDEPEND="dev-lisp/s-xml
+		dev-lisp/trivial-http"

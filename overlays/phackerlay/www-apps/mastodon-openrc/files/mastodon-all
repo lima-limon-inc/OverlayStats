@@ -1,0 +1,13 @@
+#!/sbin/openrc-run
+
+. /etc/conf.d/mastodon
+
+name="Mastodon meta service"
+
+depend() {
+    provide mastodon
+}
+
+start() {
+:
+}

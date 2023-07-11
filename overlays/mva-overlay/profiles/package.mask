@@ -1,0 +1,5 @@
+# Not ready (broken buildsystem)
+dev-db/proxysql
+
+# Not ready yet
+net-im/keywee

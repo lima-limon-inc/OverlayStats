@@ -1,0 +1,2 @@
+KERNEL_CONFIG+="-.+_NLS"
+#use unicode || KERNEL_CONFIG+=" -NLS"

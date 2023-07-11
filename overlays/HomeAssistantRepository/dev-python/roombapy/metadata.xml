@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">roombapy</remote-id>
+    <remote-id type="github">pschmitt/roombapy</remote-id>
+    <maintainer status="unknown">
+      <email>philipp@schmitt.co</email>
+      <name>Philipp Schmitt</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

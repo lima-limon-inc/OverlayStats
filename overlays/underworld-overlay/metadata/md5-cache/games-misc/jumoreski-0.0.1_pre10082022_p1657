@@ -1,0 +1,13 @@
+BDEPEND=>=dev-lang/perl-5 sys-apps/coreutils app-arch/unzip
+DEFINED_PHASES=install postinst prerm
+DEPEND=>=dev-lang/perl-5 games-misc/fortune-mod games-misc/lolcat sys-apps/coreutils
+DESCRIPTION=Bring colorful and funny Jumoreski into your workspace!
+EAPI=8
+HOMEPAGE=https://github.com/BobIsOnFire/jumoreski
+IDEPEND=games-misc/fortune-mod
+KEYWORDS=~amd64 ~x86
+LICENSE=|| ( Artistic GPL-1+ )
+RDEPEND=>=dev-lang/perl-5 games-misc/fortune-mod games-misc/lolcat sys-apps/coreutils
+SLOT=0
+SRC_URI=https://github.com/BobIsOnFire/jumoreski/archive/4ddd89109784e324dfec96e3f28dabc5078eedc2.zip -> jumoreski-0.0.1_pre10082022_p1657.zip
+_md5_=c31ce29f367c542966020e673c1cef74

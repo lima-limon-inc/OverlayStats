@@ -1,0 +1,17 @@
+# portage options
+EMERGE_DEFAULT_OPTS="--quiet-build=y --read-news=y"
+FEATURES="splitdebug clean-logs"
+PORTAGE_ELOG_SYSTEM="save:* echo"
+PORTAGE_LOGDIR="/var/log/portage"
+PORTAGE_TMPDIR="/tmp"
+
+# Accepted licenses (see gentoo:profiles/license_groups)
+ACCEPT_LICENSE="-* @BINARY-REDISTRIBUTABLE"
+
+# USE flags
+USE="acl acpi bzip2 gdbm -geolocation -gnome -gtk -gtk2 -gtk3 ipv6 -kde ncurses nls -qt5 udisks unicode vim-syntax -webkit -wxwidgets -X"
+
+L10N="-* en-US en"
+PHP_TARGETS="-* php8-0"
+PYTHON_SINGLE_TARGET="-* python3_11"
+PYTHON_TARGETS="-* python3_11"

@@ -1,0 +1,19 @@
+alt - Based on the more peculiar glyph forms of the reference fonts
+fantasy - Based on fonts used in fantasy games
+halfloose - Halfloose width
+halftight - Halftight width
+large - Large height (16px)
+loose - Loose width
+mcr - Based on retrofuturistic MCR-like 8x8 fonts 
+monospace - A monospaced typeface
+sans - Sans-serif typeface
+serif - Serif typeface
+slab - Slab serif typeface
+small - Small height (14px)
+smallcaps - Small caps variant
+tall - Double-height version
+thin - Based on system fonts with 1-pixel-wide lines
+tight - Tight width
+ui - An UI typeface
+xtralarge - Xtralarge height (17px)
+xtrasmall - Xtrasmall height (13px)

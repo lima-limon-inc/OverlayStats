@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=Nagios/Icinga plugin for checking DANE/TLSA records
+EAPI=7
+HOMEPAGE=https://github.com/debfx/check_dane
+KEYWORDS=~amd64 ~x86
+LICENSE=GPL-3
+RDEPEND=>=dev-lang/python-3.4 dev-libs/openssl dev-python/dnspython
+SLOT=0
+SRC_URI=https://github.com/debfx/check_dane/archive/1.0.tar.gz -> nagios-check_dane-1.0.tar.gz
+_md5_=9981e3ffe60e1c435b751a738ecc8aef

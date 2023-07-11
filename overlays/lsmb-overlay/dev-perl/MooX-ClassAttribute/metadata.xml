@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+This module adds support for class attributes to Moo. Class attributes are attributes whose values are not associated with any particular instance of the class.
+
+For example, the Person class might have a class attribute "binomial_name"; its value "Homo sapiens" is not associated with any particular individual, but the class as a whole.
+</longdescription>
+</pkgmetadata>

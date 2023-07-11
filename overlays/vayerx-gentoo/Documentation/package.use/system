@@ -1,0 +1,73 @@
+app-admin/conky iostats portmon
+app-admin/lsyncd lua_single_target_lua5-3
+app-admin/sudo -ldap -sendmail
+app-crypt/argon2 static-libs
+app-crypt/heimdal -ssl -threads
+app-crypt/qca gpg
+app-misc/mc edit samba sftp slang
+app-portage/layman mercurial squashfs
+app-text/hunspell l10n_en l10n_ru
+app-text/mandoc system-man
+dev-lang/rust system-llvm
+dev-libs/libaio static-libs
+dev-libs/libdbusmenu gtk3
+dev-libs/libgcrypt static-libs
+dev-libs/libgpg-error static-libs
+dev-libs/lzo static-libs
+dev-libs/openssl rfc3779 sctp -tls-heartbeat
+dev-python/PyQt5 declarative webchannel webengine
+dev-python/QtPy webengine
+dev-qt/qtdeclarative accessibility webkit
+dev-qt/qtgui accessibility dbus evdev -wayland
+dev-qt/qtmultimedia widgets
+dev-qt/qtsql mysql
+dev-qt/qtsvg accessibility
+dev-qt/qtwebchannel qml
+dev-qt/qtwebengine widgets
+dev-qt/qtwebkit printsupport
+dev-ruby/rrdtool-bindings graph
+gnome-base/nautilus tracker
+media-libs/babl introspection
+media-libs/chromaprint tools
+media-libs/freetype brotli harfbuzz
+media-libs/gexiv2 introspection
+media-libs/libmypaint gegl
+media-libs/libsdl2 haptic
+media-libs/libvpx postproc svc
+media-plugins/alsa-plugins speex
+net-analyzer/rrdtool graph
+net-analyzer/tcpdump -samba
+net-dialup/ppp dhcp eap-tls
+net-dns/libidn2 static-libs
+net-fs/samba client ldap winbind
+net-libs/libssh server static-libs
+net-misc/ciscovpn openssl
+net-misc/curl http2 idn rtmp
+net-misc/dhcp -server
+net-vpn/openvpn iproute2 lz4
+sci-geosciences/gpsd usb
+sci-libs/gdal -python -ruby
+sci-libs/hdf5 -cxx -fortran
+sci-mathematics/octave curl gnuplot
+sys-apps/lm-sensors sensord
+sys-apps/portage gentoo-dev rsync-verify
+sys-apps/systemd-utils -boot -sysusers tmpfiles -udev
+sys-apps/util-linux static-libs
+sys-block/gparted btrfs fat mdadm
+sys-boot/grub -fonts mount -sdl -themes -truetype
+sys-devel/qconf -qt5
+sys-fs/eudev -introspection static-libs
+sys-fs/lvm2 static -udev
+sys-fs/mdadm static
+sys-fs/udev static-libs
+sys-kernel/gentoo-sources experimental symlink
+sys-libs/glibc -clone3
+sys-libs/ldb ldap
+sys-libs/ncurses gpm static-libs
+sys-libs/readline static-libs
+sys-libs/zlib minizip static-libs
+virtual/libudev static-libs
+x11-libs/cairo -lto -xlib-xcb
+x11-libs/fltk xft
+x11-libs/goffice gnome
+x11-libs/libdrm -valgrind

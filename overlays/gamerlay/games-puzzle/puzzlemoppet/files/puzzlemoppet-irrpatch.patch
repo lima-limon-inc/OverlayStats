@@ -1,0 +1,24 @@
+--- a/CMakeLists.txt	2017-01-29 21:07:57.191535103 +0700
++++ b/CMakeLists.txt	2017-01-29 21:08:48.953560110 +0700
+@@ -57,11 +57,19 @@
+ # (things required by both litha engine and individual projects)
+ # (actually some of these probably aren't required by both...)
+ 
+-include_directories(${rootDir} ${rootDir}/include ${rootDir}/thirdparty/irrlicht-1.6.1/include)
++include_directories(${rootDir} ${rootDir}/include /usr/include/irrlicht)
+ 
+ link_directories(${rootDir}/thirdparty/irrlicht-1.6.1/lib/${irrlichtLibDir})
+ 
+-
++#find_package(PkgConfig)
++#pkg_check_modules(IRR irrlicht)
++#include_directories(${IRR_INCLUDE_DIRS})
++#link_directories(${IRR_LIBRARY_DIRS})
++
++#find_package(PkgConfig)
++#pkg_check_modules(ODE ode)
++#ADD_DEFINITIONS (${ODE_INCLUDE_DIRS})
++ADD_DEFINITIONS ( -DdSINGLE )
+ 
+ ########## LITHA ENGINE CONFIG ########
+ 

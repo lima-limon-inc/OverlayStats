@@ -1,0 +1,609 @@
+#!/bin/sh
+VERSION=0.10
+HELP="init for early userspace v$VERSION, (c) Denis Kaganovich, Anarchy or GPLv2 license
+
+Main goal: scan '/sys/*/uevent' for MODALIASes (without grep, sed...)
+and load via external insmod only (trying to use standard modprobe
+and kernel configuration). And standard bootload..
+
+Moving all pseudofs to newroot controlled by pre-created empty /dev.
+
+Usage: as /sbin/init, + /etc/modprobe.d, etc;
+or symlink to /sbin/modprobe;
+or \"$0 --sort .../modules.alias [slow] >modules.alias\"
+	- to make new better modules order;
+or \"$0 --dry-run [<dir>]\"
+	- to scan /sys/devices -> modules [<dir>] -> stdout."
+
+#[ -e /dev/shm ] && : ${TMPDIR:=/dev/shm}
+tmp="${TMPDIR:-/tmp}/init_"
+BOOT=false
+MOUNTED=false
+modprobe="$0"
+mod=mod
+A=a
+[ -e /bin/nuke ] && rm=/bin/nuke || rm=rm
+
+# fast moved from my other place, better to overcode here
+last="usb_storage nvidiafb radeonfb intelfb snd_pcsp ata_generic pata_acpi ide_core sound"
+# for sort
+barrier=256
+first="tpm_tis"
+msg=true
+
+_i(){
+	$rm -f "install/$1" "remove/$1"
+}
+
+KV(){
+	read KV </proc/sys/kernel/osrelease || KV=`uname -r||ls /lib/modules`
+	libmod="/lib/modules/$KV"
+}
+
+modprobe(){
+cd $tmp||exit 1
+local i x n='--' a=false cmd=true
+while true; do
+case "$1" in
+--)shift;break;;
+--ignore-install|--ignore-remove)cmd=_i;;
+-*)	i="$1"
+	while [ -n "$i" ]; do
+		i="${i#?}"
+		case "$i" in
+		a*)a=true;;
+		A*)exit 1;;
+		i*)cmd=_i;;
+		esac
+	done
+	;;
+*)break;;
+esac
+shift
+done
+if $a; then
+	for i in "${@}"; do
+		$cmd "$i"
+		$mod "$i"
+	done
+else
+	n="$1"
+	shift
+	for i in "${@}"; do
+		echo -n " $i" >"options/$n.${i%%=*}"
+	done
+	$cmd "$n"
+	$mod "$n"
+fi
+}
+
+mdevs(){
+	local i s
+	for i in /sys/class/*/*/uevent; do
+		[ -e "$tmp$1$i" ] && continue
+		mkdir -p "$tmp$1$i"
+		local DEVNAME='' MAJOR='' MINOR='' FIRMWARE='' DEVPATH='' DEVMODE='' x='' t=c
+		while read s; do
+			x="${s%%=*}"
+			case "$x" in
+			DEVNAME|MAJOR|MINOR|FIRMWARE|DEVPATH|DEVMODE)eval "$x='${s#*=}'";;
+			esac
+		done <$i
+		if [ -n "$FIRMWARE" ] && [ -z "$1" ] && echo 1 >/sys/$DEVPATH/loading; then
+			[ -e /lib/firmware/$FIRMWARE ] && cat /lib/firmware/$FIRMWARE >/sys/$DEVPATH/data && echo 0 >/sys/$DEVPATH/loading || echo -1 >/sys/$DEVPATH/loading
+		fi
+		if [ -n "$DEVNAME" ] && ! [ -e "$1/dev/$DEVNAME" ]; then
+			DEVNAME="$1/dev/$DEVNAME"
+			[ -z "${i##/sys/class/block/*}" ] && t=b
+			i="${DEVNAME%/*}"
+			[ -e "$i" ] || mkdir -p "$i"
+			mknod -m ${DEVMODE:-0600} "$DEVNAME" $t $MAJOR $MINOR
+		fi
+	done
+}
+
+modp(){
+	if [ -e "alias/$1" ]; then
+		[ -L "alias/$1" ] && readlink "alias/$1" >>modules.lst || echo "$1" >>modules.lst
+	fi
+	[ -e "$A/$1" ] || mkdir -p "$A/$1"
+}
+
+sys_modalias(){
+	local i x
+	if [ -e "$1/uevent" ] && i="
+`cat "$1/uevent"`"; then
+		i="
+$i"
+		x="${i#*
+MODALIAS=}"
+		[ "$i" != "$x" -a -n "${i##*
+DRIVER=*}" ] && modp "${x%%
+*}"
+	elif [ -e "$1/modalias" ] && read x <"$1/modalias"; then
+		modp "$x"
+	fi
+	for i in "$1"/* ; do
+		[ -d "$i" ] && [ ! -L "$i" ] && sys_modalias "$i"
+	done
+}
+
+early_huge(){
+local d=/sys/kernel/mm/transparent_hugepage
+[ "${_cmd_transparent_hugepage_misc}" = true -a -d $d ] || return
+case "`cat $d/enabled`" in
+*\[never\]*)return;;
+esac
+echo defer+madvise >$d/defrag 2>/dev/null||echo defer >$d/defrag||return
+echo always >$d/shmem_enabled
+}
+
+init(){
+local i='-o nosuid,nodev,noexec' l
+mount -t proc $i proc /proc && mount -t sysfs $i sys /sys || return
+KV
+BOOT=true
+mkdir /newroot
+[ -e /bin/busybox ] && /bin/busybox --install -s
+mdevs
+if ! [ -e /dev/loop1 ]; then
+	insmod $libmod/kernel/drivers/block/loop.ko
+	insmod $libmod/kernel/fs/squashfs/squashfs.ko
+	mdevs
+fi
+for i in /*loop* /*.squahfs; do
+	[ -e "$i" ] || continue
+	l="${i##*.}"
+	[ -b "$l" ] || l=`losetup -f`
+	losetup $l $i && mount -r -t squashfs $l /${i%.*}
+done 2>/dev/null
+mount -a 2>/dev/null
+echo "$modprobe" >/proc/sys/kernel/modprobe
+#echo "$0" >/proc/sys/kernel/hotplug
+}
+
+cmd(){
+local i x xx y yy m c=''
+for i in "${@}"; do
+	x="${i%%=*}"
+	if [ "$x" = "$i" ]; then
+		xx='_cmd_'
+		yy=''
+		x="${x#!}"
+		[ "$x" = "$i" ] && y=true || y=false
+	else
+		xx='cmd_'
+		y="${i#*=}"
+		yy="=$y"
+	fi
+	m="${x%%.*}"
+	if [ "$m" = "$x" ]; then
+		case "${x#real_}" in
+		# [^...] broken in klibc
+		quiet|root|init|rw|ro|resume|resume_offset|nfsroot|ip|rootdelay|rootwait|rootflags|rootfstype|loop|transparent_hugepage_misc)export $xx$x="$y";;
+		esac
+	elif ! [ -e cmdline ]; then
+		[ -d options ] && echo -n " ${x#*.}$yy" >"options/$x" || echo -n "options $m ${x#*.}$yy" >>"/etc/modprobe.d/initrd_$x.conf"
+	fi
+done
+#cmd_init=/sbin/init
+#cmd_root="${cmd_real_root:-${cmd_root:-$root}}"
+#cmd_init="${cmd_real_init:-${cmd_init:-$init}}"
+#cmd_resume="${cmd_real_resume:-${cmd_resume:-$resume}}"
+init=/sbin/init
+cmd_root="${cmd_real_root:-$root}"
+cmd_init="${cmd_real_init:-$init}"
+cmd_resume="${cmd_real_resume:-$resume}"
+${_cmd_quiet:-true} || msg=echo
+}
+
+cmdline(){
+[ $modprobe != /sbin/modprobe ] && mkdir -p options
+read cmdline </proc/cmdline
+[ -e /cmdline ] && cmdline="$cmdline $(cat /cmdline)"
+cmd $cmdline
+#eval "cmd $cmdline"
+echo "$cmdline" >cmdline
+}
+
+mod(){
+local l='' i m ok err=true
+[ -z "$*" ] && return
+for i in "${@}"; do
+	read i <"alias/$i" && i=" $i" && while [ -n "$i" ]; do
+		l="$l ${i##* }"
+		i="${i% *}"
+	done
+done
+cd $A && mkdir -p "${@}"
+while $err; do
+cd $libmod
+ok=false
+err=false
+for m in $l; do
+	i="${m##*/}"
+	i="${i%%.*}"
+	[ -e "$tmp/alias/$i" ] || continue
+	CMDLINE_OPTS=`cat "$tmp/options/$1."* 2>/dev/null`
+	$msg -n " $i"
+	if [ -e "$tmp/install/$m" ]; then
+		read i <"$tmp/install/$m"
+		eval "$i" && ok=true || err=true
+	elif insmod "$m" "$CMDLINE_OPTS"; then
+		ok=true
+		$rm "$tmp/alias/$i"
+#		$rm "`readlink -f "$tmp/alias/$i"`"
+	else
+		err=true
+	fi
+done
+$msg
+$ok || break
+cd "$tmp/alias" && $rm -f `cd /sys/module && echo *`
+done
+cd $tmp || exit 1
+}
+
+dep1(){
+[ -s modules.lst ] || return
+mod `cat modules.lst`
+$rm -f modules.lst modules/*
+}
+
+conf(){
+	[ -e alias ] && return
+	local i m cmd x d
+	mkdir -p a alias modules options install remove softdep later
+	echo -n >>modules.lst
+	while read m d; do
+		m="${m%:}"
+		x="${m##*/}"
+		x="${x%%.*}"
+		i="$x"
+		while [ -z "${i##*-*}" ]; do
+			i="${i%%-*}_${i#*-}"
+		done
+		[ -e "/sys/module/$i" ] && ${1:-continue}
+		echo "$m $d" >>"alias/$i"
+		[ "$x" != "$i" ] && ln -s "$i" "alias/$x"
+	done <$libmod/modules.dep
+	for i in /etc/modprobe.d/*; do
+	[ -e "$i" ] && while read cmd m i; do
+		case "$cmd" in
+		alias) echo "alias $m $i" >>conf;;
+		options)echo -n " $i" >"options/$m.${i%%=*}";;
+		blacklist)
+			[ -L "$m" ] && m=`readlink "alias/$m"`
+			$rm -f "alias/$m"
+		;;
+		install|remove|softdep)echo " $i" >"$cmd/$m";;
+	esac
+	done <$i
+	done
+	cat $libmod/modules.alias >>conf 2>/dev/null
+#	( cd alias && mv $last ../later/ 2>/dev/null ) #bug
+	for i in $last; do
+		mv -f alias/$i later/ 2>/dev/null
+	done
+}
+
+dep(){
+local i m cmd x d
+mod=mod
+dep1
+while read cmd m i; do
+	set $A/$m
+	[ -e "$1" ] && [ -e "$cmd/$i" ] && ! [ -e "modules/$i" ] && echo "$i" >>modules.lst 2>"modules/$i"
+done <conf
+dep1
+mv later/* alias/ 2>/dev/null
+}
+
+fs_loop(){
+	mkdir -p /looproot
+	local l i
+	for i in /newroot/$1; do
+		[ -e "$i" ] && l=`losetup -f` && losetup "$l" "$i" || continue
+		mount -r -t squashfs "$l" /looproot &&
+			mount -o move /newroot /looproot/boot &&
+			mount -o move /looproot /newroot &&
+			return 0
+		umount /looproot
+		losetup -d "$l"
+	done
+	return 1
+}
+
+fs(){
+	if [ -e "$1" ]; then
+		[ -e "$tmp/mnt/$1" ] && return 1
+		${_cmd_rootwait:-false} || mkdir -p "$tmp/mnt/$1"
+	elif $MOUNTED; then
+		return 1
+	elif [ "$1" = /dev/nfs ]; then
+		#nfsmount -p /pmap_lock -o lock $cmd_nfsroot /newroot ||
+		nfsmount $cmd_nfsroot /newroot || return 1
+		[ -z "$2" ] || fs_loop "$2" || ! umount /newroot && MOUNTED=true
+		return $?
+	elif [ -z "$cmd_rootfstype" ]; then
+		return 1
+	fi
+	local i x y o="${cmd_rootflags:+-o $cmd_rootflags}" fs="`cat /proc/filesystems` t="${cmd_rootfstype:+TYPE=$cmd_rootfstype}"
+	unknown
+"
+	! ${_cmd_rw:-false} || ${_cmd_ro:-false} && o="$o -r"
+	[ -n "$cmd_rootdelay" ] && sleep $cmd_rootdelay
+	for i in ${t:-`{ fstype "$1";blkid "$1";} 2>/dev/null`}; do #`
+		case "$i" in
+		FSTYPE=*|TYPE=*)
+			i="${i#*=}"
+			i="${i#\"}"
+			i="${i%\"}"
+			[ -n "${fs##*	$i
+*}" ] && [ -e "alias/$i" ] && mod "$i"
+			! $BOOT || $MOUNTED && continue
+			mount $o -t $i "$1" /newroot 2>/dev/null || continue
+			if [ -n "$2" ]; then
+				fs_loop "$2" && MOUNTED=true
+			else
+				[ "$cmd_root" = "$1" ] && MOUNTED=true && continue
+				if [ -z "${1##$cmd_root}" ] && [ -e "/newroot/$cmd_init" ] && [ -e /newroot/etc/fstab ]; then
+					while read i x y; do
+						[ "$i:$x" = "$cmd_root:/" ] && MOUNTED=true && break
+					done </newroot/etc/fstab
+				fi
+			fi
+			$MOUNTED || umount /newroot || MOUNTED=true
+		;;
+		esac
+	done
+}
+
+flags(){
+	mod $(cd /etc/modflags && cat "${@}" </dev/null)
+}
+
+own(){
+	local id c i
+	flags `cat /sys/bus/acpi/devices/*/path;while read id c i; do
+	case "$id" in
+	flags|vendor_id)echo " $i";;
+	esac
+	done </proc/cpuinfo`
+}
+
+_tee(){
+	local s="$1" i r=1
+	shift
+	for i in "${@}"; do
+		[ -e "$i" ] && echo "$s" >"$i" && r=0
+	done 2>/dev/null
+	return $r
+}
+
+modaliases(){
+local i mm="`cat /proc/modules`" m1='-' fs m d p n='/newroot' sm=/sys/module/scsi_mod/parameters sms= smf= cnt=
+mkdir -p "$tmp/sys/class/*/*/uevent" "$tmp/options"
+cd $tmp||exit 1
+echo -n '^'
+conf
+cmdline
+early_huge
+own 2>/dev/null
+while [ "$m1" != "$mm" -o "${_cmd_rootwait}:$MOUNTED" = 'true:false' ]; do
+	echo -n "*"
+	mod=modp
+	sys_modalias /sys/devices 2>/dev/null
+	echo -n "#"
+	dep
+	echo -n "+"
+	for i in scsi_wait_scan scsi_mod; do
+		m="$libmod/kernel/drivers/scsi/$i.ko"
+		[ -e $m ] && insmod $m "`cat "$tmp/options/$1."* 2>/dev/null`" && [ $i = scsi_wait_scan ] && rmmod $i
+	done
+	resume "$cmd_resume" $cmd_resume_offset 2>/dev/null
+	flags `cd /sys/module && echo *` 2>/dev/null
+	mdevs
+	if [ -n "$cmd_ip" ] && ! [ -e "$tmp/ip/$cmd_ip" ] && ipconfig "$cmd_ip"; then
+		mkdir -p "$tmp/ip/$cmd_ip"
+		ipconfig 127.0.0.1:::::lo:none
+	fi
+	if [ "$cmd_root" = "*" ]; then
+		while read i i i i; do
+			fs "/dev/$i" "$cmd_loop"
+		done </proc/partitions
+	else
+		for i in $cmd_root; do
+			fs "$i" "$cmd_loop"
+		done
+	fi
+	m1="$mm"
+	mm="`cat /proc/modules`"
+	if $MOUNTED; then
+		${_cmd_fast:-false} && break
+	else
+		while [ "$m1" = "$m" ]; do
+			cnt=".$cnt"
+			case "$cnt" in
+			..)read smf <$sm/default_dev_flags && [ "$smf" = 0 ] && echo 0x240 >$sm/default_dev_flags && m1="$m1+" && echo 'try scsi_mod.default_dev_flags=0x240';;
+			.|...)
+				read sms <$sm/scan && [ "$sms" = async ] && echo sync >$sm/scan
+				_tee '- - -' /sys/class/scsi_host/host*/scan && m1="$m1+"
+				#_tee 1 /sys/class/scsi_device/*/device/rescan && m1="$m1+"
+				#_tee 1 /sys/class/scsi_disk/*/device/rescan && m1="$m1+"
+				[ "$sms" = async ] && echo async >$sm/scan
+			;;
+			*)break;;
+			esac
+		done
+	fi
+done
+echo ''
+if $BOOT; then
+	echo /sbin/modprobe >/proc/sys/kernel/modprobe
+	if ! [ -e "$n/$cmd_init" ]; then
+		echo "Not found '$n/$cmd_init' - try shell:"
+		exec sh
+	fi
+	for i in /dev /proc /sys; do
+		mkdir -p $n$i
+		mount --move $i $n$i || break
+		rmdir $i && ln -s $n$i $i
+	done 2>/dev/null
+	[ -e $n/dev ] && [ ! -e $n/dev/console ] && (mount -t devtmpfs -o exec,nosuid,mode=0755,size=10M udev $n/dev || mount -t tmpfs dev $n/dev)
+	[ -e /dev/console ] || mdevs $n
+	p="$n/usr/src/linux-$KV"
+	[ -L "$n/$libmod/kernel" ] && [ -e "$p.squashfs" ] && i=`losetup -f` && losetup $i $p.squashfs && mount -r -t squashfs $i $p
+	echo -n "Boot: [$cmd_root] "
+	cat /proc/uptime
+	cat /proc/mounts|while read d p i; do
+		case "$d:$p" in
+		rootfs:/);;
+		*:/newroot*)echo " $p $d $i";;
+		/dev/loop*)umount $p&&losetup -d $d;;
+		*:/dev)mount --move $p /newroot/$p;;
+		*)umount $p 2>/dev/null;;
+		esac
+	done
+	i=/sbin/switch_root
+	[ -e $i ] || i=run-init
+	exec $i -c /dev/console $n $cmd_init
+fi
+}
+
+# main idea to load more unique IDs first
+# (some of non-unique are bad "common" choice, but some - required)
+#
+# ideally to count cross-matches and move most uniue first &
+# some too common better be first ( > $barrier)
+#
+# but faster (and good here) to count only non-wildcard ("id") characters
+sortaliases(){
+local cmd a m mm
+tmp="$tmp$$"
+$rm -Rf "$tmp/aa" "$tmp/aaa" "$tmp/a0" "$tmp/a9"
+mkdir -p "$tmp/aa" "$tmp/aaa" "$tmp/a0" "$tmp/a9"
+cd "$tmp/a0" && mkdir $first && cd "$tmp/a9" && mkdir $last || return 1
+case "$2" in
+slow)
+cd "$tmp"||return 1
+while read cmd a m; do
+	[ "$cmd" != alias ] && continue
+	aa="$a"
+	while [ -z "${aa##*\[*\]*}" ]; do
+		aa="${aa%%\[*\]*}?${aa#*\[*\]}"
+	done
+	while [ -z "${aa##*/*}" ]; do
+		aa="${aa%%/*}\\${aa#*/}"
+	done
+	echo "$a $m" >>"aa/$aa"||return 1
+done <$1
+for aa in aa/*; do
+	set $aa
+	[ -e "$1" ] || exit 1
+	m="$#"
+	[ $m -gt $barrier ] && m=0
+	read a mm <"$aa"
+	[ -e "a0/$mm" ] && m=0
+	[ -e "a9/$mm" ] && m=9999
+	m="00000$m"
+	echo "alias $a $mm" >>"aaa/${m#${m%?????}}"
+done <$1
+cat aaa/*
+;;
+*)
+cd $tmp/aa||return 1
+while read cmd a m; do
+	[ "$cmd" != alias ] && continue
+	aa="$a"
+	while [ -z "${aa##*\[*\]*}" ]; do
+		aa="${aa%%\[*\]*}${aa#*\[*\]}"
+	done
+	while [ -z "${aa##*\**}" ]; do
+		aa="${aa%%\**}${aa#*\*}"
+	done
+	while [ -z "${aa##*[^x]*}" ]; do
+		aa="${aa%%[^x]*}x${aa#*[^x]}"
+	done
+	[ -e "$tmp/a0/$m" ] && aa=z
+	[ -e "$tmp/a9/$m" ] && aa=a
+	echo "alias $a $m" >>"$aa"||return 1
+done <$1
+i=`ls -1r`||return 1
+cat $i </dev/null
+;;
+esac
+$rm -Rf "$tmp/aa" "$tmp/aaa" "$tmp/a0" "$tmp/a9"
+cd $tmp
+rm -rf $tmp
+}
+
+dry(){
+insmod(){
+	echo "$*"
+	rm "$tmp/alias/$i"
+}
+libmod="${1-$libmod}"
+tmp="$tmp$$"
+rm -rf $tmp
+mkdir -p "$tmp"
+cd "$tmp"||exit 1
+conf true
+mod=modp
+sys_modalias /sys/devices 2>/dev/null
+dep
+rm -rf $tmp
+}
+
+doinit=true
+case $0 in
+*/kpnp)doinit=false;;
+*/modprobe)
+	KV
+	A="a$$"
+	modprobe "${@}"
+	dep
+	$rm -Rf "$tmp/$A"
+	exit
+;;
+esac
+
+[ -e /proc/version ] && KV || init
+false && if /sbin/modprobe -aVA >/dev/null 2>&1; then
+	modprobe=/sbin/modprobe
+	$BOOT && echo /sbin/modprobe >/proc/sys/kernel/modprobe
+	modprobe(){ /sbin/modprobe "${@}";}
+	modp(){ modprobe -- "$1";}
+	mod(){ modprobe -a -- "${@}";}
+	dep(){ return;}
+	conf(){ return;}
+	if [ "`readlink /sbin/modprobe`" = /etc/modprobe.sh ]; then
+		. /etc/modprobe.sh
+	fi
+fi
+case "$1" in
+	-q)	if [ "$2" = '--' ]; then
+			modprobe "${@}" >/dev/null >&1
+		else
+			modaliases
+		fi
+	;;
+	--sort)
+		shift
+		sortaliases "${@}"||{
+			echo ERROR >&2
+			exit 1
+		}
+	;;
+	--dry-run)
+		shift
+		dry "${@}"
+	;;
+	-h|--help)echo "$HELP";;
+	*)if $doinit || $BOOT; then
+		modaliases
+	else
+		echo "$HELP"
+	fi
+	;;
+esac

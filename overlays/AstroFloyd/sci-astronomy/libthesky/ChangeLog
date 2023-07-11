@@ -1,0 +1,82 @@
+# ChangeLog for sci-astronomy/libthesky
+# Copyright 1999-2021 Gentoo Authors; Distributed under the GPL v2
+# $Header: $
+
+*libthesky-0.4.2-r1 (23 Aug 2021)
+
+  23 Aug 2021; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.4.2-r1.ebuild,
+  -libthesky-0.4.2.ebuild:
+  sci-astronomy/libthesky: revision bump to v0.4.2-r1.
+
+*libthesky-0.4.2 (22 Aug 2021)
+
+  22 Aug 2021; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.4.2.ebuild:
+  sci-astronomy/libthesky: version bump to v0.4.2.
+
+*libthesky-0.4.1-r1 (05 Oct 2020)
+
+  05 Oct 2020; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.4.1-r1.ebuild,
+  -libthesky-0.3.3.ebuild, -libthesky-0.4.0.ebuild, -libthesky-0.4.1.ebuild:
+  sci-astronomy/libthesky: revision bump to v0.4.1-r1.
+
+*libthesky-0.4.1 (03 Oct 2020)
+
+  03 Oct 2020; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.4.1.ebuild:
+  sci-astronomy/libthesky: version bump to v0.4.1.
+
+  17 Feb 2020; AstroFloyd <AstroFloyd@gmail.com> Manifest:
+  sci-astronomy/libthesky: update Manifest to new data file size(?)
+
+*libthesky-0.4.0 (11 Jan 2020)
+
+  11 Jan 2020; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.4.0.ebuild,
+  -libthesky-0.3.2.ebuild, libthesky-0.3.3.ebuild:
+  sci-astronomy/libthesky: version bump to v0.4.0
+
+*libthesky-0.3.3 (08 Apr 2016)
+
+  08 Apr 2016; AstroFloyd <AstroFloyd@gmail.com> -libthesky-0.2.0.ebuild,
+  -libthesky-0.3.1.ebuild, +libthesky-0.3.3.ebuild:
+  Version bump
+
+  09 May 2015; AstroFloyd <AstroFloyd@gmail.com> libthesky-0.3.2.ebuild:
+  Cleaned up ebuild
+
+*libthesky-0.3.1 (04 Apr 2015)
+*libthesky-0.3.0 (04 Apr 2015)
+
+  04 Apr 2015; AstroFloyd <AstroFloyd@gmail.com> -libthesky-0.0.1.ebuild,
+  -libthesky-0.0.2.ebuild, -libthesky-0.0.2-r1.ebuild, -libthesky-0.0.3.ebuild,
+  -libthesky-0.1.0.ebuild, +libthesky-0.3.0.ebuild, +libthesky-0.3.1.ebuild:
+  Version bump
+
+*libthesky-0.2.0 (20 Oct 2013)
+
+  20 Oct 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.2.0.ebuild:
+  Version bump
+
+*libthesky-0.1.0 (31 Aug 2013)
+
+  31 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.1.0.ebuild:
+  Version bump
+
+*libthesky-0.0.3 (31 Aug 2013)
+
+  31 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.0.3.ebuild:
+  Version bump
+
+*libthesky-0.0.2-r1 (26 Aug 2013)
+
+  26 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.0.2-r1.ebuild:
+  Revision bump: adding asteroids.dat in separate download
+
+*libthesky-0.0.2 (26 Aug 2013)
+
+  26 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.0.2.ebuild:
+  Version bump
+
+*libthesky-0.0.1 (26 Aug 2013)
+
+  26 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libthesky-0.0.1.ebuild,
+  +metadata.xml:
+  New ebuild

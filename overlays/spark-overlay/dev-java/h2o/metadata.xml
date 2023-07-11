@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>liaoyuan@gmail.com</email>
+		<name>Yuan Liao</name>
+	</maintainer>
+	<use>
+		<flag name="flow">
+			Enable H2O Flow, a web-based interactive
+			computational environment for H2O
+		</flag>
+		<flag name="jetty9-full" restrict="&gt;=dev-java/h2o-3.36">
+			Use <pkg>dev-java/h2o-jetty9</pkg> instead of
+			<pkg>dev-java/h2o-jetty9-minimal</pkg> as H2O's
+			Jetty module; more dependencies will be pulled
+		</flag>
+		<flag name="target-encoder">
+			Enable the H2O Target Encoder plugin
+		</flag>
+	</use>
+</pkgmetadata>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="tls">HTTPS support.</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">mighttpd2</remote-id>
+		<remote-id type="github">kazu-yamamoto/mighttpd2</remote-id>
+	</upstream>
+</pkgmetadata>

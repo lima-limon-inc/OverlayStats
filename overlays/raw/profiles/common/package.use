@@ -1,0 +1,147 @@
+app-antivirus/clamav metadata-analysis-api
+sys-devel/clang default-lld
+net-wireless/iwd standalone -crda
+dev-lang/luajit lua52compat
+app-arch/zstd static-libs
+dev-lang/python sqlite
+sys-firmware/intel-microcode split-ucode monolithic
+sys-libs/gdbm berkdb
+dev-lang/perl berkdb
+mail-filter/spamassassin berkdb
+dev-libs/cyrus-sasl berkdb
+mail-filter/opendkim berkdb
+sys-apps/iproute2 berkdb
+app-crypt/heimdal -ssl -threads
+dev-db/mariadb tokudb extraengine rocksdb innodb-lz4
+sys-cluster/ceph xfs nss -ssl
+net-dns/bind threads caps -idn libidn2
+app-emulation/qemu doc tls usbredir spice sasl
+net-fs/samba cluster ads addns ldap client addc -system-heimdal -system-mitkrb5 acl python
+net-fs/cifs-utils ads creds acl
+net-dns/bind-tools gssapi -idn libidn2
+net-libs/libssh server
+media-gfx/imagemagick corefonts lzma xml
+sys-boot/syslinux -custom-cflags
+sys-apps/util-linux tty-helpers static-libs
+sys-fs/ntfs3g -external-fuse
+x11-libs/libdrm libkms
+media-libs/mesa xa r600-llvm-compiler
+sys-fs/cryptsetup -openssl
+app-portage/layman cvs bazaar mercurial g-sorcery squashfs subversion
+net-firewall/ipsec-tools nat hybrid
+x11-misc/bmpanel -libev
+net-fs/nfs-utils nfsdcld nfsv41
+media-libs/libmypaint gegl
+media-gfx/inkscape cdr inkjar
+dev-libs/elfutils static-libs
+net-mail/dovecot textcat
+dev-vcs/git -perl
+dev-vcs/subversion -perl -extras
+# default don't want pam, but elogind
+x11-base/xorg-server suid -elogind
+#sys-auth/elogind pam
+#sys-auth/pambase elogind
+# xterm:unicode - "luit allows xterm to support character encodings other than ISO-8859-1 and UTF-8."
+x11-terms/xterm Xaw3d -unicode sixel
+# optimize
+sys-apps/openrc -ncurses
+# for any our app
+dev-lang/php ssl curl tokenizer xmlrpc fastbuild mysqli postgres gd apache2 berkdb bzip2 cgi cjk cli crypt ctype filter gdbm iconv ipv6 ldap mysql ncurses nls pcre readline reflection session spell spl -threads truetype unicode xml zlib zip hash pdo mysqlnd sqlite3 json intl fileinfo imap mhash simplexml soap sockets bcmath -kerberos xmlwriter xmlreader sysvipc -phar posix -gmp
+app-admin/testdisk ntfs
+sci-libs/hdf5 -threads
+sci-libs/vtk rendering all-modules python xdmf2
+net-misc/tightvnc server
+# tightvnc dropped, xorgmodule depends xorg-server version
+net-misc/tigervnc server -xorgmodule
+dev-db/sqlite -tools
+# prefer jemalloc (faster), but if no choice:
+dev-libs/leveldb -tcmalloc
+sci-visualization/visit tcmalloc
+dev-db/haildb tcmalloc
+dev-libs/libmemcached tcmalloc
+sys-cluster/gearmand tcmalloc
+sys-cluster/hpx -perftools
+# not used, but need gtk3
+gnome-base/librsvg -tools
+# remove surprises
+net-misc/openssh -hpn
+app-arch/gzip pic
+# REQUIRED_USE
+net-misc/openvpn -lzo
+app-i18n/ibus -python
+dev-libs/xmlsec -gnutls
+mail-mta/exim exiscan-acl -gnutls -pkcs11
+media-gfx/blender cycles openimageio
+media-libs/ccaudio2 gsm
+media-libs/cogl gles2
+media-libs/libde265 -tools
+media-libs/libmetalink xml
+net-firewall/fwknop -gdbm
+net-libs/xrootd -http
+net-mail/cyrus-imapd -http
+net-mail/popa3d -mbox
+net-misc/rancid -subversion
+net-misc/rancid-git -subversion -cvs
+net-p2p/eiskaltdcpp -cli
+media-gfx/nomacs opencv
+media-libs/sdl2-mixer mad
+media-libs/sdl-mixer mad
+net-misc/networkmanager -nss
+sci-geosciences/gpsd python
+sci-libs/cctbx openmp -threads
+sci-libs/mathgl openmp -threads
+sci-libs/silo silex qt4
+sci-libs/ViSP opencv
+sys-cluster/hpx -jemalloc
+x11-wm/xpra dec_av2
+app-admin/syslog-ng -http -ipv6
+
+# modern video cards 2D perform better on modesetting driver: Nvidia G8+, Radeon R600+ ...
+x11-base/xorg-drivers -video_cards_i915 -video_cards_virtualbox -video_cards_nouveau -video_cards_nv -video_cards_mga -video_cards_amdgpu -video_cards_ati
+
+# try to avoid [qml] globally (IMHO hole)
+# dev-qt/qtwebengine
+dev-qt/qtwebchannel qml
+
+# openssl sometimes more hw accelerated
+net-wireless/wpa_supplicant -gnutls
+sys-kernel/vanilla-sources -kvm
+sys-kernel/gentoo-sources rt
+=dev-qt/qtwebengine-5.7.1* -system-icu
+# on my CherryTrail SNA xterm loose chars/regions. keep old code too
+x11-drivers/xf86-video-intel uxa
+# prefer alsa & apulse
+media-sound/pulseaudio -alsa-plugin
+# -pam
+kde-plasma/kscreenlocker -seccomp
+# unsatisfayed dependences
+x11-apps/intel-gpu-tools glib chamelium gsl
+# melomania
+media-sound/mpg123 int-quality
+# relax by default
+sys-devel/binutils -cxx -gold
+# gles2|opengl
+dev-libs/efl -drm
+# elfutils
+sys-libs/zlib static-libs
+app-arch/bzip2 static-libs
+app-arch/xz-utils static-libs
+# sys-apps/util-linux[su,python] -> pam vs. sys-apps/shadow, sys-apps/util-linux[python] req4 catalyst
+sys-apps/util-linux -su
+sys-apps/shadow su
+# busybox[static], etc
+virtual/libcrypt static-libs
+sys-libs/libxcrypt static-libs
+# initrd bug-free, shell failover
+sys-apps/busybox static
+
+# export MALLOC_MMAP_MAX_=0
+# export LD_PRELOAD=/usr/lib/libjemalloc.so
+# export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so
+>=dev-db/mariadb-10.5 -jemalloc -tcmalloc
+
+# [e]udev, but sometimes no effect
+sys-apps/systemd-utils -udev
+
+# perf
+app-text/poppler boost

@@ -1,0 +1,79 @@
+#+title: akater-ebuilds
+#+author: =#<PERSON akater A24961DE3ADD04E057ADCF4599555CE6F2E1B21D>=
+
+* Things of interest (in order of decreasing interest)
+| Package                     | Rationale                                    |
+|-----------------------------+----------------------------------------------|
+| =app-emacs/ebuild-tools=    | Access ebuilds quickly from Emacs            |
+| =app-emacs/ement-extras=    | Use Matrix from Emacs with encryption        |
+| =app-emacs/telega=          | A featureful Telegram client for Emacs       |
+| =app-emacs/portage=         | Issue ~emerge~ commands from Emacs           |
+| =app-emacs/magentoo=        | A Gentoo dashboard based on =magit-section=  |
+| =app-emacs/pdf-tools=       | Read PDF with poppler in GUI Emacs           |
+| =dev-lisp/sbcl=             | Bootstrappable with a user-specified Lisp    |
+| =app-doc/ansicl=            | ANSI Common Lisp Draft: Info and PDF         |
+| =app-emacs/elpa-to-ebuilds= | Generate ebuilds for Elisp packages          |
+| =app-emacs/imdb=            | Emacs IMDB client with local database        |
+| =app-emacs/vterm=           | USE =system-libvterm=; native =emacs-module= |
+
+=dev-lisp/sbcl= also allows omitting html doc thus avoiding dependency on =graphviz=.
+
+There is a variety of other =app-emacs/*= packages in the repository, some mine.  Some are not present in elpas, e.g. =app-emacs/pdf-mode=.
+
+* Installation
+** With =eselect repository=
+#+begin_src sh :dir /sudo::/ :tangle no :results none
+eselect repository enable akater
+#+end_src
+
+To remove the repository,
+#+begin_src sh :dir /sudo::/ :tangle no :results none
+eselect repository remove akater
+#+end_src
+
+** Manually
+Add the following to your =repos.conf=:
+#+begin_example conf-unix
+[akater]
+location = /var/db/repos/akater
+masters = gentoo
+sync-type = git
+# sync-git-verify-commit-signature = true
+# sync-openpgp-key-path = /var/akater.asc
+sync-uri = https://gitlab.com/akater/ebuilds.git
+auto-sync = yes
+#+end_example
+
+** With =layman=
+#+begin_src sh :dir /sudo::/ :tangle no :results none
+layman -o  https://gitlab.com/akater/ebuilds/-/raw/master/repositories.xml -f -a akater
+#+end_src
+
+To remove the repository,
+#+begin_src sh :dir /sudo::/ :tangle no :results none
+layman -d akater
+#+end_src
+
+* Notes
+This ebuild repository may contain:
+- some older ebuilds dropped from mainline gentoo repository but interesting to the author
+- a variety of =app-emacs/*= ebuilds
+- ebuilds providing compatibility with environments interesting to the author
+- experimental stuff (but most ebuilds should work)
+
+I'm interested in lightweight environments, i.e.:
+- text-only environments (no X)
+- non-glibc environments (musl, at this point); there are some uClibc related ebuilds but uClibc profile is deprecated in Gentoo right now
+
+Some ebuilds do not work, including:
+- =app-emacs/libegit2=
+- =sys-firmware/open-ath9k-htc-firmware=
+
+I'd appreciate help with them.
+
+To understand the purpose of forks of ebuilds from the main tree, I recommend simply diffing ebuilds.  For convenient ebuild (multi-)diffs, consider my function ~diff-ebuilds~ provided by =app-emacs/ebuild-tools=.
+
+I'm interested in
+- =www-client/palemoon= support for hardened Gentoo
+- =net-print/lprng= ebuilds and filters
+- automated packaging of Emacs Lisp software for Gentoo

@@ -1,0 +1,16 @@
+KERNEL_CONFIG+='HZ_1000 RCU_BOOST BLK_WBT_SQ'
+use experimental &&
+	KERNEL_CONFIG+=' NR_CPUS==1;(?:RCU_NOCB_CPU|NO_HZ_FULL)'
+use laptop && KERNEL_CONFIG+=' HZ_300'
+use server && use !minimal2 && KERNEL_CONFIG+=' -NO_HZ_FULL'
+use server || KERNEL_CONFIG+=' -SLUB_CPU_PARTIAL'
+
+# this is anti-"rt" setting, but save power and compensate high HZ
+# also it make this switch similar to Intel Clear Linux defaults
+# anymore, it increase from-idle state, so affect mostly unstable workloads
+use rt || KERNEL_CONFIG+=' RCU_EXPERT RCU_FAST_NO_HZ'
+KERNEL_CONFIG+=' =IRQ_TIME_ACCOUNTING'
+use rt || {
+	KERNEL_CONFIG+=' HAVE_STATIC_CALL_INLINE==!y;HAVE_PREEMPT_DYNAMIC==!y;PREEMPT_RT==y;PREEMPT PREEMPT_DYNAMIC'
+	ewarn "USE=rt2 new behaviour: PREEMPT with cmdline preempt=none/voluntary/full"
+}

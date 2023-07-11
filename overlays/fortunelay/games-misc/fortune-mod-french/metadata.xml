@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>lssndrbarbieri@gmail.com</email>
+		<name>Alessandro Barbieri</name>
+	</maintainer>
+	<longdescription>
+* fortunes-fr
+* ellisllk (mauriceetpatapon, oulipo)
+* GCU - Le Guide du Cabaliste Usenet
+* GDP - Le Guide du Debianiste Pervers
+* GFA - Le Guide du Fmblien Assassin
+* GLP - Le Guide du Linuxien Pervers
+* GPJ - Le Guide du Petit Joueur
+* La tribune libre de linuxfr
+* Les bonnes fortunes de J.R.R. Tolkien
+* Les fortunes de Multidesk OS
+* Les fortunes de Multidesk OS (2)
+* #linuxfr@Undernet
+	</longdescription>
+</pkgmetadata>

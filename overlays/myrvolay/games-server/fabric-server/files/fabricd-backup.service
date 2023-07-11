@@ -1,0 +1,12 @@
+[Unit]
+Description=Minecraft Fabric server world backup
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fabricd backup
+User=fabric
+Group=fabric
+
+[Install]
+WantedBy=multi-user.target

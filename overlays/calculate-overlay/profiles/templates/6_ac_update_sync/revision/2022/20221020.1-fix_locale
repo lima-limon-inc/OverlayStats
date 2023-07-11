@@ -1,0 +1,10 @@
+# Calculate exec=/bin/bash ini(overlay-calculate.revision)<#-cut(0)-#
+
+#-ini(overlay-calculate.revision,#-cut(0)-#)-#
+
+if [[ -e /etc/env.d/02locale ]]
+then
+	sed -i 's/utf8/UTF-8/g' /etc/env.d/02locale
+fi
+
+exit 0

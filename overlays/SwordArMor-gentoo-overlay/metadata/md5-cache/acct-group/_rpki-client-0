@@ -1,0 +1,8 @@
+DEFINED_PHASES=install preinst pretend
+DESCRIPTION=System group: _rpki-client
+EAPI=8
+INHERIT=acct-group
+KEYWORDS=~amd64 ~x86
+SLOT=0
+_eclasses_=user-info	83547b4df3e1ba5a6bf91a0837eaa664	acct-group	c5bc6ab32cd6552df855b3fd22968f98
+_md5_=cd34e0f0b4575ad83d8f29db0adce162

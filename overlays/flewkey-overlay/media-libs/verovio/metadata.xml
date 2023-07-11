@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>flewkey@2a03.party</email>
+		<name>Ryan Fox</name>
+	</maintainer>
+	<use>
+		<flag name="darms">Enable DARMS support</flag>
+		<flag name="pae">Enable Plaine and Easie support</flag>
+		<flag name="abc">Enable ABC support</flag>
+		<flag name="musicxml">Enable MusicXML support</flag>
+		<flag name="humdrum">Enable Humdrum support</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">rism-digital/verovio</remote-id>
+	</upstream>
+</pkgmetadata>

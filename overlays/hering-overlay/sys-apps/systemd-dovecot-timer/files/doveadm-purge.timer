@@ -1,0 +1,8 @@
+[Unit]
+Description=doveadm purge
+
+[Timer]
+OnCalendar=*-*-* 04:15:00
+
+[Install]
+WantedBy=timers.target

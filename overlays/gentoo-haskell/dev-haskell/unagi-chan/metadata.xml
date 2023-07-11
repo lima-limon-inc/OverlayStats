@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="compare-benchmarks">
+&#9;&#9;&#9;compare benchmarks with Chan, TQueue, and (eventually) lockfree-queue?
+&#9;&#9;</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">unagi-chan</remote-id>
+		<remote-id type="github">jberryman/unagi-chan</remote-id>
+	</upstream>
+</pkgmetadata>

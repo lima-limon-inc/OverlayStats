@@ -1,0 +1,13 @@
+[Unit]
+Description=NGINX Unit
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx-unit.pid
+EnvironmentFile=-/etc/conf.d/nginx-unit
+ExecStart=/usr/sbin/unitd $UNITD_OPTIONS
+
+[Install]
+WantedBy=multi-user.target

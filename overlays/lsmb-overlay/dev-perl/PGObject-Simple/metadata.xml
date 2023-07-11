@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+PGObject::Simple is an application-facing library which enables mapping between
+rows of simple values and application classes.  It is simple and easy to use.
+
+In this module, obects are simple blessed hashes, and arguments to mapped 
+functions are mapped by stripping an optional in_ prefix to the argumnet name
+and then looking for a property of the same name.
+
+If use Moose, use PGObject::Simple::Role instead.
+</longdescription>
+</pkgmetadata>

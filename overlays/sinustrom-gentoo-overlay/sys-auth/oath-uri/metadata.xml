@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>zoltan@sinustrom.info</email>
+		<name>Zoltan Puskas</name>
+	</maintainer>
+	<use>
+		<flag name="cli">Install command line tool</flag>
+	</use>
+	<longdescription>
+		oath-uri is an open source C/C++ library and command line tool to
+		generate OATH TOTP/HOTP key sharing URI for soft tokens, also known as
+		one-time password authentication applications.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">zpuskas/oath-uri</remote-id>
+	</upstream>
+</pkgmetadata>

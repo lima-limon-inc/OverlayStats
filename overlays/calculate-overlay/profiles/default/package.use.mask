@@ -1,0 +1,3 @@
+sys-apps/calculate-utils server
+# unmask for x86
+sci-electronics/kicad -oce

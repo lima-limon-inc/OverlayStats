@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>flewkey@2a03.party</email>
+		<name>Ryan Fox</name>
+	</maintainer>
+	<use>
+		<flag name="tool">Build the command line tool</flag>
+		<flag name="json-c">Build dev-libs/json-c wrapper</flag>
+		<flag name="jansson">Build dev-libs/jansson wrapper</flag>
+	</use>
+	<upstream>
+		<remote-id type="gitlab">jobol/mustach</remote-id>
+		<maintainer status="active">
+			<email>jose.bollo@iot.bzh</email>
+			<name>José Bollo</name>
+		</maintainer>
+	</upstream>
+</pkgmetadata>

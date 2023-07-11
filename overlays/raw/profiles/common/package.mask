@@ -1,0 +1,13 @@
+sys-apps/systemd
+# force safer graphite, etc (no time to test others)
+=sys-devel/gcc-5.0*
+=sys-devel/gcc-5.1*
+=sys-devel/gcc-5.2*
+=sys-devel/gcc-6.0*
+=sys-devel/gcc-6.1*
+=sys-devel/gcc-6.2*
+<dev-libs/isl-0.18
+
+# intel legacy
+=sys-firmware/intel-microcode-20180108*
+=sys-firmware/intel-microcode-20171117_p20171215*

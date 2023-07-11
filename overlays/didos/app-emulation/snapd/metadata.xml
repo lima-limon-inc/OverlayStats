@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>clayton.dobbs@gosecur.us</email>
+	<name>Clayton "kefnab" Dobbs</name>
+	<description>Performs gentoo package management</description>
+</maintainer>
+	<longdescription lang="en">
+	The snapd and snap tools enable systems to work with .snap files. Snaps are faster to install, easier to create, safer to run, and they update automatically and transactionally so your app is always fresh and never broken.
+	</longdescription>
+<upstream>
+	<maintainer>
+		<email>me@zygoon.pl</email>
+		<name>Zygmunt "zyga" Krynicki</name>
+	</maintainer>
+	<bugs-to>mailto:me@zygoon.pl</bugs-to>
+	<doc>https://github.com/snapcore/snapd/tree/master/docs</doc>
+</upstream>
+</pkgmetadata>

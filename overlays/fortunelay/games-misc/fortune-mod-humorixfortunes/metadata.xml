@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>lssndrbarbieri@gmail.com</email>
+		<name>Alessandro Barbieri</name>
+	</maintainer>
+	<longdescription>
+I've compiled a set of cookies for the fortune(6) program. They include:
+
+Linux slogans and one-liners
+Quotes froms Linus Torvalds and others
+Brief Microsoft jokes, stories, and one-liners
+Condensed Humorix articles
+The cookies come from public domain sources (i.e. files that have circulated throughout the Net), Slashdot posts, and, of course, the Humorix site.
+	</longdescription>
+</pkgmetadata>

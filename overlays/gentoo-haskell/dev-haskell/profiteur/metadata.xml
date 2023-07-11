@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="embed-data-files">Embed data files into the executable (needed for ghcjs packaging)</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">profiteur</remote-id>
+		<remote-id type="github">jaspervdj/profiteur</remote-id>
+	</upstream>
+</pkgmetadata>

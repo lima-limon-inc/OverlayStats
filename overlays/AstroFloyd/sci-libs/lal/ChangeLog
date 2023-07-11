@@ -1,0 +1,52 @@
+# ChangeLog for sci-libs/lal
+# Copyright 1999-2021 Gentoo Authors; Distributed under the GPL v2
+# $Header: $
+
+  10 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-7.1.4.ebuild:
+  sci-libs/lal: sort out DEPEND and RDEPEND for v7.1.4.
+
+  10 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-7.1.4.ebuild, metadata.xml:
+  sci-libs/lal: quick fix to USE flags and DEPEND for v7.1.4.
+
+  10 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-7.1.4.ebuild:
+  sci-libs/lal: quick fix to USE flags for v7.1.4.
+
+  10 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-7.1.4.ebuild:
+  sci-libs/lal: quick fix to DEPEND for v7.1.4.
+
+  09 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-6.9.1.ebuild,
+  lal-7.1.4.ebuild, metadata.xml:
+  sci-libs/lal: quick USE flag and DEPEND fixes.
+
+  08 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> lal-7.1.4.ebuild:
+  sci-libs/lal: update default swig USE flags.
+
+*lal-7.1.4 (08 Dec 2021)
+
+  08 Dec 2021; AstroFloyd <AstroFloyd@gmail.com> +lal-7.1.4.ebuild,
+  -lal-6.5.0.ebuild, -lal-6.6.1.ebuild, metadata.xml:
+  sci-libs/lal: version bump to v7.1.4.
+
+  22 Jun 2021; AstroFloyd <AstroFloyd@gmail.com> lal-6.5.0.ebuild,
+  lal-6.6.1.ebuild, lal-6.9.1.ebuild, metadata.xml:
+  sci-libs/lal: update ebuilds to EAPI7.
+
+  11 Mar 2013; AstroFloyd <AstroFloyd@gmail.com> +lal-6.9.1.ebuild:
+  Version bump
+
+*lal-6.9.1 (11 Mar 2013)
+
+  11 Mar 2013; AstroFloyd <AstroFloyd@gmail.com> +lal-6.9.1.ebuild:
+  Version bump
+
+  11 Mar 2013; AstroFloyd <AstroFloyd@gmail.com> -lal-5.2.ebuild,
+  -lal-6.0.2.ebuild, -lal-6.1.ebuild, +metadata.xml:
+  Removing old ebuilds, added metadata.xml
+
+  23 Jan 2012; AstroFloyd <AstroFloyd@gmail.com> +lal-6.5.0.ebuild
+  +lal-6.6.1.ebuild:
+  Added new ebuilds
+
+  7 Jul 2009; AstroFloyd <AstroFloyd@gmail.com> +lal-5.2.ebuild,
+  +lal-6.0.2.ebuild, +lal-6.1.ebuild:
+  Adding exisitng ebuilds

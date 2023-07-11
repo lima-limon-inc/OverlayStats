@@ -1,0 +1,120 @@
+# Copyright 1999-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI="8"
+
+KEYWORDS="amd64"
+RESTRICT="mirror"
+
+SLOT="1"
+
+USE_DOTNET="net45"
+IUSE="+${USE_DOTNET} debug +developer test +aot doc"
+
+inherit xbuild mono-pkg-config gac nupkg
+
+NAME="mono-packaging-tools"
+HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
+
+REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
+
+EGIT_COMMIT="3eae8fb31b3ad36a12ae199995f2c0479e2fd393"
+SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${CATEGORY}-${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
+
+DESCRIPTION="Command line utilities for packaging mono assemblies with portage"
+LICENSE="GPL-3"
+LICENSE_URL="https://raw.githubusercontent.com/ArsenShnurkov/mono-packaging-tools/master/LICENSE"
+
+COMMON_DEPENDENCIES="
+	>=dev-dotnet/slntools-1.1.3_p201508170-r2
+	>=dev-dotnet/eto-parse-1.4.0
+	dev-util/t4
+	"
+DEPEND="${COMMON_DEPENDENCIES}
+	dev-dotnet/msbuildtasks
+	sys-apps/sed"
+RDEPEND="${COMMON_DEPENDENCIES}
+	"
+
+NUSPEC_VERSION=${PV}
+ASSEMBLY_VERSION=${PV}
+
+SLN_FILE="mono-packaging-tools.sln"
+METAFILETOBUILD="${S}/${SLN_FILE}"
+NUSPEC_ID="${NAME}"
+COMMIT_DATE_INDEX="$(get_version_component_count ${PV} )"
+COMMIT_DATE="$(get_version_component_range $COMMIT_DATE_INDEX ${PV} )"
+NUSPEC_FILENAME="${PN}.nuspec"
+#ICON_FILENAME="${PN}.png"
+#ICON_FINALNAME="${NUSPEC_ID}.${NUSPEC_VERSION}.png"
+#ICON_PATH="$(get_nuget_trusted_icons_location)/${ICON_FINALNAME}"
+
+src_prepare() {
+	#change version in .nuspec
+	# PV = Package version (excluding revision, if any), for example 6.3.
+	# It should reflect the upstream versioning scheme
+	sed "s/@VERSION@/${NUSPEC_VERSION}/g" "${FILESDIR}/${NUSPEC_ID}.nuspec" >"${S}/${NUSPEC_ID}.nuspec" || die
+	sed -i "s?<HintPath>.*Mono\\.TextTemplating.dll</HintPath>?<HintPath>/usr/share/dev-dotnet/t4/Mono.TextTemplating.dll</HintPath>?g" "${S}/mpt-core/mpt-core.csproj" || die
+
+	# restoring is not necessary after switching to GAC references
+	# enuget_restore "${METAFILETOBUILD}"
+	default
+}
+
+src_compile() {
+	exbuild /p:VersionNumber="${ASSEMBLY_VERSION}" "${METAFILETOBUILD}"
+	enuspec "${NUSPEC_ID}.nuspec"
+}
+
+src_install() {
+	einfo '$(get_libdir)' == $(get_libdir)
+	einfo '$(framework_assembly_dir)' == $(framework_assembly_dir)
+	einfo '$(library_assembly_dir)' == $(library_assembly_dir)
+	einfo '$(executable_assembly_dir)' == $(executable_assembly_dir)
+	# install dll[s] of this package
+	elib "mpt-core/bin/$(usedebug_tostring)/mpt-core.dll"
+
+	# link libraries of this package
+	dosym "$(library_assembly_dir)/mpt-core.dll" "$(executable_assembly_dir)/mpt-core.dll"
+
+	# link other libraries
+	dosym "$(library_assembly_dir)/../mono-options/Mono.Options.dll" "$(executable_assembly_dir)/Mono.Options.dll"
+	dosym "$(library_assembly_dir)/../slntools-1/CWDev.SLNTools.Core.dll" "$(executable_assembly_dir)/CWDev.SLNTools.Core.dll"
+	dosym "$(library_assembly_dir)/../eto-parse-1/Eto.Parse.dll" "$(executable_assembly_dir)/Eto.Parse.dll"
+
+	# install launchers
+	insinto "/usr/share/${PN}${APPENDIX}"
+	install_tool mpt-gitmodules
+	install_tool mpt-sln
+	install_tool mpt-csproj
+	install_tool mpt-machine
+	install_tool mpt-nuget
+
+	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
+
+	if use doc; then
+		dodoc README.md
+	fi
+}
+
+install_tool() {
+	# installs .exe, .exe.config (if any), .mdb (if exists)
+	doins "$1"/bin/$(usedebug_tostring)/*.exe
+	if [ -f "$1"/bin/$(usedebug_tostring)/*.exe.config ]; then
+		doins "$1"/bin/$(usedebug_tostring)/*.exe.config
+	fi
+	if use developer; then
+		# http://www.mono-project.com/docs/about-mono/releases/5.0.0/
+		# csc generates Portable PDB (.pdb) debug files instead of Mono’s MDB (.mdb) format from mcs.
+		doins "$1"/bin/$(usedebug_tostring)/*.pdb
+	fi
+
+	MONO=/usr/bin/mono
+
+	if use debug; then
+		make_wrapper "$1" "${MONO} --debug $(executable_assembly_dir)/$1.exe"
+	else
+		make_wrapper "$1" "${MONO} $(executable_assembly_dir)/$1.exe"
+	fi;
+}

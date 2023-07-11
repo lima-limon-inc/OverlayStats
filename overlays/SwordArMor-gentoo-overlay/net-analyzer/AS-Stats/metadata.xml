@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<name>Alarig Le Lay</name>
+		<email>alarig@swordarmor.fr</email>
+	</maintainer>
+	<use>
+		<flag name="as-stats-gui">Use the improved webUI</flag>
+		<flag name="ip2as">Use the perl module ip2as.pm</flag>
+	</use>
+</pkgmetadata>

@@ -1,0 +1,402 @@
+# server
+dev-vcs/git cgi
+mail-mta/postfix ldap sasl dovecot-sasl
+net-dns/bind ldap sdb-ldap dlz
+net-im/ejabberd ldap sqlite
+net-mail/dovecot ldap sieve managesieve
+net-nds/openldap -sasl
+net-proxy/squid ldap
+net-ftp/proftpd -ipv6 -acl ldap openssl
+net-fs/samba ldap aio
+
+net-misc/asterisk alsa pjproject span speex vorbis
+net-misc/asterisk-extra-sounds alaw g722 g729 siren14 siren7 sln16 ulaw wav
+net-misc/asterisk-moh-opsound alaw g722 g729 siren14 siren7 sln16 ulaw wav
+net-misc/asterisk-core-sounds alaw g722 g729 siren14 siren7 sln16 ulaw wav
+
+# сompile the kernel during the installation package
+sys-kernel/calculate-sources firmware minimal symlink
+
+# Calculate themes dependence
+sys-kernel/calculate-sources themes
+
+# add NTFS and Reiserfs support
+app-admin/testdisk ntfs reiserfs
+
+# support for zstd
+sys-fs/squashfs-tools zstd
+
+# grub multislot by default
+sys-boot/grub -multislot device-mapper
+
+# for support pastebin.calculate-linux.org
+app-text/wgetpaste -lodgeit-default
+
+# to support the installation of the system
+app-arch/tar xattr
+net-misc/rsync xattr
+sys-apps/coreutils xattr
+sys-fs/squashfs-tools xattr
+
+# support layman sync for portage repositories
+app-portage/layman sync-plugin-portage
+
+net-p2p/rtorrent daemon xmlrpc
+
+# add plugin aria2
+www-client/uget aria2
+
+# enable support for Media Transfer Protocol
+kde-apps/kio-extras mtp
+
+# needed only for binary packages
+sys-libs/ncurses tinfo
+
+# i386 support, TLS support for the VNC console server, VirtFS
+app-emulation/qemu gnutls spice usbredir qemu_softmmu_targets_i386 qemu_softmmu_targets_x86_64 virtfs
+
+# use dev-libs/libnatspec to correctly decode non-ascii file names
+app-arch/zip natspec
+app-arch/unzip natspec
+
+# enable mpeg2 codec for cutscenes
+games-engines/scummvm mpeg2
+
+# support/bindings for the Python
+media-gfx/gimp python
+
+# there is IP{,_NF}_SET or NETFILTER_XT_SET support in the kernel.
+net-firewall/ipset -modules
+
+# support/bindings for the Python language
+sys-fs/cryptsetup python
+
+# build for use with thread-capable perl
+www-apache/mod_perl ithreads
+
+# include backup, client, desktop, console and console-gui modules
+sys-apps/calculate-utils backup client desktop console qt5
+
+# support caja
+app-arch/engrampa caja
+
+# use the system components instead of bundled
+# bug firefox http://www.calculate-linux.org/issues/851
+mail-client/thunderbird -system-libvpx
+
+# use streaming
+media-video/smplayer autoshutdown streaming
+
+# build with native HSP backend and oFono HFP backend for bluez 5
+media-sound/pulseaudio native-headset ofono-headset
+
+# enable Direct 3D9 API, Vulkan drivers
+media-libs/mesa d3d9 wayland
+
+# user preferences
+kde-apps/akonadi -mysql postgres
+
+
+# circular dependencies net-libs/glib-networking-2.42.1 and net-libs/libproxy-0.4.11-r2
+net-libs/libproxy -webkit
+
+# support primusrun command (primus from bumblebee overlay), gtk3 support
+x11-drivers/nvidia-drivers compat gtk3
+
+# use gstreamer for sound
+media-libs/phonon gstreamer -vlc
+
+# enables video thumbnails generation
+kde-apps/dolphin thumbnail
+
+# support for the KDE Image Plugin Interface.
+kde-apps/gwenview kipi semantic-desktop
+
+# enable support for mobile broadband devices
+kde-plasma/plasma-nm modemmanager openconnect
+
+# add support for access point mode, support for WPA TKIP
+net-wireless/wpa_supplicant ap tkip
+
+# disable Xorg dependence, large number of supported fonts reduces productivity
+media-fonts/terminus-font -X
+
+# SMplayer support, streaming media support
+media-video/mplayer bidi live -video_cards_tdfx
+
+# support modemmanager, select dhcp client
+net-misc/networkmanager connection-sharing dhcpcd
+
+# enable fax, support work over networks, IJS driver for cups, exclude scanner GUI (use XSane)
+net-print/hplip hpijs -X
+
+# to display the icons in the menu, support xdg autostart
+x11-wm/openbox imlib xdg
+
+# add support xft and 256 color
+x11-terms/rxvt-unicode 256-color xft
+
+x11-base/xorg-drivers -video_cards_nvidia -video_cards_vmware -video_cards_glint -video_cards_mach64 -video_cards_mga -video_cards_r128 -video_cards_savage -video_cards_tdfx -video_cards_trident video_cards_vmware
+
+# remove the sound when changing volume in pulseaudio
+media-libs/libcanberra -sound
+
+# add functionality
+net-wireless/blueman network
+
+# support for encrypted user directories
+sys-fs/ecryptfs-utils suid
+
+# name Service Cache Daemon
+sys-libs/glibc nscd
+
+# add support for LDAP, PDF, RSS, SMIME, HTML, Xface, sieve filter support
+mail-client/claws-mail ldap pdf rss smime webkit xface sieve
+
+# build a Qt4/5 style called GTK+ that mimics the active GTK+ theme
+dev-qt/qtgui gtkstyle
+dev-qt/qtwidgets gtkstyle
+
+# add automounting,volume monitoring, etc. Build thunar-tpa (trash) plugin for panel.
+xfce-base/thunar udisks xfce_plugins_trash
+
+xfce-base/xfce4-session -xscreensaver
+
+# build a plugin for the GIMP and printing driver files
+net-print/gutenprint gimp ppds
+
+# install the sendto-plugin for xfce-base/thunar
+#net-wireless/blueman thunar
+
+# enable support for CorelDRAW files
+# support for OpenOffice.org SVG jar files, color management engine,
+# Microsoft Visio Diagrams, WordPerfect Graphics
+media-gfx/inkscape cdr inkjar lcms visio wpg
+
+# mikmod? ( mod ) timidity? ( midi )
+media-libs/sdl-mixer mod timidity midi
+
+# enables fuse mount points in $HOME/.gvfs for legacy application access
+gnome-base/gvfs archive fuse mtp
+
+# add support git and cmake
+dev-qt/qt-creator cmake git
+
+# add support for net-libs/gnutls (TLS 1.0 and SSL 3.0 support)
+net-im/pidgin gnutls
+
+# it might be possible to solve this slot collision
+net-libs/gtk-vnc python
+
+# support HTTP streams through neon (radio)
+media-plugins/audacious-plugins http
+
+# add support for applications using legacy xembed systray icons
+kde-plasma/plasma-desktop touchpad
+
+# add modules
+lxqt-base/lxqt-panel colorpicker cpuload dom networkmonitor sysstat tray
+
+# support for XPM graphics format
+x11-wm/jwm xpm
+
+# support GUI/Application
+media-video/avidemux qt5
+media-libs/avidemux-plugins qt5
+
+# extensions without dependencies
+mate-extra/caja-extensions -cdr image-converter share
+
+# add support ePub format
+app-text/atril epub
+
+# openssl support needed for mpv, to play over ssh
+# builds libffmpeg.so to enable media playback in Chromium-based browsers like Opera and Vivaldi
+# xcb for video capture screen monitor
+media-video/ffmpeg openssl chromium xcb libaom
+
+# opengl? ( gui widgets ), webkit? ( network printsupport )
+dev-python/PyQt5 gui printsupport network widgets
+#  webengine? ( widgets? ( webchannel ) )
+dev-python/PyQt5 webengine webchannel
+
+# vpn, bluetooth, etc support
+net-misc/connman l2tp ofono openconnect openvpn pptp vpnc wispr
+net-misc/connman-gtk openconnect
+
+# install firmware for older chipsets
+#sys-firmware/amdgpu-ucode legacy
+
+# enable sound event support using
+net-irc/hexchat libcanberra
+
+# www-client/seamonkey-2.38, www-client/firefox-44.0, mail-client/thunderbird-38.5.0
+dev-db/sqlite secure-delete
+
+# include OpenGL ES support
+media-libs/libsdl2 gles
+
+# at-most-one-of ( gstreamer ffmpeg )
+app-misc/tracker ffmpeg -gstreamer -cue
+
+# enable color management, enable sound support for animations
+media-gfx/krita color-management qtmedia
+
+# detect GPS location (need for CLDX) IssueID #897
+x11-misc/redshift geoclue
+
+# support for XFT font renderer, drag-n-drop
+app-editors/xemacs xft dnd
+
+# support flash by default in the adobe-flash package$
+www-plugins/chrome-binary-plugins -flash
+
+# support for wxWidgets/wxGTK GUI toolkit
+media-video/mediainfo wxwidgets
+
+# Build standalone client with integrated core, no external quasselcore needed.
+# use postgresql database for not using '-secure-delete' sqlite USE flag
+net-irc/quassel monolithic postgres
+
+# enable support for mobile broadband devices
+gnome-extra/nm-applet modemmanager
+
+# support an image loading and rendering
+app-admin/conky imlib
+
+# prevent automagic depends
+media-libs/opencv contrib_hdf
+
+# force-enable hardware-accelerated rendering, support ALSA, disable screenshot extension
+www-client/firefox hwaccel -screenshot -pgo -lto
+
+# DRI3 support, UMA Acceleration Architecture
+x11-drivers/xf86-video-intel dri3 uxa
+
+# enable face detection and recognition
+media-gfx/kphotoalbum face
+
+# support for the Qt GUI/Application
+app-backup/backintime qt5
+app-backup/bacula qt5
+net-print/hplip qt5
+
+# mate-base/mate -> x11-misc/mozo-1.8.0
+mate-base/mate-menus python
+
+# enable Glamor OpenGL 2D acceleration
+x11-drivers/xf86-video-amdgpu glamor
+
+# support for Japanese input https://www.youtube.com/watch?v=NtA4C4HR7LE
+app-i18n/fcitx gtk2
+
+# add support for the postgresql database
+net-im/prosody postgres
+dev-lua/luadbi postgres
+
+# support for Google Chromecast
+# support SRT/SSA/ASS
+# enable live555 streaming media support
+# enable Lua scripting support
+# enable support for the skins2 interface
+# fix open directories with audio files (issue #1042)
+media-video/vlc chromecast libass live lua skins xml
+
+# xml support
+app-editors/emacs libxml2 xft
+
+# requires an outdated LINGUAS
+app-admin/webalizer -nls
+
+# support for the improved mySQL libraries
+# support for process creation functions (nextcloud php occ)
+# nextcloud perfomance (bcmath gmp sodium)
+dev-lang/php mysqli pcntl sqlite bcmath gmp sodium
+
+# enables drawing tool
+x11-misc/shutter drawing
+
+# Enable internal webserver
+media-tv/kodi webserver
+
+# Support for .ape files
+media-sound/deadbeef mac
+
+# Add xface support used
+mail-client/sylpheed ldap xface
+
+# The following REQUIRED_USE flag constraints are unsatisfied:
+# egl gles
+dev-libs/efl gles egl -sdl -opengl
+
+# Enable Active Directory support
+net-fs/samba ads gnutls
+
+# Enable PDF import, Build the Office Development Kit
+app-office/libreoffice pdfimport odk
+
+# Hardware sensors support
+xfce-extra/xfce4-sensors-plugin lm-sensors
+
+# Enable monitoring of hdd temperature (app-admin/hddtemp)
+sys-apps/inxi hddtemp
+
+# Enable nm-applet support
+net-vpn/networkmanager-l2tp gnome
+
+# Unsupported closed-source DRM capability (required by Netflix VOD)
+www-client/chromium widevine
+
+# Enable display of detailed memory information using dev-qt/qtwebengine
+kde-plasma/libksysguard webengine
+
+# Include the vulkan layers
+media-libs/vulkan-loader layers
+
+# to support patent-encumbered media codecs and closed-source DRM capability
+www-client/vivaldi proprietary-codecs widevine
+www-client/vivaldi-snapshot proprietary-codecs widevine
+
+# WireGuard VPN support
+net-misc/connman wireguard
+
+# URL transfer library
+net-analyzer/zabbix curl
+
+# remove the sound when changing volume in pulseaudio
+media-libs/libcanberra -sound
+
+# support accountservice
+x11-misc/lightdm gnome
+
+# net-firewall/nftables-0.9.8 (Change USE: +json +python)
+net-firewall/nftables json python
+
+# gtk2 support
+app-i18n/uim gtk2
+
+# Enable WebRTC-based echo canceller, pw-cat/pw-play/pw-record,
+# replace PulseAudio's ALSA plugin with PipeWire's plugin
+media-video/pipewire extra echo-cancel pipewire-alsa
+
+# disabling unmanaged changes in device access rights
+sys-auth/elogind -acl
+
+# add support for sqlite
+www-apps/gitea sqlite
+
+# l2tp+ipsec support
+net-vpn/strongswan strongswan_plugins_ipseckey
+
+# use parallel (de)compressor
+app-alternatives/bzip2 lbzip2 -reference
+app-alternatives/gzip pigz -reference
+
+# required by www-servers/nginx-1.23.2-r3
+app-misc/mime-types nginx
+
+# graphical user interface
+app-emulation/virt-manager gui
+
+# enable terminal emulation support (needed for vimspector)
+app-editors/vim terminal

@@ -1,0 +1,22 @@
+--- a/src/vteseq.cc	2020-08-31 09:09:59.238602019 +0200
++++ b/src/vteseq.cc	2020-08-31 09:11:55.999823022 +0200
+@@ -454,18 +454,7 @@
+ void
+ Terminal::update_mouse_protocol() noexcept
+ {
+-        if (m_modes_private.XTERM_MOUSE_ANY_EVENT())
+-                m_mouse_tracking_mode = MouseTrackingMode::eALL_MOTION_TRACKING;
+-        else if (m_modes_private.XTERM_MOUSE_BUTTON_EVENT())
+-                m_mouse_tracking_mode = MouseTrackingMode::eCELL_MOTION_TRACKING;
+-        else if (m_modes_private.XTERM_MOUSE_VT220_HIGHLIGHT())
+-                m_mouse_tracking_mode = MouseTrackingMode::eHILITE_TRACKING;
+-        else if (m_modes_private.XTERM_MOUSE_VT220())
+-                m_mouse_tracking_mode = MouseTrackingMode::eSEND_XY_ON_BUTTON;
+-        else if (m_modes_private.XTERM_MOUSE_X10())
+-                m_mouse_tracking_mode = MouseTrackingMode::eSEND_XY_ON_CLICK;
+-        else
+-                m_mouse_tracking_mode = MouseTrackingMode::eNONE;
++	m_mouse_tracking_mode = MouseTrackingMode::eNONE;
+
+         m_mouse_smooth_scroll_delta = 0.0;
+

@@ -1,0 +1,75 @@
+# upnp? ( expat )
+media-sound/mpd expat
+
+# mikmod? ( mod )
+media-libs/sdl2-mixer mod
+
+# x264? ( dec_av2 ) x265? ( dec_av2 )
+x11-wm/xpra dec_av2
+
+# linguas_nl_NL? ( ljr )
+net-p2p/bitcoin-qt ljr
+
+# smtp? ( libuv ) ssl? ( mbedtls )
+net-libs/libwebsockets libuv mbedtls
+
+# ruby_targets_ruby22? ( ruby )
+net-irc/epic5 ruby
+
+# sasl? ( ldap )
+net-fs/autofs ldap
+
+# qt5? ( !libnotify )
+media-plugins/audacious-plugins -libnotify
+
+# lm-sensors? ( opencl )
+net-misc/bfgminer opencl
+
+# spell? ( exactly-one-of ( aspell enchant hunspell ) )
+net-im/vacuum -enchant
+
+# timidity? ( midi )
+media-libs/sdl2-mixer midi
+
+# vnc? ( fbcon )
+# wayland? ( gles2-only )
+dev-libs/efl fbcon gles2-only
+
+# ogre? ( !opengl ) opengl? ( !ogre )
+dev-games/mygui -ogre
+
+# drm? ( gles2 )
+dev-libs/efl gles2
+
+# openal? ( wxwidgets )
+games-emulation/vbam wxwidgets
+
+# wayland? ( egl )
+media-libs/clutter egl
+
+# wayland? ( gles2 )
+media-libs/cogl gles2
+
+# wayland? ( gles2 )
+media-libs/libsdl2 gles2
+
+# pulseaudio? ( qt5 )
+media-libs/libprojectm qt5
+
+# ads? ( python )
+net-fs/samba python
+
+# required by "net-fs/samba-4.15.3-r1
+sys-libs/ldb python
+
+# !sound-server? ( !pipewire-alsa )
+media-video/pipewire sound-server
+
+# libnotify? ( gui )
+net-p2p/deluge gui
+
+# opengl? ( gui )
+games-board/gnubg gui
+
+# ffmpeg? ( gui ) jpeg? ( gui )
+media-gfx/netgen gui

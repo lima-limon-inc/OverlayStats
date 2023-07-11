@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <use>
+    <flag name="emf">Enable support for <pkg>media-libs/libemf</pkg></flag>
+    <flag name="pptx">Enable support for generating PowerPoint pptx files</flag>
+  </use>
+</pkgmetadata>

@@ -1,0 +1,9 @@
+# Calculate format=compiz protected ini(desktop.pdfreader-removing)==on merge=app-text/qpdfview
+
+#-ini(desktop.pdfreader-removing,)-#
+
+[Added Associations]
+!application/pdf=qpdfview.desktop=
+
+[Default Applications]
+!application/pdf=qpdfview.desktop=

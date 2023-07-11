@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>fabio.coatti@gmail.com</email>
+		<name>Fabio Coatti</name>
+	</maintainer>
+	<use>
+		<flag name="bash-completion">Enable bash-completion support</flag>
+		<flag name="fish-completion">Enable fish-completion support</flag>
+		<flag name="zsh-completion">Enable zsh-completion support</flag>
+	</use>
+	<longdescription>
+		Task is a task runner / build tool that aims to be simpler and
+		easier to use than, for example, GNU Make.
+    </longdescription>
+	<upstream>
+		<bugs-to>https://github.com/go-task/task/issues</bugs-to>
+		<changelog>https://taskfile.dev/changelog/</changelog>
+		<doc>https://taskfile.dev/usage/</doc>
+		<remote-id type="github">go-task/task</remote-id>
+	</upstream>
+</pkgmetadata>

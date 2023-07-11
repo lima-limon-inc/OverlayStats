@@ -1,0 +1,57 @@
+*uniloader-22.02.1 (25 Mar 2022)
+
+  25 Mar 2022; Agostino Sarubbo <ago@gentoo.org> +uniloader-22.02.1.ebuild,
+  -uniloader-21.04.8.ebuild:
+  app-metrics/uniloader: version bump to 22.02.1
+
+  10 Nov 2021; Agostino Sarubbo <ago@gentoo.org> -uniloader-21.04.6.ebuild:
+  app-metrics/uniloader: remove old
+
+*uniloader-21.04.8 (10 Nov 2021)
+
+  10 Nov 2021; Agostino Sarubbo <ago@gentoo.org> +uniloader-21.04.8.ebuild:
+  app-metrics/uniloader: version bump to 21.04.8
+
+*uniloader-21.04.6 (20 Sep 2021)
+
+  20 Sep 2021; Agostino Sarubbo <ago@gentoo.org> +uniloader-21.04.6.ebuild,
+  -uniloader-21.04.1.ebuild:
+  app-metrics/uniloader: version bump to 21.04.6 - remove old.
+
+*uniloader-21.04.1 (19 Apr 2021)
+
+  19 Apr 2021; Agostino Sarubbo <ago@gentoo.org> +uniloader-21.04.1.ebuild,
+  -uniloader-0.6.0.ebuild, -uniloader-0.6.5.ebuild, -uniloader-0.6.6.ebuild,
+  -uniloader-0.6.7.ebuild, -uniloader-0.7.5.ebuild, -uniloader-21.01.6.ebuild:
+  app-metrics/uniloader: version bump to 21.04.1 - remove old
+
+*uniloader-21.01.6 (12 Apr 2021)
+
+  12 Apr 2021; Agostino Sarubbo <ago@gentoo.org> +uniloader-21.01.6.ebuild:
+  app-metrics/uniloader: version bump to 21.01.6
+
+*uniloader-0.7.5 (09 Dec 2020)
+
+  09 Dec 2020; Agostino Sarubbo <ago@gentoo.org> +uniloader-0.7.5.ebuild:
+  app-metrics/uniloader: version bump to 0.7.5
+
+*uniloader-0.6.7 (11 Oct 2019)
+
+  11 Oct 2019; Agostino Sarubbo <ago@gentoo.org> +uniloader-0.6.7.ebuild:
+  app-metrics/uniloader: version bump to 0.6.7
+
+*uniloader-0.6.6 (01 Oct 2019)
+
+  01 Oct 2019; Agostino Sarubbo <ago@gentoo.org> +uniloader-0.6.6.ebuild:
+  app-metrics/uniloader: Version bump to 0.6.6
+
+*uniloader-0.6.5 (04 Sep 2019)
+
+  04 Sep 2019; Agostino Sarubbo <ago@gentoo.org> +uniloader-0.6.5.ebuild:
+  app-metrics/uniloader: Version bump to 0.6.5
+
+*uniloader-0.6.0 (02 May 2019)
+
+  02 May 2019; Agostino Sarubbo <ago@gentoo.org> +files/uniloader.confd,
+  +files/uniloader.initd, +metadata.xml, +uniloader-0.6.0.ebuild:
+  app-metrics/uniloader: First commit for queuemetrics/uniloader

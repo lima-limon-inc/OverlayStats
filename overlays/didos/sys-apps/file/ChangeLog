@@ -1,0 +1,12 @@
+*file-5.39-r4
+::srcshelton		add split-usr use flag
+*file-5.39-r3
+::gentoo			remove unused eclass and function, add musl patch
+::prototype99		only apply musl patch when using musl
+*file-5.39-r2
+::gentoo			general updates, update keywords, add bzip2, lzma, seccomp use flags
+::prototype99		remove 9999 code, make better use of built in variables, only apply seccomp patches when using seccomp
+*file-5.37-r2
+::gentoo			update copyright, keywords
+::prototype99		update python use flags
+::tgbugs-overlay	base ebuild

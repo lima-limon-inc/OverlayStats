@@ -1,0 +1,16 @@
+diff --color -Naur previous-9999-orig/src/paths.c previous-9999/src/paths.c
+--- previous-9999-orig/src/paths.c	2022-12-17 00:51:28.553835725 -0500
++++ previous-9999/src/paths.c	2022-12-17 00:51:59.484836159 -0500
+@@ -209,11 +209,7 @@
+ {
+ 	char *psHome;
+ 
+-	psHome = getenv("HOME");
+-	if (psHome)
+-	{
+-		sUserHomeDir = Str_Dup(psHome);
+-	}
++	sUserHomeDir = "/usr/share/previous";
+ #if defined(WIN32)
+ 	else
+ 	{

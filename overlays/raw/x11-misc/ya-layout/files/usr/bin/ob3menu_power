@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ -s /run/power.save ]; then
+	t=save
+	t1=restore
+	a=restore
+else
+	t=performance
+	t1=save
+	# keep min sockets, then min cores per max cache
+	a='sockets - cores - save'
+fi
+
+ask(){
+	echo "<item label='$1'><action name='execute'><prompt>$1</prompt><execute>$2</execute></action></item>"
+}
+
+orsudo(){
+	ask "$1" "bash -c &quot;$2 || sudo -A -- $2 &quot;"
+}
+
+echo "<openbox_pipe_menu><separator label='power:$t'/>
+<item label='$t1'><action name='Execute'><execute>sudo -n -- /usr/sbin/ya-nrg force $a</execute></action></item>
+<separator />"
+orsudo Reboot /sbin/reboot
+orsudo Off '/sbin/poweroff -i -h'
+[ -w '/sys/power/state' ] && for i in $(< /sys/power/state); do
+	ask "Suspend to $i" "/bin/bash -c &quot;echo $i &gt;/sys/power/state&quot;"
+done
+echo "</openbox_pipe_menu>"

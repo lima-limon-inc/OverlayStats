@@ -1,0 +1,11 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.textedit, kwrite)-#
+
+[Added Associations]
+text/plain=org.kde.kwrite.desktop;
+
+[Default Applications]
+text/plain=org.kde.kwrite.desktop;

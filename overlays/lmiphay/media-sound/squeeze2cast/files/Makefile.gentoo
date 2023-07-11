@@ -1,0 +1,26 @@
+# -*- makefile -*-
+DEF = -DNO_CODEC -DPB_FIELD_16BIT
+
+INC = \
+	-I/usr/include/nanopb \
+	-I/usr/include/upnp \
+	-I/usr/include/valgrind \
+	-I../squeezetiny \
+	-I../tools \
+	-I./inc
+
+LIB = -ljansson -lupnp -lixml -lthreadutil -lpthread -lssl -lcrypto -ldl -lm -lrt
+
+SRC = \
+	webserver.c util.c squeeze2cast.c castmessage.pb.c castcore.c cast_util.c \
+	../squeezetiny/utils.c ../squeezetiny/util_common.c ../squeezetiny/stream.c \
+	../squeezetiny/slimproto.c ../squeezetiny/output_mr.c ../squeezetiny/main.c \
+	../squeezetiny/decode.c ../squeezetiny/buffer.c \
+	../tools/log_util.c \
+	/usr/share/nanopb/pb_encode.c /usr/share/nanopb/pb_decode.c /usr/share/nanopb/pb_common.c \
+	/usr/share/mdnssd/mdnssd-min.c
+
+MYCFLAGS = -Wall -fPIC -ggdb -O2 $(DEF) $(INC)
+
+all:
+	$(CC) $(CFLAGS) $(MYCFLAGS) -o squeeze2cast $(SRC) $(LIB) $(LDFLAGS)

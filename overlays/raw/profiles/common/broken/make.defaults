@@ -1,0 +1,12 @@
+# if most of gcc optimization broken
+
+USE="-modules -pgo -lto"
+LIRC_DEVICES="userspace"
+
+# reasonable fast by default
+MAKEOPTS="-j2 -s"
+#PYTHON_TARGETS="python2_7"
+
+# some -O2
+_FLAGS="$_FLAGS -finline-small-functions -findirect-inlining"
+#LDFLAGS="-Wl,-O1 -Wl,--as-needed -Wl,--hash-style=gnu -Wl,--sort-common"

@@ -1,0 +1,5 @@
+  21 Nov 2021; AstroFloyd <AstroFloyd@gmail.com> -ChangeLog,
+  -files/Doxyfile.patch, -files/Doxyfile_man.patch,
+  -gtk-fortran-2.9999-r1.ebuild, -gtk-fortran-3.9999-r1.ebuild,
+  -gtk-fortran-3.9999-r2.ebuild, metadata.xml:
+  x11-libs/gtk-fortran: remove package.

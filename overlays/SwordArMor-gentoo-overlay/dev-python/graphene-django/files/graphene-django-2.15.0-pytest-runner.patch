@@ -1,0 +1,12 @@
+--- a/setup.py	2021-09-20 18:33:44.985238371 +0200
++++ b/setup.py	2021-09-20 18:32:49.889432686 +0200
+@@ -68,8 +68,7 @@
+         "promise>=2.1",
+         "text-unidecode",
+     ],
+-    setup_requires=["pytest-runner"],
+-    tests_require=tests_require,
++    tests_require=tests_require + ["pytest-runner"],
+     rest_framework_require=rest_framework_require,
+     extras_require={
+         "test": tests_require,

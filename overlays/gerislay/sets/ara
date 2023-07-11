@@ -1,0 +1,8 @@
+dev-python/cython
+dev-util/meson
+dev-libs/boost
+dev-python/graph-tool
+dev-python/pydot
+sys-devel/llvm:14
+sys-devel/clang:14
+sci-mathematics/z3

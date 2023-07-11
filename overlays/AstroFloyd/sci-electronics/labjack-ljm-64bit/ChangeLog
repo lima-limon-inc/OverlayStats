@@ -1,0 +1,33 @@
+*labjack-ljm-64bit-20171221-r3 (10 Jan 2022)
+
+  10 Jan 2022; AstroFloyd <AstroFloyd@gmail.com>
+  +labjack-ljm-64bit-20171221-r3.ebuild, -labjack-ljm-64bit-20171221-r1.ebuild,
+  -labjack-ljm-64bit-20171221-r2.ebuild, -labjack-ljm-64bit-20171221.ebuild:
+  sci-electronics/labjack-ljm-64bit: revision bump to v20171221-r3.
+
+*labjack-ljm-64bit-20171221-r2 (09 Dec 2020)
+
+  09 Dec 2020; AstroFloyd <AstroFloyd@gmail.com>
+  +labjack-ljm-64bit-20171221-r2.ebuild:
+  sci-electronics/labjack-ljm-64bit: revision bump to v20171221-r2.
+
+*labjack-ljm-64bit-20171221-r1 (10 Nov 2020)
+
+  10 Nov 2020; AstroFloyd <AstroFloyd@gmail.com>
+  +labjack-ljm-64bit-20171221-r1.ebuild, labjack-ljm-64bit-20171221.ebuild:
+  sci-electronics/labjack-ljm-64bit: revision bump to v20171221-r1.
+
+  30 Apr 2018; AstroFloyd <AstroFloyd@gmail.com>
+  labjack-ljm-64bit-20171221.ebuild:
+  sci-electronics/labjack-ljm-64bit: Remove lingering symlink and directory
+
+  30 Apr 2018; AstroFloyd <AstroFloyd@gmail.com>
+  labjack-ljm-64bit-20171221.ebuild:
+  sci-electronics/labjack-ljm-64bit: Install in /usr/local/...; make symlinks to
+  /usr/...
+
+*labjack-ljm-64bit-20171221 (30 Apr 2018)
+
+  30 Apr 2018; AstroFloyd <AstroFloyd@gmail.com>
+  +labjack-ljm-64bit-20171221.ebuild, +metadata.xml:
+  sci-electronics/labjack-ljm-64bit: Initial ebuild for v20171221

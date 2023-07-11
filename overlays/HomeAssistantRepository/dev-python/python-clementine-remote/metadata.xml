@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">python-clementine-remote</remote-id>
+    <remote-id type="github">jjmontesl/python-clementine-remote</remote-id>
+    <maintainer status="unknown">
+      <email>jjmontes@gmail.com</email>
+      <name>Jose Juan Montes</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>lssndrbarbieri@gmail.com</email>
+		<name>Alessandro Barbieri</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/Alessandro-Barbieri/fortunes-warhammer/issues</bugs-to>
+		<remote-id type="github">Alessandro-Barbieri/fortunes-warhammer</remote-id>
+		<maintainer>
+			<email>lssndrbarbieri@gmail.com</email>
+			<name>Alessandro Barbieri</name>
+		</maintainer>
+	</upstream>
+</pkgmetadata>

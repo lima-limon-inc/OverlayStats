@@ -1,0 +1,11 @@
+# ====================[ package.mask                       ]====================
+#
+# --------------------( SYNOPSIS                           )--------------------
+# List of locally provided atoms to be hard-masked. Too fast&furious users may
+# unmask atoms by adding an equivalent line to "/etc/portage/package.unmask".
+
+# ....................{ BROKEN                             }....................
+
+# ....................{ UNSTABLE                           }....................
+# Ditto for the SDL1 repository.
+~media-libs/libsdl-1.2.9999

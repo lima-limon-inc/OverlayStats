@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+# Copyright 2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+extra_stopped_commands="debug"
+
+description="Linode Longview monitoring client"
+description_debug="Start Longview in debug mode"
+
+depend() {
+	use net
+}
+
+start() {
+	ebegin "Starting Longview"
+	start-stop-daemon --start --pidfile /var/run/longview.pid --exec /opt/linode/longview/Linode/Longview.pl
+	eend $?
+}
+
+debug() {
+	ebegin "Starting Longview in debug mode"
+	start-stop-daemon --start --pidfile /var/run/longview.pid --exec /opt/linode/longview/Linode/Longview.pl -- Debug
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping Longview"
+	start-stop-daemon --stop --pidfile /var/run/longview.pid --exec /opt/linode/longview/Linode/Longview.pl
+	eend $?
+}

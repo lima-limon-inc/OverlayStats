@@ -1,0 +1,147 @@
+# Jack Todaro <solpeth@posteo.org> (2023-06-30)
+# Last rites dead packages for removal within 30 days.
+dev-haskell/conduit-connection
+dev-haskell/simpleirc
+dev-haskell/smtp-mail
+
+# Jack Todaro <solpeth@posteo.org> (2023-07-10)
+# No reverse dependencies left. Deprecated upstream.
+# Masked for removal.
+#
+# Removal: 2023-08-09.
+dev-haskell/aeson-compat
+
+# Jack Todaro <solpeth@posteo.org> (2023-06-30)
+# Last rites dead packages for removal within 30 days.
+dev-haskell/conduit-connection
+dev-haskell/simpleirc
+dev-haskell/smtp-mail
+
+# Jack Todaro <solpeth@posteo.org> (2023-07-03)
+# Masked for removal in 30 days. Dead package with reverse dependencies
+# in the process of migrating over to crypton-connection.
+#
+# ::gentoo only users will not be affected by this mask, whereas ::haskell
+# users will be. This is the intended behaviour.
+#
+# Removal: 2023-08-02.
+=dev-haskell/connection-0.3.1-r1
+
+# Jack Todaro <solpeth@posteo.org> (2023-06-30)
+# Last rites dead packages for removal within 30 days.
+dev-haskell/conduit-connection
+dev-haskell/simpleirc
+dev-haskell/smtp-mail
+
+# hololeap <hololeap@protonmail.com> (2023-06-16)
+# Package does not appear to be buildable on linux and is strictly for
+# iOS.
+# See: <https://hackage.haskell.org/package/jsaddle-wkwebview-0.9.8.2/jsaddle-wkwebview.cabal>
+# Masked for removal in 30 days.
+dev-haskell/jsaddle-wkwebview
+
+# hololeap <hololeap@protonmail.com> (2023-03-01)
+# Not buildable on ghc-9.2
+# Masking until it is
+dev-haskell/hls-tactics-plugin
+
+# hololeap <hololeap@protonmail.com> (2023-02-27)
+# These currently depend on an old version of ghc-exactprint, which is
+# incompatible with ghc-9.2
+# See e.g. <https://github.com/lspitzner/brittany/pull/366>
+dev-haskell/brittany
+dev-haskell/hls-brittany-plugin
+dev-haskell/hls-haddock-comments-plugin
+dev-haskell/hls-class-plugin
+
+# hololeap <hololeap@protonmail.com> (2022-12-30)
+# Depends on old version of ghcide
+dev-haskell/hls-call-hierarchy-plugin
+
+# hololeap <hololeap@protonmail.com> (2022-12-29)
+# Many packages still depend on network-uri<2.7
+>=dev-haskell/network-uri-2.7
+
+# hololeap <hololeap@protonmail.com> (2022-11-13)
+# Needs patching to build with current dev-haskell/hnix
+dev-util/dhall-nix
+
+# hololeap <hololeap@protonmail.com> (2022-11-12)
+# Needs extensive patching to be compatible with modern hashable.
+dev-haskell/liquidhaskell
+
+# hololeap <hololeap@protonmail.com> (2022-11-11)
+# This version breaks the normal version scheme and seems to be a mistake.
+# Hackage doesn't allow for removal of versions that have already been
+# uploaded so it is masked to prevent accidental usage.
+=dev-haskell/liquid-fixpoint-8.10.7
+
+# hololeap <hololeap@protonmail.com> (2022-09-22)
+# dev-haskell/stan does not build on >=ghc-9.0 and needs extensive patching or
+# a rewrite to do so.
+# See: <https://github.com/kowainik/stan/issues/423>
+dev-haskell/stan
+dev-haskell/hls-stan-plugin
+
+# hololeap <hololeap@protonmail.com> (2022-09-01)
+# doctest-parallel does not currently work with Setup.hs (used internally by
+# haskell-cabal.eclass)
+# See: <https://github.com/martijnbastiaan/doctest-parallel/issues/45>
+dev-haskell/doctest-parallel
+
+# Jack Todaro <solpeth@posteo.org> (2020-07-20)
+# Depends on pipes-text, which is masked.
+dev-haskell/zxcvbn-hs
+
+# hololeap <hololeap@protonmail.com> (2022-03-03)
+# >=random-fu-0.3.0.0 is needed to compile on >=base-4.15, but the latest
+# version of lambdabot-core needs <random-fu-0.3
+# Mask lambdabot and related packages until they are updated
+dev-haskell/goa
+dev-haskell/lambdabot-core
+dev-haskell/lambdabot-haskell-plugins
+dev-haskell/lambdabot-irc-plugins
+dev-haskell/lambdabot-misc-plugins
+dev-haskell/lambdabot-novelty-plugins
+dev-haskell/lambdabot-reference-plugins
+dev-haskell/lambdabot-social-plugins
+net-irc/lambdabot
+
+# hololeap <hololeap@protonmail.com> (2022-02-26)
+# Needs patching in order to compile in current ecosystem.
+dev-haskell/pipes-cereal
+dev-haskell/pipes-network
+dev-haskell/pipes-text
+dev-haskell/pipes-zlib
+dev-haskell/ihaskell-diagrams
+
+# hololeap <hololeap@protonmail.com> (2022-02-22)
+# gi-gtk-4 is not currently used and will cause conflicts
+>=dev-haskell/gi-gtk-4
+>=dev-haskell/gi-gdk-4
+>=dev-haskell/gi-gdkx11-4
+dev-haskell/gi-gsk
+
+# hololeap <hololeap@protonmail.com> (2022-02-16)
+# Needs patching to build with ghc-9.0.2
+dev-haskell/beam-automigrate
+
+# hololeap <hololeap@protonmail.com> (2022-02-12)
+# Needs patching to build with current optparse-applicative
+dev-haskell/hi
+
+# hololeap <hololeap@protonmail.com> (2022-01-21)
+# Needs extensive patching in order to build on ghc-9.0.2
+dev-util/hdocs
+
+# hololeap <hololeap@protonmail.com> (2021-05-12)
+# dev-lang/purescript-0.14.1 requires
+# ~dev-haskell/language-javascript-0.7.0.0
+# Mask any versions higher than that until purescript bumps its dependencies.
+>=dev-haskell/language-javascript-0.7.0.1
+
+# P.B. Lecavalier <pbl.ltx@gmail.com> (2020-01-01)
+# Various unrelated packages and what causes the conflict with newer version.
+>=dev-haskell/hsemail-2
+>=dev-haskell/ilist-0.4.0.0
+>=dev-haskell/socket-0.8

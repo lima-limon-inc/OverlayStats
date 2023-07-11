@@ -1,0 +1,16 @@
+BDEPEND=sys-devel/gnuconfig >=app-portage/elt-patches-20170815 || ( >=sys-devel/automake-1.16.5:1.16 ) >=sys-devel/autoconf-2.71-r5 >=sys-devel/libtool-2.4.7
+DEFINED_PHASES=configure prepare
+DEPEND=dev-libs/libgcrypt app-crypt/libb2 x11-libs/gtk+:3 sys-libs/zlib nettle? ( dev-libs/nettle ) openssl? ( dev-libs/openssl ) mbedtls? ( net-libs/mbedtls ) caja? ( mate-base/caja ) nautilus? ( gnome-base/nautilus ) nemo? ( gnome-extra/nemo ) thunar? ( xfce-base/thunar )
+DESCRIPTION=A cross-platform desktop utility for computing message digests or checksums
+EAPI=8
+HOMEPAGE=https://gtkhash.org/
+INHERIT=autotools
+IUSE=nettle +openssl mbedtls caja nautilus nemo thunar
+KEYWORDS=~amd64 ~x86
+LICENSE=GPL-2
+RDEPEND=dev-libs/libgcrypt app-crypt/libb2 x11-libs/gtk+:3 sys-libs/zlib nettle? ( dev-libs/nettle ) openssl? ( dev-libs/openssl ) mbedtls? ( net-libs/mbedtls ) caja? ( mate-base/caja ) nautilus? ( gnome-base/nautilus ) nemo? ( gnome-extra/nemo ) thunar? ( xfce-base/thunar )
+RESTRICT=mirror
+SLOT=0
+SRC_URI=https://github.com/tristanheaven/gtkhash/archive/refs/tags/v1.5.tar.gz -> gtkhash-1.5.tar.gz
+_eclasses_=gnuconfig	b6b3e92f8b8c996400074b5f61a59256	toolchain-funcs	513c31b3346458ed1f3878b57da6d61c	multilib	c19072c3cd7ac5cb21de013f7e9832e0	libtool	9d3a9a889a6fa62ae794f817c156491b	autotools	6ae9a4347149b19a112caa1182d03bde
+_md5_=947e57e7c24c94c511de0e449f3046fd

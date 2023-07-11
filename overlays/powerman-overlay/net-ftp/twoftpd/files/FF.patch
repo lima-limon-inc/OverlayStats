@@ -1,0 +1,12 @@
+diff -uNr a/main.c b/main.c
+--- a/main.c	2006-04-19 02:47:56.000000000 +0300
++++ b/main.c	2007-12-16 18:06:08.000000000 +0200
+@@ -119,8 +119,6 @@
+       obuf_flush(&outbuf);
+       saw_esc_respond = 0;
+     }
+-    else if (*byte == TELNET_IAC)
+-      saw_esc = 1;
+     else if (*byte == LF)
+       break;
+     else

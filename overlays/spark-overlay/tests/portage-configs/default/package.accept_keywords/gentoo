@@ -1,0 +1,3 @@
+# Accept keywords for packages in ::gentoo needed by ebuilds in this overlay
+dev-java/jcip-annotations::gentoo
+dev-java/openjfx::gentoo

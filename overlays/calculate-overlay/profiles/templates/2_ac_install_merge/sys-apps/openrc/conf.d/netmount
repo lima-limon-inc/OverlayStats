@@ -1,0 +1,4 @@
+# Calculate format=openrc ini(container.type)==desktop
+
+rc_need="net"
+rc_keyword="!-lxc"

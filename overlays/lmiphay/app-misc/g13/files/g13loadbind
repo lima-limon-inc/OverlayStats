@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cmdpipe=/run/g13-0
+
+if [ -p "$cmdpipe" ] ; then
+    cat "$*" >$cmdpipe
+    exit 0
+else
+    echo "$(basename $0): $cmdpipe not found - is the g13 service running?"
+    exit 1
+fi

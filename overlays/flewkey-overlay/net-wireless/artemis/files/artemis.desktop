@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Artemis
+Type=Application
+StartupWMClass=artemis3
+Exec=artemis
+Terminal=false
+Icon=artemis3

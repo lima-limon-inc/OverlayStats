@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>waebbl-gentoo@posteo.net</email>
+    <name>Bernd Waibel</name>
+  </maintainer>
+  <longdescription>
+    Meta package to pull in all VulkanSceneGraph related packages.
+    The package does not use the FetchContent mechanism, but pulls
+    in all dependent libraries.
+  </longdescription>
+  <use>
+    <flag name="assimp">
+      Use <pkg>media-libs/assimp</pkg> with vsgXchange
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">vsg-dev/vsgFramework</remote-id>
+  </upstream>
+</pkgmetadata>

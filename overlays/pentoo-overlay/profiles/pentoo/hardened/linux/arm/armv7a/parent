@@ -1,0 +1,4 @@
+gentoo:targets/desktop
+gentoo:default/linux/arm/17.0/armv7a/hardened
+../../base
+pentoo:pentoo/base

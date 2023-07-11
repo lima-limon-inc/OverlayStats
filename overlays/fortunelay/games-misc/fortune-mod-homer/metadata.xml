@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>lssndrbarbieri@gmail.com</email>
+		<name>Alessandro Barbieri</name>
+	</maintainer>
+	<longdescription>
+INTRO
+
+	In 1999, Fox published a one-a-day calendar of Homer Simpson
+quotes.  On the back of each page was the name of the episode from the
+quote came, providing us fanatics with some fun trivia.  At some
+point, I decided that it'd be nice to have all of those quotes in a
+file parsable by `fortune`.  So, you get what we have here.
+	</longdescription>
+	<upstream>
+		<maintainer>
+			<email>crcarter@cs.indiana.edu</email>
+			<name>Clayton R. Carter</name>
+		</maintainer>
+	</upstream>
+</pkgmetadata>

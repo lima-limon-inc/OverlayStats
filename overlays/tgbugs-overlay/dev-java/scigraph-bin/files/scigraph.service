@@ -1,0 +1,53 @@
+[Unit]
+Description=SciGraph webservices
+Requires=xvfb.service
+After=network.target xvfb.service
+
+[Service]
+User=scigraph
+Group=scigraph
+LimitNOFILE=1048576
+WorkingDirectory=/var/lib/scigraph
+StandardOutput=syslog
+StandardError=syslog
+Environment=DISPLAY=:5
+Environment=SERVICES_LOG_LOC=/var/log/%N
+Environment=SERVICES_CONFIG=/var/lib/%N/services.yaml
+ExecStart=/usr/bin/java \
+-server \
+-d64 \
+-Djava.net.preferIPv4Stack=true \
+-XX:+UseNUMA \
+-XX:+UseCompressedOops \
+-XX:+UseParNewGC \
+-XX:+UseConcMarkSweepGC \
+-XX:+CMSParallelRemarkEnabled \
+-XX:+AggressiveOpts \
+-XX:+UseFastAccessorMethods \
+-XX:+UseBiasedLocking \
+-XX:NewRatio=2 \
+-Xms4G \
+-Xmx4G \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=${SERVICES_LOG_LOC}/head.dump \
+-XX:+PrintGC \
+-Xloggc:${SERVICES_LOG_LOC}/gc.log \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:GCLogFileSize=20M \
+-XX:NumberOfGCLogFiles=15 \
+-XX:+UseGCLogFileRotation \
+-XX:+PrintGCDateStamps \
+-XX:+PrintPromotionFailure \
+-Dfile.encoding=UTF-8 \
+-Djava.security.egd=file:/dev/urandom \
+-Djava.rmi.server.hostname=%H \
+-XX:-ReduceInitialCardMarks \
+-jar "/usr/share/scigraph-services/scigraph-services.jar" server ${SERVICES_CONFIG}
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

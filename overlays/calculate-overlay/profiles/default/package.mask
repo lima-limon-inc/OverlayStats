@@ -1,0 +1,14 @@
+# mask portage wgetpaste
+>app-text/wgetpaste-2.25-r4
+
+# prevent automagic depends
+sys-libs/db:6.0
+
+# not compiled
+=dev-libs/log4cxx-1.0.0
+=mate-base/mate-control-center-1.26.0-r2
+=net-libs/pjproject-2.13
+=net-libs/pjproject-2.13-r1
+=sci-libs/cifparse-obj-7.105
+=sys-apps/ucspi-tcp-0.88-r19
+

@@ -1,0 +1,118 @@
+# Calculate name=world format=world
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS, CCM, CDS, CLS, CSS)!=#
+app-arch/lbzip2
+app-arch/pigz
+app-misc/tmux
+app-text/tree
+sys-apps/texinfo
+sys-auth/pam_update
+sys-fs/btrfs-progs
+sys-fs/cryptsetup
+sys-fs/f2fs-tools
+sys-fs/xfsprogs
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS, CCM, CDS, CLS)!=#
+app-admin/logrotate
+app-admin/syslog-ng
+sys-apps/ethtool
+sys-apps/usbutils
+sys-process/cronie
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS)!=#
+sys-apps/inxi
+sys-fs/mdadm
+sys-process/htop
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS, CDS)!=#
+app-admin/hddtemp
+app-admin/sudo
+app-admin/testdisk
+app-cdr/cdrtools
+app-cdr/dvd+rw-tools
+sys-apps/acl
+sys-apps/dmidecode
+sys-apps/lm-sensors
+sys-apps/memtest86+
+sys-apps/pciutils
+sys-apps/pv
+sys-apps/smartmontools
+sys-fs/dmraid
+sys-fs/dosfstools
+sys-fs/mtools
+sys-fs/ncdu
+sys-process/lsof
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS)!=#
+app-arch/p7zip
+app-arch/rar
+app-arch/unzip
+sys-apps/hdparm
+sys-apps/keyexec
+sys-apps/pcmciautils
+sys-apps/usb_modeswitch
+sys-fs/exfatprogs
+sys-fs/ntfs3g
+sys-power/acpi
+sys-power/acpid
+sys-power/cpupower
+sys-power/powernowd
+sys-power/powertop
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDL, CLDM, CLDX, CLDXS)!=#
+sys-power/upower
+#in#
+
+#?in(os_linux_pkglist, CLDC, CLDL, CLDM, CLDX, CLDXS)!=#
+app-pda/usbmuxd
+dev-python/gst-python
+sys-block/gparted
+#для корректной поддержки мультимедиа клавиатур
+x11-misc/wmctrl
+#in#
+
+#?in(os_linux_pkglist, CLDL, CLDX, CLDXS)!=#
+sys-apps/qdirstat
+#in#
+
+#?in(os_linux_pkglist, CCM, CDS)!=#
+sys-process/iotop
+#in#
+
+#?in(os_linux_pkglist, CLDC, CLDM)!=#
+x11-misc/parcellite
+#in#
+
+#?in(os_linux_pkglist, CLD)!=#
+sys-block/partitionmanager
+#in#
+
+#?in(os_linux_pkglist, CLDC)!=#
+gnome-base/dconf-editor
+#in#
+
+#?in(os_linux_pkglist, CDS)!=#
+app-antivirus/clamav
+app-i18n/enca
+app-portage/ufed
+dev-python/psycopg
+dev-python/pyserial
+net-misc/dhcp
+sci-libs/fftw
+sys-apps/ipmitool
+sys-apps/iproute2
+sys-apps/kexec-tools
+sys-block/parted
+sys-block/tw_cli
+#in#
+
+#?in(os_linux_pkglist, CCM)!=#
+app-backup/btrbk
+app-containers/lxc
+sys-apps/calculate-access
+#in#

@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Midnight Commander
+TryExec=/usr/bin/mc
+Exec=/usr/bin/mc
+Path=~
+Terminal=true
+Categories=FileManager;Utility;
+StartupNotify=false
+GenericName=
+Icon=system-file-manager

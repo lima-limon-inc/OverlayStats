@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">python-izone</remote-id>
+    <remote-id type="github">Swamp-Ig/pizone</remote-id>
+    <maintainer status="unknown">
+      <email>pypl@ninjateaparty.com</email>
+      <name>Penny Wood</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

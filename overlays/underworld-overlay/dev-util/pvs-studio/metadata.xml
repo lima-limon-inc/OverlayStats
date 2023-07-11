@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>eridan200@mail.ru</email>
+		<name>Eridan Domoratskiy</name>
+	</maintainer>
+	<longdescription lang="en">
+		PVS‑Studio is a static analyzer on guard of code quality, security (SAST), and code safety.
+	</longdescription>
+	<use>
+		<flag name="bash-completion">Add bash completions</flag>
+	</use>
+</pkgmetadata>

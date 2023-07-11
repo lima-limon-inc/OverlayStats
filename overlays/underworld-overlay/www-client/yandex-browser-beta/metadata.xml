@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>golbah@yandex.ru</email>
+		<name>Mikahil Golbakh</name>
+	</maintainer>
+	<maintainer type="person">
+		<email>eridan200@mail.ru</email>
+		<name>Eridan Domoratskiy</name>
+	</maintainer>
+	<longdescription lang="en">
+		Yandex Browser is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.
+	</longdescription>
+	<use>
+		<flag name="ffmpeg-codecs">Add support for video and audio in the HTML5 format</flag>
+	</use>
+</pkgmetadata>

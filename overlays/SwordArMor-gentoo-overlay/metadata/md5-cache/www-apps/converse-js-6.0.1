@@ -1,0 +1,15 @@
+DEFINED_PHASES=install postinst prepare prerm setup
+DEPEND=omemo? ( www-apps/libsignal-protocol-javascript ) app-admin/webapp-config
+DESCRIPTION=Free and open-source browser XMPP chat client
+EAPI=7
+HOMEPAGE=https://conversejs.org/
+INHERIT=savedconfig webapp
+IUSE=+omemo savedconfig vhosts
+KEYWORDS=~amd64 ~x86
+LICENSE=MPL-2.0
+RDEPEND=omemo? ( www-apps/libsignal-protocol-javascript ) app-admin/webapp-config
+REQUIRED_USE=omemo? ( savedconfig )
+SLOT=6.0.1
+SRC_URI=https://github.com/conversejs/converse.js/releases/download/v6.0.1/converse.js-6.0.1.tgz
+_eclasses_=portability	964493f201f557a5c6baccacccf45ee2	savedconfig	8b5f9d995a970e49cd427c55d5840285	webapp	1aad5c010cfdf11d0376c80467b0de4c
+_md5_=d7b40b9e6d719b2671c463a0c0e50d3e

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">aioswitcher</remote-id>
+    <remote-id type="github">tomerfi/aioswitcher</remote-id>
+    <maintainer status="unknown">
+      <email>tomer@tomfi.info</email>
+      <name>Shay Levy</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

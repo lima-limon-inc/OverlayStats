@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="dynamic">Build Clash binaries with GHC flag `-dynamic`. This flag should only be used for packaging purposes. Installations using cabal should use `--enable-executable-dynamic`!</flag>
+		<flag name="ghc-paths">Locate the GHC core libraries using the `ghc-paths` package.  Note: this flag may make binaries less relocatable, by hard-coding an absolute path to the core libraries.</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">clash-ghc</remote-id>
+		<remote-id type="github">clash-lang/clash-compiler</remote-id>
+	</upstream>
+</pkgmetadata>

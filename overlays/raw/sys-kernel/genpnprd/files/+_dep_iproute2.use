@@ -1,0 +1,1 @@
+RDEPEND+=' iproute2? ( sys-apps/iproute2 )'

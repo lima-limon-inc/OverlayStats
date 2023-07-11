@@ -1,0 +1,26 @@
+#!/bin/sh -x
+PROFILE="@PROFILE@"
+
+export WINEARCH="win32"
+export WINECELLAR="$HOME/Wine"
+export WINEPREFIX="$WINECELLAR/$PROFILE"
+
+export REAL_HOME="$HOME"
+export HOME="$WINEPREFIX"
+export XDG_CONFIG_HOME="$WINEPREFIX/.config"
+export XDG_DATA_HOME="$WINEPREFIX/.local"
+
+export WINETRICKS_CACHE="$WINEPREFIX/drive_c/wine"
+export W_CACHE="$WINETRICKS_CACHE"
+export W_PREFIXES_ROOT="$HOME/Wine"
+#export WINEDEBUG=-all
+
+cd "$WINETRICKS_CACHE"
+
+wget -nc http://winetricks.org/winetricks || exit 1
+
+
+chmod 755 winetricks
+
+exec ./winetricks --no-isolate --no-clean "$@"
+

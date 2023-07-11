@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="buildwebsite">Build the hakyll website</flag>
+		<flag name="checkexternal">Include external link checking</flag>
+		<flag name="previewserver">Include the preview server</flag>
+		<flag name="usepandoc">Include Pandoc support</flag>
+		<flag name="watchserver">Include the watch server</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">hakyll</remote-id>
+		<remote-id type="github">jaspervdj/hakyll</remote-id>
+	</upstream>
+</pkgmetadata>

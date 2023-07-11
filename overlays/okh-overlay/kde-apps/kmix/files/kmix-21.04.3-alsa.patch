@@ -1,0 +1,30 @@
+diff --git a/backends/mixer_alsa9.cpp b/backends/mixer_alsa9.cpp
+index 458cd3a5..5955e9af 100644
+--- a/backends/mixer_alsa9.cpp
++++ b/backends/mixer_alsa9.cpp
+@@ -305,7 +305,7 @@ int Mixer_ALSA::openAlsaDevice(const QString& devName)
+     }
+     const char* mixer_card_name =  snd_ctl_card_info_get_name( hw_info );
+     //QString mixer_card_name_QString = mixer_card_name;
+-    registerCard(mixer_card_name);
++    registerCard(mixer_card_name, devName.mid(devName.indexOf(':') + 1).toUInt() + 1);
+ 
+ 
+     snd_ctl_close( ctl_handle );
+diff --git a/backends/mixer_backend.h b/backends/mixer_backend.h
+index eeb932f4..9ed9593b 100644
+--- a/backends/mixer_backend.h
++++ b/backends/mixer_backend.h
+@@ -189,10 +189,10 @@ protected:
+ 	 *
+ 	 * @param cardBaseName
+ 	 */
+-  void registerCard(QString cardBaseName)
++  void registerCard(QString cardBaseName, unsigned discriminator = 0)
+   {
+ 		m_mixerName = cardBaseName;
+-		int cardDiscriminator = 1 + s_mixerNums[cardBaseName];
++        int cardDiscriminator = discriminator == 0? 1 + s_mixerNums[cardBaseName] : discriminator;
+ 		qCDebug(KMIX_LOG) << "cardBaseName=" << cardBaseName << ", cardDiscriminator=" << cardDiscriminator;
+ 		_cardInstance = cardDiscriminator;
+ 		_cardRegistered = true;

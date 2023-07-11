@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<repositories xmlns="" version="1.0">
+    <repo quality="experimental" status="unofficial">
+        <name>wichtounet</name>
+        <description lang="en">Baptiste Wicht's Gentoo Overlay</description>
+        <homepage>http://github.com/wichtounet/wichtounet-overlay</homepage>
+        <owner type="person">
+            <email>baptiste.wicht@gmail.com</email>
+            <name>Baptiste Wicht</name>
+        </owner>
+        <source type="git">git://github.com/wichtounet/wichtounet-overlay.git</source>
+        <feed>http://github.com/wichtounet/wichtounet-overlay/commits/master.atom</feed>
+    </repo>
+</repositories>

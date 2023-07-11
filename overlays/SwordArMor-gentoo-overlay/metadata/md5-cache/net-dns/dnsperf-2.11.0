@@ -1,0 +1,11 @@
+DEFINED_PHASES=-
+DEPEND=dev-libs/openssl dev-libs/concurrencykit net-libs/ldns net-libs/nghttp2
+DESCRIPTION=DNS Performance Testing Tools
+EAPI=8
+HOMEPAGE=https://www.dns-oarc.net/tools/dnsperf
+KEYWORDS=~amd64
+LICENSE=Apache-2.0
+RDEPEND=dev-libs/openssl dev-libs/concurrencykit net-libs/ldns net-libs/nghttp2
+SLOT=0
+SRC_URI=https://www.dns-oarc.net/files/dnsperf/dnsperf-2.11.0.tar.gz
+_md5_=3b28750e46811f5542e8307b5a7a37b5

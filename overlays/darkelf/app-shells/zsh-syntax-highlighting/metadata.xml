@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>neuron@mail.uni-paderborn.de</email>
+	<description>Primary maintainer</description>
+</maintainer>
+<longdescription>This package provides syntax highlighing for the shell zsh. It enables highlighing of commands whilst they are typed at a zsh prompt into an interactive terminal. This helps in reviewing commands before running them, particularly in catching syntax errors.</longdescription>
+<upstream>
+	<bugs-to>https://github.com/zsh-users/zsh-syntax-highlighting/issues</bugs-to>
+	<remote-id type="github">zsh-users/zsh-syntax-highlighting</remote-id>
+</upstream>
+</pkgmetadata>

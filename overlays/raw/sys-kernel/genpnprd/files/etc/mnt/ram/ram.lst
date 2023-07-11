@@ -1,0 +1,9 @@
+/tmp 777
+/var/tmp 777
+/var/log
+/var/lock
+/var/lib/xkb
+/var/lib/samba
+/var/cache
+/media
+/home

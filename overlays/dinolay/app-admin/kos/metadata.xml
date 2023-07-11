@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer type="person">
+        <email>ari.web.xyz@gmail.com</email>
+        <name>Ari Archer</name>
+    </maintainer>
+    <use>
+        <flag name="man">Install man pages</flag>
+        <flag name="gcc">Use GCC instead of clang</flag>
+        <flag name="clang">Use Clang instead of GCC</flag>
+        <flag name="strip">Strip output binary</flag>
+        <flag name="bash-completion">Install bash completions</flag>
+        <flag name="doc">Install extra documentation</flag>
+        <flag name="size">Build for size</flag>
+        <flag name="debug">Build with debug flags</flag>
+        <flag name="group-inherit">Inherit root user groups</flag>
+        <flag name="setenv">Modify environment variables to match of root</flag>
+        <flag name="speed">Build for speed</flag>
+        <flag name="lto">Enable link-time optimisation</flag>
+        <flag name="test">Test kos</flag>
+        <flag name="unsafe-group-validation">Don't validate groups of a user !!UNSAFE!!</flag>
+        <flag name="unsafe-password-validation">Don't validate password of a user !!UNSAFE!!</flag>
+        <flag name="safe">Disallow unsafe USE flags</flag>
+        <flag name="hardened">Harden output binary for security</flag>
+        <flag name="unsafe-password-echo">Echo password insted of hiding it !!UNSAFE!!</flag>
+        <flag name="valgrind">Enable valgring memory checks</flag>
+        <flag name="quiet">Disable logging of kos</flag>
+        <flag name="infinite-ask">Ask for password infinitely</flag>
+        <flag name="no-bypass-root-auth">Validate authentication for root</flag>
+        <flag name="stable">Make sure no unstability causing USE flags are used</flag>
+        <flag name="no-pipe">Disable piping support !!BREAKAGE!!</flag>
+        <flag name="vtable-harden-gcc">Adds -fvtable-verify=std hardening flag to GCC (not supported on all configurations)</flag>
+        <flag name="branch-harden-gcc">Adds -mindirect-branch -mfunction-return hardening flags to GCC</flag>
+        <flag name="fcf-harden-gcc">Adds -fcf-protection=full hardening flag to GCC</flag>
+        <flag name="no-remember-auth">Disables remembering of authentication</flag>
+        <flag name="short-grace-time">Make the grace period for remembering auth 1min rather than default 5min</flag>
+        <flag name="effective-id">Enable support for seteuid and setegid</flag>
+        <flag name="safe-remember-auth">Make rememberauth feature safe</flag>
+        <flag name="rememberauth-mkdir">Make the rememberauth dir if it doesn't exist</flag>
+    </use>
+    <decription>A simple SUID tool written in C++</decription>
+    <longdescription>
+        A simple SUID tool written in C++
+    </longdescription>
+</pkgmetadata>
+

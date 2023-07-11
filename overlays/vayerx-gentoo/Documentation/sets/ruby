@@ -1,0 +1,11 @@
+dev-ruby/addressable
+dev-ruby/bundler
+dev-ruby/mechanize
+dev-ruby/mocha
+dev-ruby/nokogiri
+dev-ruby/rake
+dev-ruby/rspec
+dev-ruby/rubygems
+dev-ruby/ruby-progressbar
+dev-ruby/zentest
+dev-util/cucumber

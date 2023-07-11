@@ -1,0 +1,11 @@
+dev-util/nvidia-cuda-sdk opencl -doc -examples
+dev-util/nvidia-cuda-toolkit profiler
+
+#arduino dep
+dev-util/astyle java
+
+dev-util/unicorn python
+dev-libs/unicorn-bindings python
+
+#depens on heavy qtwebkit
+dev-util/mobsf -pdf

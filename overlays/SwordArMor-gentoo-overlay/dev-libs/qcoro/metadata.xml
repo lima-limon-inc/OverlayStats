@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>alarig@swordarmor.fr</email>
+		<name>Alarig Le Lay</name>
+	</maintainer>
+	<use>
+		<flag name="asan">Build Address Sanitizer runtime</flag>
+		<flag name="network">Enable network support</flag>
+		<flag name="shared">Build shared libraries</flag>
+	</use>
+</pkgmetadata>

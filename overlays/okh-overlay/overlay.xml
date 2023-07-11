@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repositories version="1.0">
+<repo priority="50" status="unofficial">
+    <name>okh</name>
+    <description>Personal overlay with no special focus</description>
+    <owner>
+	<email>alex.forth(at)gmail.com</email>
+	<name>Olexiy Khokhlov</name>
+    </owner>
+    <source type="git">https://github.com/OlexiyKhokhlov/okh-overlay.git</source>
+    <feed>https://github.com/OlexiyKhokhlov/okh-overlay/commits/master.atom</feed>
+</repo>
+</repositories>

@@ -1,0 +1,22 @@
+# scripts are coerced with official install guide
+# https://docs.joinmastodon.org/admin/install/
+
+USER=mastodon
+USERHOME="/home/mastodon"
+INSTALLROOT="${USERHOME}/live"
+RBENV_ROOT="${USERHOME}/.rbenv"
+PATH="${RBENV_ROOT}/bin:${RBENV_ROOT}/shims:$PATH"
+
+# these are tuned to rather small values from defaults to suite compact instance
+# feel free to experiment
+DB_POOL=1
+SIDEKIQ_WORKERS=2
+
+STREAMING_PORT=4000
+STREAMING_WORKERS=1
+
+WEB_BIND=127.0.0.1
+WEB_PORT=3000
+# should be 0 (single process) or >1
+WEB_CONCURRENCY=0
+WEB_MAX_THREADS=2

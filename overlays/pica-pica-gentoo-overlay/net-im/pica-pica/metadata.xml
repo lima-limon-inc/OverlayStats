@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<use>
+	    <flag name="client">Enables build of pica-client</flag>
+		<flag name="node">Enables build of pica-node</flag>
+	</use>
+</pkgmetadata>
+

@@ -1,0 +1,93 @@
+# Calculate comment=# pkg(sys-apps/calculate-server)!=
+# vim: set syntax=sh
+#
+# Copyright 2016 Calculate Ltd. http://www.calculate-linux.org
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+
+# added for calculate server 2.2
+# FUNC: protect_server_files
+# DESC: protect server changed files from rewrite
+
+protect_server_files() {
+    local protected_files=(
+        "/etc/bind/named.conf"
+        "/etc/conf.d/sortmilter"
+        "/etc/dhcp/dhcpd.conf"
+        "/etc/dhcp/dhcp.ldap"
+        "/etc/dovecot/conf.d/10-auth.conf"
+        "/etc/dovecot/conf.d/10-logging.conf"
+        "/etc/dovecot/conf.d/10-mail.conf"
+        "/etc/dovecot/conf.d/10-master.conf"
+        "/etc/dovecot/conf.d/auth-ldap.conf.ext"
+        "/etc/dovecot/conf.d/auth-system.conf.ext"
+        "/etc/openldap/slapd.conf"
+        "/etc/dovecot/dovecot.conf"
+        "/etc/dovecot/dovecot-ldap.conf"
+        "/etc/jabber/ejabberd.cfg"
+        "/etc/jabber/ejabberd.yml"
+        "/etc/openldap/schema/dnszone.schema"
+        "/etc/openldap/schema/mail.schema"
+        "/etc/postfix/ldap-aliases.cf"
+        "/etc/postfix/ldap-aliases-gr.cf"
+        "/etc/postfix/ldap-aliases-repl.cf"
+        "/etc/postfix/ldap-recipient.cf"
+        "/etc/postfix/ldap-recipient-gr.cf"
+        "/etc/postfix/ldap-recipient-repl.cf"
+        "/etc/postfix/main.cf"
+        "/etc/procmailrc"
+        "/etc/proftpd/proftpd.conf"
+        "/etc/samba/smb.conf"
+        "/etc/squid/squid.conf"
+        "/etc/squid/squid.ldap"
+    )
+    local packages=(
+        "net-ftp/proftpd"
+        "net-fs/samba"
+        "net-mail/dovecot"
+        "net-misc/dhcp"
+        "net-dns/bind"
+        "mail-filter/procmail"
+        "net-im/ejabberd"
+        "mail-mta/postfix"
+        "net-nds/openldap"
+        "net-proxy/squid"
+    )
+    local install_pkg="${CATEGORY}/${PN}"
+    for pkg in ${packages[@]}
+    do
+        if [[ $pkg == $install_pkg ]]
+        then
+            for fn in ${protected_files[@]}
+            do
+	    	if [[ -f ${D}/$fn ]]
+		then
+			if [[ "$fn" == "/etc/openldap/slapd.conf" ]] && [[ $pkg == "net-nds/openldap" ]]
+			then
+				if [[ -f $fn ]]
+				then
+					contmd5="$(cat /var/db/pkg/net-nds/openldap-*/CONTENTS | grep " /etc/openldap/slapd.conf " | awk '{print $3}')"
+					curmd5="$(md5sum $fn | awk '{print $1}')"
+					if [[ $contmd5 != $curmd5 ]]
+					then
+						mv -- "${D}/$fn" "${D}/${fn}.origin"
+					fi
+				fi
+				cp -- "${D}/$fn" "${D}/${fn}.origin"
+			else
+				mv -- "${D}/$fn" "${D}/${fn}.origin"
+			fi
+		fi
+            done
+            break
+        fi
+    done
+}
+
+post_pkg_preinst() {
+    protect_server_files
+}

@@ -1,0 +1,24 @@
+# General
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+insert_final_newline = true
+tab_width = 4
+trim_trailing_whitespace = true
+
+[{.gitmodules,Makefile}]
+indent_style = tab
+
+[{*.html,*.json,*.xml,*.yml}]
+indent_size = 2
+tab_width = 2
+
+
+# Portage
+
+[{*.ebuild,*.eclass}]
+indent_style = tab

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>AstroFloyd@gmail.com</email>
+    <name>AstroFloyd</name>
+  </maintainer>
+  <use>
+    <flag name='doc-html'>Installs (~13Mb) of documentation as HTML</flag>
+    <flag name='doc-pdf'>Installs (~4.6Mb) of documentation as PDF</flag>
+  </use>
+</pkgmetadata>

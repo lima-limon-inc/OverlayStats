@@ -1,0 +1,29 @@
+#!/bin/sh
+
+PROFILE="@PROFILE@"
+
+export WINEARCH="win32"
+export WINECELLAR="$HOME/Wine"
+export WINEPREFIX="$WINECELLAR/$PROFILE"
+
+export REAL_HOME="$HOME"
+export HOME="$WINEPREFIX"
+export XDG_CONFIG_HOME="$WINEPREFIX/.config"
+export XDG_DATA_HOME="$WINEPREFIX/.local"
+
+
+cd "$WINEPREFIX"
+unset GIT_DIR
+
+if [ -e .git ]
+then
+ echo .git already exists
+ exit 1
+fi
+
+git init .
+git config user.email "$USER@localhost"
+git config user.name "$USER"
+git add -A .
+git commit --all --message "init"
+git gc

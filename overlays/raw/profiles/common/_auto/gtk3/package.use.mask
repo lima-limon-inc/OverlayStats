@@ -1,0 +1,4 @@
+media-libs/libmediaart -gtk qt5
+media-libs/opencv -gtk3 qt5
+net-analyzer/pinger -gtk3 gtk2
+dev-qt/qtwebkit -gstreamer # multimedia

@@ -1,0 +1,60 @@
+#!/sbin/openrc-run
+# Copyright 2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+basecommand="/usr/sbin/tailscaled"
+instanceName=${SVCNAME#*.}
+if [ x"$instanceName" = x"$SVCNAME" ]; then
+	unset instanceName
+	directory="/var/lib/tailscale"
+	command="$basecommand"
+else
+	interfaceName=$(expr substr "$instanceName" 1 11)
+	directory="/var/lib/tailscale/ex-instances.d/${instanceName}"
+	command="${directory}/bin.tailscaled"
+fi
+defaultTsConfig="/etc/default/tailscaled"
+
+name="tailscaled"
+description="Tailscale node agent"
+command_args="
+	-statedir $directory
+	-socket /run/tailscale/tailscaled.sock${instanceName:+.}${instanceName}
+	${interfaceName:+-tun tsi2}${interfaceName}
+	-port ${PORT:-0} ${FLAGS}"
+command_background=true
+pidfile="/run/tailscaled${instanceName:+.}${instanceName}.pid"
+output_log="/var/log/tailscale/tailscale${instanceName:+.}${instanceName}.log"
+error_log="$output_log"
+export TS_LOGS_DIR="$directory"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath -d -m 700 /var/log/tailscale
+	checkpath -d -m 700 $directory
+
+	/opt/bin/tailscaled.misconfiged.fix.sh
+	if [ x"$instanceName" != x ]; then
+		ln -sf "$basecommand" "$command" || exit 1
+	fi
+	${command} --cleanup $command_args >>${output_log} 2>>${error_log}
+}
+
+start() {
+	local tsConfig="${defaultTsConfig}${instanceName:+.}${instanceName}"
+	if [ ! -e "$tsConfig" ]; then
+		ewarn "configuration file for this instance doesn't exist, fallbacks to the default one."
+		ewarn "'$tsConfig' --> '${defaultTsConfig}'"
+		tsConfig=${defaultTsConfig}
+	fi
+	. "$defaultTsConfig"
+	default_start
+
+}
+
+stop_post() {
+	${command} --cleanup $command_args >>${output_log} 2>>${error_log}
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+PGChange is a Sqitch-like framework for managing changes in a PostgreSQL
+database.  Unlike Sqitch, it is PostgreSQL-specific, but it also supports
+multiple stable upgrade paths.  It was purpose build for the LedgerSMB
+project but could be used by other projects which manage multiple stable
+release branches.
+</longdescription>
+</pkgmetadata>

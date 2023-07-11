@@ -1,0 +1,5 @@
+#!/bin/sh
+tty=${PWD##*getty-}
+[ -c "/dev/$tty" ] || tty=tty1
+
+exec chpst -P /sbin/agetty 38400 $tty linux

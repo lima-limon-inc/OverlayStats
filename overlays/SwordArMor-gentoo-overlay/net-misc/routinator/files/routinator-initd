@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+# Copyright 2019-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+name="routinator daemon"
+description="An RPKI relying party software"
+command=/usr/bin/routinator
+command_args="--syslog --base-dir=${ROUTINATOR_BASEDIR} server
+${ROUTINATOR_OPTS}"
+pidfile="/run/${RC_SVCNAME}.pid"
+command_args_background="--detach --pid-file=${pidfile}"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath -d -m 0750 -o routinator:routinator "${ROUTINATOR_BASEDIR}"
+	if [ ! -d "${ROUTINATOR_BASEDIR}/repository" ] || \
+	   [ ! -d "${ROUTINATOR_BASEDIR}/tals" ]; then
+		${command} --base-dir=${ROUTINATOR_BASEDIR} init \
+			--decline-arin-rpa
+		chown -R routinator:routinator "${ROUTINATOR_BASEDIR}"/repository
+		chown -R routinator:routinator "${ROUTINATOR_BASEDIR}"/tals
+        fi
+}

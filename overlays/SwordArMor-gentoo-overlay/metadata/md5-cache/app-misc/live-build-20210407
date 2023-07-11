@@ -1,0 +1,11 @@
+DEFINED_PHASES=prepare
+DEPEND=dev-util/debootstrap
+DESCRIPTION=Debian live system build components
+EAPI=8
+HOMEPAGE=https://wiki.debian.org/DebianLive
+KEYWORDS=~amd64
+LICENSE=GPL-3
+RDEPEND=dev-util/debootstrap
+SLOT=0
+SRC_URI=mirror://debian/pool/main/l/live-build/live-build_20210407.tar.xz
+_md5_=5730b0a1c10421cb6ccd80d6041b351f

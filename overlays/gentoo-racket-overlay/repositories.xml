@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
+
+<repositories xmlns="" version="1.0">
+  <repo quality="experimental" status="unofficial">
+    <name>racket-overlay</name>
+    <description lang="en">Racket packages overlay</description>
+    <homepage>https://gitlab.com/gentoo-racket/gentoo-racket-overlay/</homepage>
+    <owner type="person">
+      <email>xgqt@gentoo.org</email>
+      <name>Maciej Barć</name>
+    </owner>
+    <source type="git">https://gitlab.com/gentoo-racket/gentoo-racket-overlay.git</source>
+    <source type="git">git+ssh://git@gitlab.com/gentoo-racket/gentoo-racket-overlay.git</source>
+    <feed>https://gitlab.com/gentoo-racket/gentoo-racket-overlay/commits/master.atom</feed>
+  </repo>
+</repositories>

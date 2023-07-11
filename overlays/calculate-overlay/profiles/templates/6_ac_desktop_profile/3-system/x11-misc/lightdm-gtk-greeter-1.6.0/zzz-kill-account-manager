@@ -1,0 +1,6 @@
+# Calculate exec=/bin/bash
+
+# перезапуск accounts-daemon
+/usr/bin/pkill -f accounts-daemon
+
+true

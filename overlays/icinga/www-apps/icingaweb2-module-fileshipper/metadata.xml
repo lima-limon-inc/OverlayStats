@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>github@fischl-online.de</email>
+    <name>Anton Fischl</name>
+  </maintainer>
+  <stabilize-allarches/>
+  <upstream>
+    <remote-id type="github">Icinga/icingaweb2-module-fileshipper</remote-id>
+  </upstream>
+  <use>
+    <flag name="xlsx">
+      Install <pkg>dev-lang/php</pkg> with USE-Flag "zip" required for optional XLSX file support
+    </flag>
+    <flag name="xml">
+      Install <pkg>dev-lang/php</pkg> with USE-Flag "xml" required for optional XML file support
+    </flag>
+    <flag name="yaml">
+      Install <pkg>dev-php/pecl-yaml</pkg> required for optional YAML file support
+    </flag>
+  </use>
+</pkgmetadata>

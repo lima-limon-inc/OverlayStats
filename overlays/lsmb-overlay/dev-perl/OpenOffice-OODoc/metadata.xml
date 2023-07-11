@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+<email>chris.travers@gmail.com</email>
+</maintainer>
+<longdescription lang="en">
+This toolbox is an extensible Perl interface allowing for direct read/write
+pperations on files which comply with OASIS Open Document Format for Office
+Applications (ODF).
+
+It provides a high-level document-oriented language and isolates the programmer
+from the details of the file format.  It can process different document classes
+(texts, spreadsheets, presentations, and drawings).  It can retrieve and update
+styles and images, document metadata, and text content.
+</longdescription>
+</pkgmetadata>

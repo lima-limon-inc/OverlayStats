@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+  <email>nuclearspace@gmail.com</email>
+  <name>Dima Akater</name>
+</maintainer>
+<longdescription>Gentoo Dashboard for Emacs</longdescription>
+<use>
+  <flag name="magit-section">Use standalone magit-section</flag>
+</use>
+<stabilize-allarches/>
+<upstream>
+  <remote-id type="framagit">akater/emacs-magentoo</remote-id>
+</upstream>
+</pkgmetadata>

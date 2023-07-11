@@ -1,0 +1,13 @@
+*smartgit-20.2_rc5
+::prototype99	add vanilla and sytem-jre use flags
+*smartgit-20.2_rc1-r1
+::prototype99
+-don't use some outdated shell script from the files dir
+-add a higher memory fix for those working on the linux kernel
+-stop using rindeal eclass
+*smartgit-20.2_rc1
+::prototype99	remove kinda useless comment, just hardcode the source url
+*smartgit-20.1.6
+::prototype99	fix url
+*smartgit-20.1.2
+::prototype99	update url

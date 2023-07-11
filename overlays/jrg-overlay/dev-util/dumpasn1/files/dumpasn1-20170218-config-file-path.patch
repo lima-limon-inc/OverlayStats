@@ -1,0 +1,13 @@
+diff -ubB old/dumpasn1.c new/dumpasn1.c
+--- old/dumpasn1.c	2019-02-22 13:42:49.237676288 -0500
++++ new/dumpasn1.c	2019-02-22 13:45:11.271730776 -0500
+@@ -419,7 +419,8 @@
+ static const char *configPaths[] = {
+   #ifndef DEBIAN
+ 	/* Unix absolute paths */
+-	"/usr/bin/", "/usr/local/bin/", "/etc/dumpasn1/",
++	"/etc/dumpasn1/",
++	"/usr/share/dumpasn1/",
+ 
+ 	/* Unix environment-based paths */
+ 	"$HOME/", "$HOME/bin/",

@@ -1,0 +1,23 @@
+# cosmicmod-overlay This is a deprecated overlay just kept for possible future use
+CosmicMod main ebuild repo
+
+to use this repo add cosmicmod-overlay via layman
+
+For more information on CosmicMod Gnu/Linux go to the Wiki section of the main repo or http://cosmicmod.net
+
+If you need a newer version of pulseaudio you can utilize the CosmicMod Overlay. This is needed for newer Intel and Realtek audio hardware. You will know if you need to do this as you probably will have no sound. Run the block script below as su - or edit the script to suit your liking. I haven't checked the script below for typos.
+
+touch /etc/portage/package.use/layman &&
+echo 'app-portage/layman sync-plugin-portage git' > /etc/portage/package.use/layman &&
+emerge --ask --quiet layman &&
+layman -L &&
+layman -a cosmicmod-overlay &&
+layman -S &&
+emerge --ask --sync &&
+sleep 1m &&
+emerge --ask --verbose --quiet --update --deep --newuse --with-bdeps=y @world &&
+sleep 1m &&
+emerge --ask --depclean &&
+sleep 1m &&
+eclean -d distfiles &&
+echo 'CosmicMod Overlay successfully added, synced and integrated.'

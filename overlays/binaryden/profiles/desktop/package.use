@@ -1,0 +1,21 @@
+# profile
+app-arch/p7zip          -wxwidgets
+dev-libs/qtkeychain     keyring
+dev-python/matplotlib   wxwidgets
+media-video/vlc         bidi ffmpeg libass live lua matroska 
+net-nds/openldap        minimal
+net-print/cups          -usb
+net-print/hplip         snmp
+x11-base/xorg-server    xvfb
+x11-themes/flat-remix   -blue -red -yellow
+
+# app-office/libreoffice{,-bin}
+dev-libs/xmlsec   nss
+
+# media-video/vlc
+media-libs/freetype   harfbuzz
+sys-libs/zlib         minizip
+
+# net-print/hplip
+net-dns/avahi   python
+

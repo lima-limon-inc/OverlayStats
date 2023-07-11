@@ -1,0 +1,6 @@
+if use jit; then
+	KERNEL_CONFIG+='BPF_JIT_ALWAYS_ON'
+else
+	KERNEL_CONFIG+='-BPF_.+ -.+_BPF'
+fi
+KERNEL_CONFIG+=' -BPF_SYSCALL'

@@ -1,0 +1,22 @@
+diff --git a/test/Makefile b/test/Makefile
+index 7ad23420..79370d88 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -3,17 +3,6 @@ OUR_TESTS= \
+ 	perl \
+ 	annotate-output \
+ 	checkbashisms \
+-	dd-list \
+-	debchange \
+-	debdiff \
+-	debrepro \
+-	debsign \
+-	mergechanges \
+-	mk-origtargz \
+-	package_lifecycle \
+-	sadt \
+-	uscan \
+-	uscan_ftp \
+ 	uscan_git \
+ 	uscan_svn \
+ 	uscan_mangle \

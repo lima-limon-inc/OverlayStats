@@ -1,0 +1,14 @@
+libtool strip C flags for linker, but LTO linker recompile bytecode
+--- libtool.orig
++++ libtool
+@@ -8008,6 +8008,10 @@ func_mode_link ()
+ 
+       # Now actually substitute the argument into the commands.
+       if test -n "$arg"; then
++	case "$arg" in
++	-fobjc-arc);;
++	-f*|-m*|--param=*|-Wa,*)func_append compiler_flags " $arg";;
++	esac
+ 	func_append compile_command " $arg"
+ 	func_append finalize_command " $arg"
+       fi

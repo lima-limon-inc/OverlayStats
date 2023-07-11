@@ -1,0 +1,10 @@
+[Unit]
+Description=CapsuleFarmerEvolved
+
+[Service]
+ExecStart=/usr/bin/capsule-farmer-evolved
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=default.target

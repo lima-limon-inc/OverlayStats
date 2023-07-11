@@ -1,0 +1,11 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.calc, libreoffice)-#
+
+[Added Associations]
+application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop;
+
+[Default Applications]
+application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop;

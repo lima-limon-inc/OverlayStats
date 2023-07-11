@@ -1,0 +1,52 @@
+KERNEL_CONFIG+="-AUDIT -MEMTEST -HUGETLBFS -TRANSPARENT_HUGEPAGE EMBEDDED -NETWORK_SECMARK -NET_CLS_IND -LOGO DEFAULT_NOOP -TUN_VNET_CROSS_LE -VHOST_CROSS_ENDIAN_LEGACY -RCU_TRACE -RUNTIME_TESTING_MENU"
+KERNEL_CONFIG+=" -ISDN -DECNET -IPX -ATALK -WAN"
+KERNEL_CONFIG+=" -.+_TEST -KUNIT -SYMBOLIC_ERRNAME"
+KERNEL_CONFIG+=" -MEMORY_HOTPLUG -MEMORY_FAILURE"
+KERNEL_CONFIG+=" NO_HZ_FULL==y;-CPU_ISOLATION"
+KERNEL_CONFIG+=" -SOCK_VALIDATE_XMIT"
+KERNEL_CONFIG+=" -FW_LOADER_USER_HELPER"
+KERNEL_CONFIG+=" -PREEMPT_DYNAMIC"
+# from "speculative": more fast & secure, crashes less verbose, no Wine, dosemu & old utils
+KERNEL_CONFIG+=" -X86_VSYSCALL_EMULATION LEGACY_VSYSCALL_NONE -MODIFY_LDT_SYSCALL UNWINDER_GUESS -I2C_COMPAT -CRASH_DUMP -COREDUMP -VM_EVENT_COUNTERS"
+#use lxc ||
+	KERNEL_CONFIG+=" -NAMESPACES -CGROUPS"
+if use dri || use X; then
+	KERNEL_MODULES+=' %m%%drivers/video %%m%drivers/gpu %%m%drivers/video/backlight'
+	use fbcon || use efi || KERNEL_CONFIG+=" +FB"
+elif use !fbcon && use !efi; then
+	KERNEL_CONFIG+=" -FB"
+elif use !fbcon; then
+	KERNEL_MODULES+=' %m%%drivers/video'
+fi
+use efi && KERNEL_CONFIG+=" DRM_SIMPLEDRM==y;FB DRM_SIMPLEDRM==y;FB_SIMPLE"
+# IMHO: SCHED_MC required mostly for i7-i9 and for HT
+use laptop && use soc && {
+	[[ "$CFLAGS" != *march=native* ]] && KERNEL_CONFIG+=" SCHED_SMT==!y;-SCHED_MC -NUMA"
+	KERNEL_CONFIG+=" -SCSI_LOWLEVEL -NET_DSA"
+#	-ATA
+}
+use server || KERNEL_CONFIG+=" +IOSCHED_DEADLINE -IP_ADVANCED_ROUTER -TCP_CONG_ADVANCED"
+
+#use server && KERNEL_CONFIG+=" -KEXEC -KEXEC_.+"
+#use speculative &&
+    KERNEL_CONFIG+=" -CRASH_CORE"
+
+use server && use !desktop && use !laptop && KERNEL_CONFIG+=" -USB_HID USB_KBD;+USB_HID USB_MOUSE;+USB_HID"
+#use server && ts+=" -IRQ_TIME_ACCOUNTING"
+use kvm || use lxc || KERNEL_CONFIG+=" -TASKSTATS"
+use lxc || KERNEL_CONFIG+=" -TASK_XACCT"
+use mdadm || use lvm || use device-mapper || KERNEL_CONFIG+=" -MD"
+[ "$VIRT" = 2 ] && {
+	# next remove some USB drivers and ACPI_HOTPLUG, may be useful under QEMU
+#	KERNEL_CONFIG+=" -FW_LOADER -CPU_IDLE"
+	# keep ACPI_PROCESSOR (CPU_IDLE)
+	KERNEL_CONFIG+=" -FW_LOADER"
+	use !usb && use !desktop && use !laptop && KERNEL_CONFIG+=" -HID"
+	use hibernate || KERNEL_CONFIG+=" -PM"
+	KERNEL_CONFIG+=" -PM_OPP"
+}
+use soc || use laptop || KERNEL_CONFIG+=" -X86_EXTENDED_PLATFORM -X86_INTEL_LPSS -X86_AMD_PLATFORM_DEVICE -.+_MID -USB_OTG"
+# Intel's default
+KERNEL_CONFIG+=" NODES_SHIFT=2"
+
+use !X && use !dri && use !systemd && use !lxc && KERNEL_CONFIG+=" -KCMP"

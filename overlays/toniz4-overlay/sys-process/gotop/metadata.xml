@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM 'http://www.gentoo.org/dtd/metadata.dtd'>
+<pkgmetadata>
+	<maintainer type="person">
+		<email>cassioavila@yandex.com</email>
+		<name>Cássio Ribeiro Alves de Ávila</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/xxxserxxx/gotop/issues</bugs-to>
+		<changelog>
+			https://github.com/xxxserxxx/gotop/blob/master/CHANGELOG.md
+		</changelog>
+		<doc>https://github.com/xxxserxxx/gotop/wiki</doc>
+	</upstream>
+</pkgmetadata>

@@ -1,0 +1,208 @@
+#!/bin/sh
+# tested with busybox ash
+
+fs='ext4:-q:-O:sparse_super2:-O:^has_journal:-O:dir_index:-O:^project:-O:^quota:-E:discard:-E:num_backup_sb=0:-b:4096'
+#fs="$fs:-O:inline_data:-I:256"
+fs="$fs:-O:^inline_data:-I:128"
+
+# no remount
+try=
+
+# remount
+try1='discard dioread_nolock noblock_validity lazytime nobarrier delalloc'
+
+read kv </proc/sys/kernel/osrelease && [ "${kv%%.*}" -gt 3 ] || fs='ext4:-E:discard'
+
+wait='true true true true true true false'
+
+help="
+
+mount.zram v0.14 (c) mahatma, under Anarchy license
+Mount helper to mount zram (or ram/brd) devices via /etc/fstab over most simple way, stupid.
+Usage:	mount -t zram ...
+	mount.zram /dev/zram[<X>|'*'] <mountpoint> -o <options>
+	mount.zram /dev/ram<X> <mountpoint> -o <options>
+	mount.zram /dev/ram0 <mountpoint> -o disksize=<N>,<options>
+Loading zram module with number of devices from FIRST mount device in fstab.
+Loading brd module for /dev/ram0 ONLY.
+Number is first unused (fstab or mounts) or <X>.
+/dev/zram & /dev/zram* implies reset.
+/dev/zram follow 'busy'-like mount-once behaviour.
+Mount options:
+	'fs=<fs[{:mkfs_options}]> (default fs=$fs, zram fs+=$fs_zram, ram fs+=$fs_ram),
+	<zram_param>=<value> where <zram_param> is any file from /sys/block/zramX/
+	zramctl=<options> - alternative to sysfs - use zramctl tool (spaces replaced to ':')
+	disksize=<N> - for /dev/ram0 - compatible with zram, bound single brd/ram disk to N.
+	other options pass directly to <fs> mount.
+	First trying to mount with '-o dax,discard...', '-o discard...',
+Examples of /etc/fstab:
+	/dev/zram /tmp zram disksize=8g 0 0
+	/dev/zram* /tmp zram comp_algorithm=lz4,disksize=8g,noatime 0 0
+	/dev/zram0 /var/tmp/portage zram reset=1,comp_algorithm=zstd,disksize=12g,noatime,sync 0 0
+	/dev/ram /var/cache/fscache zram disksize=1g,lazytime,dax,dioread_nolock,nobarrier,inode_readahead_blks=0,nodelalloc 0 0
+    Over zramctl:
+	/dev/zram3 /tmp zram zramctl=-alz4:-s8g 0 0
+	/dev/zram3 /tmp zram zramctl=--algorithm=lz4:--size=8g 0 0
+"
+
+err(){
+	{
+	echo "
+ERROR $0: $1" 
+	caller
+	} >&2
+	exit ${2:-1}
+}
+
+warn(){
+	echo "WARNING $0: ignored failed: $1" >&2
+}
+
+size2b(){
+	local v="$1" x  l="${2:-1}"
+	x="${v%?}"
+	case "$v" in
+	*k|*K)v=$((x*l));;
+	*m|*M)v=$((x*1024*l));;
+	*g|*G)v=$((x*1024*1024*l));;
+	*t|*T)v=$((x*1024*1024*1024*l));;
+	esac
+	echo "$v"
+}
+
+disksize=
+w=true
+
+case "$1" in
+/dev/zram|/dev/zram\*)
+	[ "$1" = /dev/zram ] && grep -so "^/dev/zram[0-9]* $2 " /proc/mounts && err "- already mounted. Or use '/dev/zram*' to mount over."
+	j=0
+	# respect commented out fstab entries too
+	while grep -sq "^[ 	#]*/dev/zram$j[ 	]" /etc/fstab /proc/mounts || (f="/sys/block/zram$j/reset" && [ -e $f ] && ! echo 1 >$f) ; do
+		j=$((j+1))
+	done
+	shift
+	set -- /dev/zram$j "${@}"
+;;
+/dev/ram0)
+	for j in ${4//,/ }; do
+		v="${j#disksize=}"
+		[ "$v" = "$j" ] || disksize="$(size2b "$v")"
+	done
+	[ -n "$disksize" ] && modprobe brd rd_nr=1 rd_size="$disksize" max_part=0 && w=true
+;;
+esac >&2
+
+n="${1##*/}"
+i="/sys/block/$n"
+c="$i"
+#w=false
+case "$1" in
+/dev/*/*)err "$*$help";;
+/dev/zram*)
+	[ -e "$1" ] || {
+		nn=${1#/dev/zram}
+		nn=$((nn+0))
+		ha=/sys/class/zram-control/hot_add
+		[ "$1" = "/dev/zram$nn" -a "$nn" -ge 0 ] &&
+		if [ -e $ha ]; then
+			j1=
+			while read j <$ha && [ "$j" -lt "$nn" ]; do
+				[ "$j" = "$j1" ] && break
+				j1="$j"
+			done
+			#w=true
+		else
+			modprobe zram num_devices=$((nn+1)) && w=true
+		fi
+	}
+	c="$i/comp_algorithm"
+	fs="$fs$fs_zram"
+;;
+/dev/ram*)
+	try="$try dax"
+	fs="$fs$fs_ram"
+	c="$i/size"
+;;
+*)err "$*$help";;
+esac
+$w && for w in $w $wait; do
+	[ -e "$c" ] && break
+	sleep 0.1
+done
+[ -e "$c" ] || err "no $c"
+echo 0 >"$i/queue/rotational"
+[ "$3" = '-o' -o "$3" = '' ] || err "invalid option '$3'"
+o=
+w=true
+sw=false
+for i in ${4//,/ }; do
+	case "$i" in
+	sw)eval "$i=true";;
+	*=*)
+		v="${i#*=}"
+		x="${i%%=*}"
+		case "$x" in
+		disksize)[ -n "$disksize" ] && continue;; # /dev/ram0
+		zramctl) # unify mkfs here?
+			c="$x ${v//:/ } $1"
+			$c || err "$c"
+			continue
+		;;
+		mode|uid|gid)eval "$x=\"\$v\"";;
+		fs)eval "$x=\"\$v\"";continue;;
+		esac
+		f="/sys/block/$n/$x"
+		[ -e "$f" ] && {
+			# after modprobe reset not ready
+			for w in $w $wait; do
+				e=$(echo "$v" >"$f" 2>&1) && continue 2
+				$w || break
+				sleep 0.1
+			done
+			v1="$(cat "$f")" && [ -n "$v1" ] && ( [ "$v1" = "$v" ] || [ "$v1" = "$(size2b "$v" 1024)" ] || [ -z "${v1##*\[$v\]*}" ] ) && continue
+			err "echo \"$v\" >$f - $e"
+		}
+	;;
+	esac
+	o="$o,$i"
+done
+[ -b "$1" ] || err " -b $1$help"
+o="${o#,}"
+
+$sw && {
+	mkswap "$1" || warn "mkswap $1"
+	swapon -o "discard,$o" "$1" || swapon -o "$o" "$1" || err "swapon -o $o $1"
+	exit 0
+} >/dev/null
+
+fs="${fs//:/ }"
+mkfs="mkfs.$fs $1"
+fs="${fs%% *}"
+
+re=",$4,"
+[ -z "${re##*,remount,*}" ] || yes '' | $mkfs || warn "$mkfs"
+
+# move original mountpoint permissions to mount if not fs-assisted
+[ -z "$mode" ] && m=`stat "$2" -c '%a'`
+[ -z "$uid$gid" ] && ug=`stat "$2" -c '%u:%g'` || ug=
+
+t1="${try1// /,}"
+for i in $try ''; do
+    for i in "$t1,$i" "$i" ; do
+	[ -n "$i" -a -n "$o" ] && i="$i,$o" || i="$i$o"
+	mount -t "$fs"${i:+ -o }"$i" "$1" "$2" && {
+		case "$i,1" in
+		$t1,*);;
+		*)for i1 in $try1; do
+			mount -t "$fs" -o "remount,$i1${i:+,$i}" "$1" "$2"
+		done;;
+		esac
+		[ -n "$m" ] && chmod -- "$m" "$2"
+		[ -n "$ug" ] && chown -- "$ug" "$2"
+		exit 0
+	}
+	r=$?
+    done
+done
+err "mount -t $fs ${o+-o $o} $1 $2" $r

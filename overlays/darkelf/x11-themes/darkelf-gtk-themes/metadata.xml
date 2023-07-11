@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>neuron@mail.uni-paderborn.de</email>
+	<description>Primary maintainer</description>
+</maintainer>
+<longdescription>darkelf gtk-2/gtk-3/xfwm4 themes for working in dark environments with blue-light filters.</longdescription>
+</pkgmetadata>

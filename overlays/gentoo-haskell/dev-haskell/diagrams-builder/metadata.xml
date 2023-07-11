@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="cairo">install cairo-specific builder tool</flag>
+		<flag name="pgf">install PGF-specific builder tool</flag>
+		<flag name="rasterific">install rasterific-specific builder tool</flag>
+		<flag name="svg">install svg-specific builder tool</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">diagrams-builder</remote-id>
+		<remote-id type="github">diagrams/diagrams-builder</remote-id>
+	</upstream>
+</pkgmetadata>

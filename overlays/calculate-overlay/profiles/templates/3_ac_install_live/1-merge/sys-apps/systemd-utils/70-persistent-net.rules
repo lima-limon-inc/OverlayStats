@@ -1,0 +1,42 @@
+# Calculate comment=# path=/etc/udev/rules.d exists(/etc/udev/rules.d/70-persistent-net.rules)==
+
+#?list(os_install_net_interfaces,0)!=&&list(os_install_net_mac_type,0)==OUI#
+# #-list(os_install_net_name,0)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,0)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,0)-#"
+#list#
+#?list(os_install_net_interfaces,1)!=&&list(os_install_net_mac_type,1)==OUI#
+# #-list(os_install_net_name,1)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,1)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,1)-#"
+#list#
+#?list(os_install_net_interfaces,2)!=&&list(os_install_net_mac_type,2)==OUI#
+# #-list(os_install_net_name,2)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,2)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,2)-#"
+#list#
+#?list(os_install_net_interfaces,3)!=&&list(os_install_net_mac_type,3)==OUI#
+# #-list(os_install_net_name,3)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,3)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,3)-#"
+#list#
+#?list(os_install_net_interfaces,4)!=&&list(os_install_net_mac_type,4)==OUI#
+# #-list(os_install_net_name,4)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,4)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,4)-#"
+#list#
+#?list(os_install_net_interfaces,5)!=&&list(os_install_net_mac_type,5)==OUI#
+# #-list(os_install_net_name,5)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,5)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,5)-#"
+#list#
+#?list(os_install_net_interfaces,6)!=&&list(os_install_net_mac_type,6)==OUI#
+# #-list(os_install_net_name,6)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,6)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,6)-#"
+#list#
+#?list(os_install_net_interfaces,7)!=&&list(os_install_net_mac_type,7)==OUI#
+# #-list(os_install_net_name,7)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,7)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,7)-#"
+#list#
+#?list(os_install_net_interfaces,8)!=&&list(os_install_net_mac_type,8)==OUI#
+# #-list(os_install_net_name,8)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,8)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,8)-#"
+#list#
+#?list(os_install_net_interfaces,9)!=&&list(os_install_net_mac_type,9)==OUI#
+# #-list(os_install_net_name,9)-#
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="#-list(os_install_net_mac,9)-#", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="#-list(os_install_net_interfaces,9)-#"
+#list#

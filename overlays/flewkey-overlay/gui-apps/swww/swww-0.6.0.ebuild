@@ -1,0 +1,159 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CRATES="
+	adler-1.0.2
+	assert_cmd-2.0.6
+	autocfg-1.1.0
+	bincode-1.3.3
+	bitflags-1.3.2
+	bstr-1.0.1
+	bumpalo-3.10.0
+	bytemuck-1.11.0
+	byteorder-1.4.3
+	calloop-0.10.1
+	cc-1.0.73
+	cfg-if-1.0.0
+	clap-4.0.29
+	clap_complete-4.0.6
+	clap_derive-4.0.21
+	clap_lex-0.3.0
+	color_quant-1.1.0
+	crc32fast-1.3.2
+	difflib-0.4.0
+	dlib-0.5.0
+	doc-comment-0.3.3
+	downcast-rs-1.2.0
+	either-1.7.0
+	errno-0.2.8
+	errno-dragonfly-0.1.2
+	fast_image_resize-2.3.0
+	flate2-1.0.24
+	fork-0.1.20
+	getrandom-0.2.7
+	gif-0.11.4
+	heck-0.4.0
+	hermit-abi-0.2.6
+	image-0.24.5
+	io-lifetimes-0.7.3
+	io-lifetimes-1.0.3
+	is-terminal-0.4.1
+	itertools-0.10.3
+	itoa-1.0.3
+	jobserver-0.1.24
+	jpeg-decoder-0.3.0
+	js-sys-0.3.59
+	keyframe-1.1.1
+	lazy_static-1.4.0
+	libc-0.2.134
+	libloading-0.7.3
+	libm-0.2.6
+	linux-raw-sys-0.0.46
+	linux-raw-sys-0.1.3
+	log-0.4.17
+	lzzzz-1.0.4
+	memchr-2.5.0
+	memmap2-0.5.5
+	memoffset-0.6.5
+	minimal-lexical-0.2.1
+	miniz_oxide-0.5.3
+	miniz_oxide-0.6.2
+	mint-0.5.9
+	nix-0.22.3
+	nix-0.24.2
+	nom-7.1.1
+	num-integer-0.1.45
+	num-rational-0.4.1
+	num-traits-0.2.15
+	num_threads-0.1.6
+	once_cell-1.16.0
+	os_str_bytes-6.2.0
+	pkg-config-0.3.25
+	png-0.17.7
+	ppv-lite86-0.2.16
+	predicates-2.1.1
+	predicates-core-1.0.3
+	predicates-tree-1.0.5
+	proc-macro-error-1.0.4
+	proc-macro-error-attr-1.0.4
+	proc-macro2-1.0.47
+	quote-1.0.21
+	rand-0.8.5
+	rand_chacha-0.3.1
+	rand_core-0.6.3
+	regex-automata-0.1.10
+	rustix-0.35.11
+	rustix-0.36.4
+	serde-1.0.148
+	serde_derive-1.0.148
+	simplelog-0.12.0
+	slotmap-1.0.6
+	smallvec-1.9.0
+	smithay-client-toolkit-0.16.0
+	strsim-0.10.0
+	syn-1.0.104
+	termcolor-1.1.3
+	terminal_size-0.2.1
+	termtree-0.2.4
+	thiserror-1.0.37
+	thiserror-impl-1.0.37
+	tiff-0.8.0
+	time-0.3.12
+	time-macros-0.2.4
+	unicode-ident-1.0.3
+	vec_map-0.8.2
+	version_check-0.9.4
+	wait-timeout-0.2.0
+	wasi-0.11.0+wasi-snapshot-preview1
+	wasm-bindgen-0.2.82
+	wasm-bindgen-backend-0.2.82
+	wasm-bindgen-macro-0.2.82
+	wasm-bindgen-macro-support-0.2.82
+	wasm-bindgen-shared-0.2.82
+	wayland-client-0.29.4
+	wayland-commons-0.29.4
+	wayland-cursor-0.29.4
+	wayland-protocols-0.29.4
+	wayland-scanner-0.29.4
+	wayland-sys-0.29.4
+	weezl-0.1.7
+	winapi-0.3.9
+	winapi-i686-pc-windows-gnu-0.4.0
+	winapi-util-0.1.5
+	winapi-x86_64-pc-windows-gnu-0.4.0
+	windows-sys-0.36.1
+	windows-sys-0.42.0
+	windows_aarch64_gnullvm-0.42.0
+	windows_aarch64_msvc-0.36.1
+	windows_aarch64_msvc-0.42.0
+	windows_i686_gnu-0.36.1
+	windows_i686_gnu-0.42.0
+	windows_i686_msvc-0.36.1
+	windows_i686_msvc-0.42.0
+	windows_x86_64_gnu-0.36.1
+	windows_x86_64_gnu-0.42.0
+	windows_x86_64_gnullvm-0.42.0
+	windows_x86_64_msvc-0.36.1
+	windows_x86_64_msvc-0.42.0
+	xcursor-0.3.4
+	xml-rs-0.8.4
+"
+
+inherit cargo
+
+DESCRIPTION="Animated wallpaper daemon for Wayland."
+HOMEPAGE="https://github.com/Horus645/swww"
+SRC_URI="
+	https://github.com/Horus645/swww/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	$(cargo_crate_uris)
+"
+
+LICENSE="GPL-3 MIT 0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions ISC MIT Unlicense ZLIB"
+SLOT="0"
+KEYWORDS="~amd64"
+
+DEPEND=""
+RDEPEND="${DEPEND}"
+BDEPEND=""

@@ -1,0 +1,36 @@
+#!/sbin/openrc-run
+# Copyright 2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Headscale Server daemon"
+
+: ${HEADSCALE_USER:=headscale}
+: ${HEADSCALE_GROUP:=headscale}
+: ${HEADSCALE_WORK_DIR:=/var/lib/headscale}
+: ${HEADSCALE_LOG_DIR:=/var/log/headscale}
+: ${HEADSCALE_LOG_STDOUT:=headscale.log}
+: ${HEADSCALE_LOG_STDERR:=headscale.error}
+
+command="/usr/bin/headscale"
+command_args="serve ${HEADSCALE_EXTRA_ARGS}"
+command_background=true
+pidfile="/run/headscale.pid"
+command_user="${HEADSCALE_USER}:${HEADSCALE_GROUP}"
+directory="${HEADSCALE_WORK_DIR}"
+output_log="${HEADSCALE_LOG_DIR%/}/${HEADSCALE_LOG_STDOUT}"
+error_log="${HEADSCALE_LOG_DIR%/}/${HEADSCALE_LOG_STDERR}"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	# /run/headscale is a common dir for sock file keep it
+	checkpath -d -m 700 -o "${command_user}" \
+		${HEADSCALE_WORK_DIR} \
+		${HEADSCALE_LOG_DIR}
+
+	checkpath -f -m 600 -o "${command_user}" \
+		${output_log} \
+		${error_log}
+}

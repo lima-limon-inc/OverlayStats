@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="cairo">Enable the cairo backend</flag>
+		<flag name="canvas">Enable the Haskell-native Canvas backend</flag>
+		<flag name="gtk">Enable the GTK backend</flag>
+		<flag name="postscript">Enable the Haskell-native PostScript backend</flag>
+		<flag name="rasterific">Enable the Haskell-native Rasterific backend</flag>
+		<flag name="svg">Enable the Haskell-native SVG backend</flag>
+	</use>
+</pkgmetadata>

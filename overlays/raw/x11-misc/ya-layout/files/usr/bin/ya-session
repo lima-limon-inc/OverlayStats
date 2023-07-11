@@ -1,0 +1,858 @@
+#!/bin/bash
+# starting minimal openbox+desktop session
+# wm is not reloadable
+# startup is compromise pure openbox & some accessibility
+
+shopt -s expand_aliases
+
+minimal=false
+suff=
+[[ "$XSESSION" == *minimal || "$1" == --minimal ]] && suff=-minimal && minimal=true
+
+wm=/usr/bin/openbox
+Desk=/usr/share/ya-layout/Desktop
+obconfdir="$HOME/.config/ya$suff"
+obconf="$obconfdir/rc.xml"
+cache="$HOME/.cache/ya$suff"
+sm='--sm-disable'
+sm2='--sm-client-disable'
+prefapps="$obconfdir/preferred-apps"
+DSP="${DISPLAY//[\\\/*]/_}"
+DSP0="$DSP"
+[[ "$DSP" == *:* && "$DSP" != *:*.* ]] && DSP+='.0'
+DSP1="${DSP%.*}"
+# wallpaper ID (vsize)
+DSP2=
+# panel ID (monitor1)
+DSP3=
+ENV="$cache/environment.$DSP"
+DSPS=
+disconnected=false
+kbd=true
+kbdd=false
+xinitrc=false
+
+#xinerama='--xinerama-index 0'
+xinerama='--no-xinerama' # pan
+
+: ${YA_APP_WebBrowser:="'exo-open --launch WebBrowser' @WebBrowser"}
+# exo-open going mad with params, but we want terminal with params NOW!
+#: ${YA_APP_TerminalEmulator:="'exo-open --launch TerminalEmulator' @TerminalEmulator"}
+: ${YA_APP_TerminalEmulator:="@TerminalEmulator 'vte --reverse'"}
+: ${YA_APP_FileManager:="'exo-open --launch FileManager' \"spacefm --profile=\$YA_PROFILE\" \"pcmanfm -p \$YA_PROFILE\" \"nautilus --no-desktop \$sm2\" @FileManager +mc"}
+: ${YA_APP_Email:="'exo-open --launch MailReader' 'seamonkey --mail' @Email"}
+: ${YA_APP_InstantMessaging:="@InstantMessaging"}
+
+: ${YA_APP_XF86WWW:="WebBrowser"}
+: ${YA_APP_XF86Mail:="Email"}
+: ${YA_APP_XF86AudioMedia:="'@Player;Audio|Player;AudioVideo;!Video' '@Player;AudioVideo' mplayer2 mplayer"}
+: ${YA_APP_XF86VideoMedia:="mplayer2 mplayer '@Player;Video|Player;AudioVideo;!Audio' '@Player;AudioVideo'"}
+: ${YA_APP_XF86Calendar:="orage"}
+: ${YA_APP_XF86Calculator:="gpe-calculator"}
+: ${YA_APP_XF86Messenger:="InstantMessaging"}
+: ${YA_APP_XF86Eject:="\"eject /dev/sr0\""}
+: ${YA_APP_XF86MyComputer:="\"FileManager \$HOME/Desktop\""}
+: ${YA_APP_XF86Documents:="libreoffice"}
+: ${YA_APP_XF86DOS:="TerminalEmulator"}
+: ${YA_APP_XF86Terminal:="TerminalEmulator"}
+: ${YA_APP_XF86Explorer:="WebBrowser"}
+: ${YA_APP_XF86Excel:="libreoffice -calc"}
+: ${YA_APP_XF86Video:="XF86VideoMedia"}
+: ${YA_APP_XF86Music:="XF86AudioMedia"}
+: ${YA_APP_XF86Phone:="Telephony"}
+: ${YA_APP_XF86Word:="WordProcessor @X-MandrivaLinux-Office-Wordprocessors"}
+#F86Battery XF86Bluetooth XF86Book XF86CD XF86Community XF86Config XF86Favorites
+#XF86Finance XF86Forward XF86Game XF86Go XF86Hibernate XF86History XF86HomePage
+#XF86HotLinks XF86iTouch XF86LogOff XF86New XF86News XF86OfficeHome XF86Open XF86OpenURL
+#XF86Pictures XF86PowerOff XF86ScreenSaver XF86Shop XF86Terminal XF86ToDoList XF86Tools
+#XF86Travel XF86VendorHome XF86WebCam XF86WLAN
+
+: ${YA_APP_XF86SettingsManager:="'xfsettingsd --replace' xfce-mcs-manager gnome-settings-daemon /usr/libexec/gnome-settings-daemon"}
+: ${YA_APP_XF86Panel:="\"xfce4-panel \$sm2\" \"lxpanel -p \$YA_PROFILE\"" \"gnome-panel \$sm2\"}
+: ${YA_APP_XF86Desktop:="\"spacefm --desktop --profile=\$YA_PROFILE\" \"pcmanfm --desktop -p \$YA_PROFILE\" \"xfdesktop \$sm2\" \"nautilus -n \$sm2\""}
+
+YA_APP_TINT2="'/usr/bin/tint2'"
+
+# 2run
+: ${YA_SESSION:="XF86SettingsManager XF86Panel XF86Desktop"}
+
+: ${YA_PROFILE:=ya}
+# preferred: append to $YA_APP
+: ${YA_PROFILE_LXDE:="pcmanfm lxpanel lxterminal"}
+: ${YA_PROFILE_xfce:="xfdesktop xfce4-panel exo-open"}
+: ${YA_PROFILE_gnome:="nautilus gnome-panel gnome-terminal"}
+
+: ${YA_XDG_AUTOSTART:="$YA_PROFILE"}
+
+# startup: minimal
+: ${YA_STARTUP:=TINT2}
+
+_exit(){
+	return
+}
+
+_xrandr(){
+local x y m
+# first try --current fast, next strange or forced - rescan
+for m in '--query --current' ''; do
+	$disconnected && {
+		[ -z "$m" ] && return 1
+		m=
+	}
+	y="`DISPLAY="$1" xrandr $2 $m 2>/dev/null`" || return 1
+	y=`echo $(echo "$y"|grep -o ' current [0-9]* x [0-9]*\| connected [0-9x+]*\| disconnected'|sed -e 's: \|current\|connected::g')`
+	[[ "$y" == [0-9]*[0-9]x[0-9]* ]] || {
+		# no resolution
+		[ -n "$m" ] && continue
+		$disconnected || return 1
+	}
+	x="${y// dis}"
+	if [[ "$y" == *' '* ]]; then
+		# normal diagnostic
+		$disconnected || [[ "$x" == *' '* ]] || return 1
+	else
+		# no connector diagnostic, rescan & force ON
+		[ -n "$m" ] && continue
+	fi
+	DSPS+="$1 "
+	echo "$x" >"$cache/menu.xml.$1.key1"
+	return 0
+done
+return 1
+}
+
+displays(){
+	[ -n "$DSPS" ] && return
+	rm -f "$cache/menu.xml."$DSP1".*.key1"
+	if [ "$DSP0" != "$DSP" ] || $disconnected; then
+		local i
+		for i in $(seq 0 9); do
+			_xrandr "$DSP1.$i" "--screen $i" || break
+		done
+	else
+		_xrandr "$DSP"
+	fi
+	[ -z "$DSPS" ] && if $disconnected; then
+		DSPS="$DSP "
+	else
+		disconnected=true
+		displays
+		return
+	fi
+	dsp0="${DSPS%% *}"
+	dsps1="${DSPS#* }"
+}
+
+pid_ok(){
+	local f="$cache/$DSP1-$1"
+	grep -sqxf "$f" /proc/$1/cmdline && return
+	rm "$f"
+	return 1
+}
+
+err(){
+	echo "ERROR: ${@}"
+	caller
+	_exit
+	exit 1
+}
+
+_exec(){
+	_exit
+	exec "${@}"
+}
+
+_1of(){
+	local i x p
+	for i in "${@}"; do
+		x=`which "${i%% *}" 2>/dev/null` || continue
+		p="${i#* }"
+		[ "$p" = "$i" ] && echo "$x" || echo "$x $p"
+		return 0
+	done
+	return 1
+}
+
+_1cfg(){
+	local i
+	for i in "$HOME"/.config/$1 /etc/xdg/$1; do
+		[ -r "$i" ] && echo "$i" && return 0
+	done
+	return 1
+}
+
+wm(){
+	if [ "$1" = --startup -a "$wm" != /usr/bin/openbox ]; then
+		shift
+		_run $*
+		wm
+	fi
+	_exec $wm $sm --config-file "$obconf" "${@}"
+}
+
+envir(){
+	local A
+	A=`_1cfg "$1/environment.$DSP"` && [ -r "$A" ] && . "$A"
+}
+
+fixml(){
+perl -e 'sub ndx{
+	my $i;
+	$_[1]=$i if((($i)=$_[0]=~/($_[1])/));
+	$i=index($_[0],$_[1]);
+	$i<0?$i:$i+length($_[1]);
+}
+
+$s=join("",<STDIN>);
+$to=shift @ARGV;
+($p1,$p2)=(0,length($s)-1);
+my $i;
+for(@ARGV){
+	last if(($i=ndx(substr($s,$p1,$p2),$_))<0);
+	$p1+=$i;
+	$p2-=$i;
+	if(substr($_,0,1) eq "<"){
+		my $x=$_;
+		$x=~s/\s.*//;
+		substr($x,1,0)="/";
+		last if(($p2=ndx(substr($s,$p1,$p2),$x))<0);
+	}else{
+		$i=length($_);
+		substr($s,$p1-$i,$i)=$to;
+	}
+}
+print $s;' "${@}"
+}
+
+
+_mix1(){
+	local i='/usr/bin/amixer -q set'
+	# standard channel is "Master", I have simple USB card with "Headphone", try to detect some other exotic
+	if [ -n "$mixer" -a "$mixer" != Master -a "$mixer" != Headphone ]; then
+		echo "$i Master $* || $i '$mixer' $* || $i Headphone $*"
+	else
+		echo "$i Master $* || $i Headphone $*"
+	fi
+}
+
+_mix(){
+	echo "$(_mix1 $* -c 0) || $(_mix1 $*)"
+}
+
+obconfig(){
+	mkdir -p "${1%/*}"
+	local a= i
+	for i in "${!YA_APP_XF86@}"; do
+		i="${i#YA_APP_}"
+		case "$i" in
+		XF86Desktop|XF86Panel|XF86SettingsManager);;
+		*)a+="<keybind key='$i'><action name='Execute'><command>ya-session --run $i</command></action></keybind>\n";;
+		esac
+	done
+	for i in 'C-Menu +/usr/bin/sudo /usr/bin/mc' 'Super_R TerminalEmulator' 'C-Super_R +/usr/bin/sudo -s'; do
+		a+="<keybind key='${i%% *}'><action name='Execute'><command>ya-session --run ${i#* }</command></action></keybind>\n"
+	done
+	mixer=`echo $(/usr/bin/amixer -c 0|grep -o "control '[^']*'\|Playback channels: Front .*")|grep -o "'[^']*' Playback"`
+	mixer="${mixer#\'}"
+	mixer="${mixer%%\'*}"
+	for i in 'C-A-KP_Delete /usr/bin/slock' {XF86AudioLowerVolume,C-A-KP_Divide}" $(_mix 1-)" {XF86AudioRaiseVolume,C-A-KP_Multiply}" $(_mix 1+);$(_mix1 on)" "XF86AudioMute $(_mix 0);$(_mix1 off)"; do
+	# left != right with pulseaudio (async?)
+#	for i in 'C-A-KP_Delete /usr/bin/slock' {XF86AudioLowerVolume,C-A-KP_Divide}" $(_mix1 1%-)" {XF86AudioRaiseVolume,C-A-KP_Multiply}" $(_mix1 1%+ on)" "XF86AudioMute $(_mix1 i 0 off)"; do
+		a+="<keybind key='${i%% *}'>\n"
+		i="${i#* };"
+		while [ -n "$i" ]; do
+			a+="<action name='Execute'><command>${i%%;*}</command></action>\n"
+			i="${i#*;}"
+		done
+		a+="</keybind>\n"
+	done
+	local m='..'
+	$minimal && m='/var/lib'
+	ob3menuconfig --config - --fix <"$2" | \
+	sed -e 's:<animateIconify>yes</animateIconify>:<animateIconify>no</animateIconify>:' \
+		-e 's:<noStrut>.*</noStrut>:<noStrut>no</noStrut>:' \
+		-e 's:\(<context name="Titlebar">\):\1\n<mousebind button="Left" action="Click"><action name="ShowMenu"><menu>root-menu</menu></action></mousebind>\n<mousebind button="Middle" action="Click"><action name="ShowMenu"><menu>root-menu</menu></action></mousebind>:' \
+		-e 's:<file>menu\.xml</file>:<file>'"$m"'/ya/menu.xml</file>:' \
+		-e 's:\(<!-- Menus -->\):\1\
+<!-- "Drag" not working here -->\
+<mousebind button="Left" action="DoubleClick"><action name="ShowMenu"><menu>root-menu</menu></action></mousebind>\
+<mousebind button="Right" action="Click"><action name="ShowMenu"><menu>root-menu</menu></action></mousebind>\
+<mousebind button="Left" action="Click"><action name="execute"><execute>'"$cache"'/desk-sh $pointer</execute></action></mousebind>\n:' \
+		-e 's:</keyboard>:<!-- ya.keybind -->\
+<keybind key="C-Escape"><action name="ShowMenu"><menu>client-list-combined-menu</menu></action></keybind>\
+<keybind key="Menu"><action name="ShowMenu"><menu>root-menu</menu></action></keybind>\
+<keybind key="XF86PowerOff"><action name="Execute"><prompt>Power off?</prompt><command>/sbin/poweroff</command></action></keybind>\
+'"$a"'<!-- /ya.keybind -->\n</keyboard>:' | \
+			fixml 'Bottom' '<dock>' '<position>' '[^<]*' | \
+			fixml 'root' '<context name="Icon">' '<mousebind button="Right" action="Press">' '<menu>' 'client' | \
+			fixml 'Onyx-Citrus' '<theme>' '<name>' '[^<]*' >$1
+}
+
+_kill(){
+	local i l
+	for i in "${@}"; do
+		i="${i%% *}"
+		case "$l" in
+		pcmanfm)pcmanfm --desktop-off;;
+		xfdesktop)xfdesktop --quit;;
+		lxpanel)lxpanelctl exit;;
+		*)l+=" $i";;
+		esac
+	done
+	killall $l
+}
+
+killer(){
+	{
+	flock -w 10 -x 9
+	pcmanfm --desktop-off
+	xfdesktop --quit
+	lxpanelctl exit
+	local k i p
+	p=`cd "$cache" && ls -1 $DSP1-[1-9]* 2>/dev/null` &&
+	for k in kill false false false 'kill -s KILL' false; do
+		for i in $p; do
+			pid_ok $i && $k $i
+		done
+		p=`cd "$cache" && ls -1 $DSP1-[1-9]* 2>/dev/null` || break
+		sleep 1
+		echo -n "[wait]"
+	done
+	killall -w xfce-mcs-manager gnome-settings-daemon
+	} 9>>"$ENV"
+}
+
+_run(){
+	local i c="$*"
+	"${@}" &
+	i=$?
+	case "$*" in
+	*/xfdesktop\ *|*/pcmanfm\ --desktop*|*/lxpanel\ *)return $i;;
+	esac
+	c="${c//[^a-zA-Z0-9\/-]/.*}"
+	c="${c//.\*.\*/.*}"
+	echo "$c." >"$cache/$DSP1-$!"
+	return $i
+}
+
+runs(){
+	local i
+	i=`_1of "${@}"` && _run $i
+}
+
+run(){
+	local i
+	for i in "${@}"; do
+		i=`app $i` && _run $i
+	done
+}
+
+_env(){
+	{
+	flock -x 1
+	"${@}"
+	} >>"$ENV" && . "$ENV"
+}
+
+envcache(){
+	local i
+	{
+	flock -x 1
+	for i in "${@}"; do
+		sed -i -e "/^$i=/d" "$ENV"
+		echo "$i='${!i}';" >>"$ENV"
+	done
+	} >>"$ENV"
+}
+
+by_category(){
+local i
+for i in "${1//|/ }"; do
+	local g j y= n=
+	for i in ${i//;/ }; do
+		[ -n "${i##!*}" ] && y+="$i\|" || n+="${i#!}\|"
+	done
+	i="grep -R '^Categories=${y:+\(\|.*;\)\(${y%??}\)\(;\|$\)}' /usr/share/applications"
+	g="$i --include '*.desktop'"
+	if j=`grep -s "^_app/" "$HOME/.local/share/applications/mimeapps.list"|grep -o "[^=]*\.desktop$"`; then
+		for j in $j; do
+			i+=" --include '$j'"
+			g+=" --exclude '$j'"
+		done
+		g="($i;$g)"
+	fi
+	eval "$g${n:+|grep -v '[=;]\(${n%??}\)\(;\|$\)'}"
+done|while read i; do
+	local Exec= TryExec= Terminal= Type=
+	while read i; do
+		case "$i" in
+		Exec=*|TryExec=*|Terminal=*|Type=*)local "${i%%=*}"="${i#*=}";;
+		esac
+	done <"${i%%:*}"
+	if [ -n "$Exec" -a "$Type" = Application ] && ([ -z "$TryExec" ] || which "$TryExec" >/dev/null 2>&1); then
+		[ "$Terminal" = true ] && Exec="+$Exec"
+		echo -n "'${Exec% \%?}' "
+	fi
+done
+}
+
+_app(){
+	local p="$1" x x1 p1= al_="$al" al
+	shift
+	for i in "${@}"; do
+		x="${i%% *}"
+		[ "$x" = "$i" ] && p1="$p" || p1=" ${i#* }$p"
+		pref="${x:0:1}"
+		al="${x//;/@}"
+		al="${al//\|/:}"
+	    if x1=`alias "$al" 2>/dev/null`; then
+		# exec alias don't working. subst now
+		x="${x1#*=\'}"
+		x="${x%\'}"
+	    else
+		x="${x#[+@]}"
+		case "$pref" in
+		@)
+			# categories are slow, last resort
+#			[ -n "$min" ] && continue
+			eval "_app '$p1' $(by_category "$x")"
+			continue
+		;;
+		esac
+		v="YA_APP_${x//-/_}"
+		if [ -n "${v##*/*}" ] && [ -n "${!v+set}" ]; then
+			if [ -n "${!v}" ]; then
+				# do not too cache
+				al=
+				eval "_app '$p1' ${!v}"
+				continue
+			fi
+			unset "${v}"
+		fi
+		x=`which "$x" 2>/dev/null` || continue
+	    fi
+		x1="${x// /\\ }"
+		a="$aa"
+		a="${a%% $x1 *}"
+		a="${a%% ${x1##*/} *}"
+#		[ $a ] || break
+		a="${#a}"
+		[ $a -lt $mina ] || continue
+		mina=$a
+		minp="$p1"
+		min="$x"
+		minpref="$pref"
+	done
+	[ -n "$al_" -a -n "$min" ] && alias "$al_"="$min" &>/dev/null && alias "$al_" >>$ENV
+}
+
+#alias WebBrowser=/usr/bin/seamonkey-X
+
+# select one preferred app
+# $YA_APP - global preferred list
+# $YA_APP_<name> - substitution list for "name"
+# +command - in term
+app(){
+	local i v a aa min= minp= mina pref minpref= al=
+	v="YA_PROFILE_$YA_PROFILE"
+	aa=" $YA_APP ${!v} "
+	mina=$((${#aa}+1))
+	for i in "${@}"; do
+		eval "_app '' '$i'"
+	done
+	if [ -z "$min" ]; then
+		for i in "${@}"; do
+			case "$i" in
+			@*);;
+			*)eval "_app '' '@$i'";;
+			esac
+			[ -n "$min" ] && break
+		done
+		[ -z "$min" ] && return 1
+	fi
+	case "$minpref" in
+	+)app "TerminalEmulator -e $min$minp";;
+	*)echo "$min$minp";;
+	esac
+	return
+}
+
+launch(){
+	i="$(app "${@}")"
+	case "$i" in
+	*exo-open\ --launch\ TerminalEmulator\ -e\ *)i="${i/ -e}";;
+	/usr/bin/[Tt]erminal\ *-e\ *|/usr/bin/xfce4-terminal\ *-e\ *)exec ${i%% -e *} -e "${i#* -e }";;
+	/usr/bin/vte\ *-e\ *|/usr/bin/vte\ --reverse\ *-e\ *)exec ${i%% -e *} -c "${i#* -e }";;
+	esac
+	exec $i
+	exit
+}
+
+preferred(){
+	local i
+	while read i; do
+		YA_APP+=" ${i// /\\ }"
+	done <"$prefapps"
+}
+
+sess(){
+	export XDG_MENU_PREFIX="${YA_PROFILE,,}-" DESKTOP_SESSION="ya$suff" DISPLAY
+	# SESSION_MANAGER=
+}
+
+# do not start xscreensaver if xset
+xssaver(){
+	local x=`xrdb -query|grep '^xscreensaver\.'|cat - "$HOME/.xscreensaver" 2>/dev/null|sed -e 's:[ \t]::g' -e 's:^xscreensaver\.::'` i v t=0 c=0 xset=xset dpms=true b=true s1=0 s2=0 s3=0 lock=true mode=X lock=false h m s
+	x="${x,,}"
+	while [ -n "$x" ]; do
+		i="${x%%
+*}"
+		[ "$i" = "$x" ] && x=
+		x="${x#*
+}"
+		v="${i#*:}"
+		if [ -n "$v" -a -z "${v//[0-9:]}" ]; then
+			s="${v##*:}"
+			if [ "$s" = "$v" ]; then
+				v=$[s*60]
+			else
+				v="${v%:*}"
+				m="${v##*:}"
+				m="${m:-0}"
+				v="${v%:*}"
+				h="${v##*:}"
+				h="${h:-0}"
+				v=$[h*60*60+m*60+s]
+			fi
+		fi
+		case "$i" in
+		mode:*)mode=$v;;
+		lock:true|lock:false)lock=$v;;
+		dpmsenabled:true|dpmsenabled:false)dpms=$v;;
+		timeout:*)t=$v;;
+		cycle:*)c=$v;;
+		dpmsstandby:*)s1=$v;;
+		dpmssuspend:*)s2=$v;;
+		dpmsoff:*)s3=$v;;
+		dpmsquickoff:true)b=false;;
+		dpmsquickoff:false)b=true;;
+		esac
+	done
+	case "$mode" in
+	x);;
+	# 2do: --dpms && remove dpms here?
+	lock)xkbd-onoff --sudo2 /usr/sbin/ya-nrg bat restore --sudo1 /usr/sbin/ya-nrg light 20 sockets - cores - auto --boot --xss;;
+	off)dpms=false;b=false;;
+	*)xset=true;lock=false;_run xscreensaver;;
+	esac
+	if [ $s2 = 0 ]; then
+		[ $s3 != 0 -a $s3 -lt $s1 ] && s3=$s1
+	else
+		[ $s2 -lt $s1 ] && s2=$s1
+		[ $s3 != 0 -a $s3 -lt $s2 ] && s3=$s2
+	fi
+	$dpms && $xset dpms $s1 $s2 $s3 +dpms || {
+		$b && $xset dpms $s1 $s2 $s3 -dpms || $xset dpms 0 0 0
+	}
+	$b && $xset s on s blank s expose s $t $c || $xset s off
+#	$lock && ...
+}
+
+xcursor(){
+	local x=`xrdb -query|grep '^Xcursor\.'|sed -e 's:[ \t]::g' -e 's:^Xcursor\.::'` i x v t s
+	while [ -n "$x" ]; do
+		i="${x%%
+*}"
+		[ "$i" = "$x" ] && x=
+		x="${x#*
+}"
+		v="${i#*:}"
+		case "$i" in
+		theme:*)t=$v;;
+		size:*)s=$v;;
+		theme_core:*);;
+		esac
+	done
+	[[ -n "$t" ]] && [[ -n "$s" ]] || return
+	x=
+	for i in /usr/share/cursors/xorg-x11; do
+		i="$i/$t/cursors/left_ptr"
+		[ -e "$i" ] && x=$i && break
+	done
+	[[ -n "$x" ]] && xsetroot -xcf "$x" "$s"
+}
+
+resolution(){
+	xi=
+	displays
+	[ -n "$DSP2" -a "$DSP" = "$DSP0" ] && return
+	local i
+	read i <"$cache/menu.xml.$DSP.key1"
+	DSP3="${i// /X}"
+	DSP2="${i%% *}"
+	i="${i#* }"
+	[ -n "$i" -a -z "${i##* *}" ] && xi="$xinerama" && i+=' ' && [ -z "${i##* $DSP2[ +]*}" ] && xi=
+	[[ "$xi" == *index* ]] && DSP2="${i%% *}"
+	: ${DSP2:="$DSP"}
+	: ${DSP3:="$DSP"}
+}
+
+tint2chk(){
+	resolution
+	local a="/etc/xdg/ya$suff/tint2rc" b="$obconfdir/tint2rc" c="$cache/tint2rc.$DSP3" t
+	t="/usr/bin/tint2 -c $c"
+	YA_APP_TINT2="'$t'"
+	[[ "${YA_DESKTOP,,}" == *tint2* ]] && YA_DESKTOP="$t" && desk="$t"
+    if [ -s "$c" ]; then
+	true
+    elif [ -s $b ]; then
+	cp $b "$c"
+    else
+	[ -s $a ] && cp $a "$b" && cp $b "$c"
+	$minimal || [ -e "$cache/desk-sh" ] || {
+		i="$(< /etc/xdg/ya$suff/menu.xml)$(< "$obconfdir/menu.xml")"
+		i="${i##*execute=\"}"
+		i="${i%%\"*}"
+		desk="${i// \~/ $HOME}"
+		[ -n "${desk##* --tint2*}" ] && desk+=" --init --tint2 $c --init"
+	}
+	[ "$DSP" = "$DSP0" ] && return
+	[ -e "$prefapps" ] || {
+		grep -sh '^Exec=' "$HOME/.config/xfce4/panel/launcher"{*.rc,*/*.desktop}|sed -e 's:^Exec=::' -e 's:%[^ ]*$::' -e 's: *::g'|sort -u >>"$prefapps"
+	}
+    fi
+    $kbdd && grep -qw xkbdd "$c" && kbdd=false
+}
+
+_unalias(){
+	echo "YA_ENV_KEY=$i;unalias -a"
+}
+
+_setxkbmap(){
+	setxkbmap "${@}" && [ "$DSP1" = :0 ] || setxkbmap "${@}" -print|xkbcomp - $DISPLAY
+}
+
+_xcat(){
+	cat {/etc/X11/xinit/,/etc/xdg/ya$suff/,"$HOME"/.config/ya$suff/,"$HOME"/.}"$1" 2>/dev/null
+}
+
+# add keyboards for all used locales
+_setkb(){
+	i="
+`setxkbmap -query`"
+	o="${i##*options: }"
+	o="${o%%
+*}"
+	o="${o// }"
+	i="${i##*layout: }"
+	i="${i%%
+*}"
+
+	i="${i// }"
+	i1=
+	for l in "$LANG" "${!LC_@}"; do
+		l="${l#*_}"
+		l="${l%%[.@]*}"
+		l="${l,,}"
+		[ -n "${i##*$l*}" ] && i1+=",$l"
+	done
+	[ -z "$o" ] && o='-option grp:ctrl_shift_toggle' || o=
+	[ -n "$i1" ] && i+="$i1" && i="${i#,}" && _setxkbmap -layout "$i" $o
+	if read j <"$obconfdir/xkbmap"; then
+		_setxkbmap $j
+		setxkbmap -query|grep -q '^layout: .*,' && kbdd=true
+	elif [[ "$i" == *,* ]]; then
+		kbdd=true
+	fi
+}
+
+[ -e "$ENV" ] && . "$ENV" || mkdir -p "$cache"
+i=`stat --printf=%Z $prefapps /usr/share/applications /usr/bin/ya-session 2>/dev/null`
+[ "$i" != "$YA_ENV_KEY" ] && _env _unalias
+preferred 2>/dev/null
+[ -z "$YA_DESKTOP" ] && YA_DESKTOP=`app $YA_STARTUP`
+desk="$YA_DESKTOP"
+sess
+while true; do
+case "$1" in
+--noop)break;;
+--exit)_exec killall xinit X $wm ;;
+--ya)
+	killer
+	sess
+	i="YA_SESSION_$YA_PROFILE"
+	i="${!i}"
+	eval "run ${i:-$YA_SESSION}"
+	while read i; do
+		_run ${i% &}
+	done <"$cache/autostart"
+;;
+--kill)
+	i="YA_APP_$2"
+	[ -z "${!i}" ] && i="$2" || i="${!i}"
+	eval "_kill $i"
+	break
+;;
+--0)
+	killer
+	_run $desk
+;;
+--layout)
+	desk(){
+		cd "$1" || ( mkdir "$1" && cd "$1" ) || err "~/Desktop"
+	}
+	eval "desk ~${2:-$USER}/Desktop"
+	for i in /mnt/auto/disk $Desk/*; do
+		[ -n "${i##*/.*}" -a -e "$i" -a -e "${i##*/}" ] || ln -s "$i"
+	done
+	break
+;;
+-f|--disconnected)
+	shift
+	disconnected=true
+	continue
+;;
+--nokbd)
+	shift
+	kbd=false
+	continue
+;;
+--xinitrc)
+	shift
+	xinitrc=true
+	continue
+;;
+--obsession)
+	shift
+	envir openbox
+	i='/usr/libexec/openbox-autostart OPENBOX'
+	[ -z "$desk" ] && desk="$i" || desk="/bin/bash -c '$i;_exec $desk'"
+	continue
+;;
+--open)
+	shift
+	desk=`app FileManager` && for i in $Desk $HOME/Desktop; do
+		[ -d "$i" ] && desk="$desk $i"
+	done
+	continue
+;;
+-p|--profile)
+	YA_PROFILE="$2"
+	envcache YA_PROFILE
+	YA_DESKTOP=`app $YA_STARTUP`
+	desk="$YA_DESKTOP"
+	shift 2
+	continue
+;;
+--run)shift;launch "$*";; # better for param chaining
+--runs)shift;launch "${@}";;
+--obconfig)
+	shift
+	obconfig "${@}"
+	break
+;;
+--env)
+	_env "$2"
+	shift 2
+	continue
+;;
+--tint2)
+	shift
+	YA_DESKTOP=`app TINT2`
+	desk="$YA_DESKTOP"
+	tint2chk
+	continue
+;;
+--minimal)shift;continue;;
+--fixrc)
+	shift
+	fixml "${@}" <"$obconf" >"$obconf"'.$$$' && rename '.$$$' '' "$obconf"'.$$$'
+;;
+--app)
+	shift
+	app "${@}"
+	break
+;;
+?*)
+	i=" ${!YA_APP_*}"
+	i="${i// YA_APP_/,}"
+	i="${i#,}"
+	echo "Usage: ya-session [command]
+Commands: -noop, --ya, -p|--profile <profile>, --exit, --0, --obsession, --open,
+	--layout [user], --run <cmd>, --runs 'cmd1' ['cmd2'...],
+	-f|--disconnected
+	--nokbd
+.xinitrc examples:
+	minimal: exec ya-session'
+	openbox-style: exec ya-session --open --obsession
+	panel: YA_STARTUP=XF86Panel exec ya-session
+	xfce4 panel: YA_PROFILE=xfce YA_STARTUP=XF86Panel exec ya-session
+One-shot desktop update: ya-session --layout
+or: ln -s $Desk ~/Desktop/desktop
+Launcher:
+	ya-session --run cmd
+	ya-session --runs 'cmd1' 'cmd2' ...
+	- launch first found command, preferred in \$YA_APP variable
+	(prefixed by '+' to terminal)
+	and/or substituted via \$YA_APP_<cmd> variables:
+	$i"
+	break
+;;
+*)
+	rm -f "$cache/"$DSP1-[1-9]* "$ENV"
+	[ -e /etc/udev/rules.d/88-autofs.rules -a ! -e /var/run/auto.dev ] && . /usr/share/ya-layout/autofs-all
+	if $xinitrc; then
+		. /etc/X11/xinit/xinitrc
+	fi
+	[ -x /usr/bin/dbus-launch ] && _env /usr/bin/dbus-launch --sh-syntax --exit-with-session
+	for i in gtk{3,2}; do
+		for j in /usr/lib64/qt5/plugins/platformthemes/libq$i.so; do
+			[ -e "$j" ] && export QT_QPA_PLATFORMTHEME="$i" QT_STYLE_OVERRIDE="$i" && break 2
+		done
+	done
+	xcursor
+	$kbd && _setkb
+	$xinitrc || _xcat Xmodmap | xmodmap -
+	xprop -root -remove _NET_NUMBER_OF_DESKTOPS -remove _NET_DESKTOP_NAMES -remove _NET_CURRENT_DESKTOP
+	envir ya$suff
+	[ -s "$obconf" ] || obconfig "$obconf" $(_1cfg openbox/rc.xml)
+_run_dsp(){
+	resolution
+	[ "$YA_STARTUP" = TINT2 ] && tint2chk
+	$xinitrc || _xcat Xresources | xrdb -merge
+	xssaver
+	$kbdd && xkbdd >/dev/null &
+	[ -n "$desk" ] && i=`_1cfg "ya$suff/wallpaper{$DSP2,$DSP,${DSP%:*},${DSP%.*},}.*"` && case "$desk" in
+	*pcmanfm*)desk+=" -w $i";;
+	esac
+	for i in "$cache"/desk.kEy.{"$DSP2","$DSP"}.*; do
+		[ -e "$i" ] && {
+			# on nouveau only last xinerama window drawed, so don't owercode here
+			{
+			[ -n "$xi" ] &&
+				feh --no-fehbg $xi --bg-center "$i" ||
+				feh --no-fehbg --bg-tile "$i" &
+			} &
+			break
+		}
+	done
+	export YA_DESKTOP
+	[ -e /var/run/autofs.pid ] && (. /usr/share/ya-layout/autofs-all)
+	wm ${desk:+--startup "$desk"}
+}
+	displays
+	for DSP in $dsps1; do
+		DISPLAY="$DSP" _run_dsp &
+	done
+	DSP="$dsp0"
+	_run_dsp
+;;
+esac
+displays
+for DSP in $dsps1; do
+		DISPLAY="$DSP" wm --restart &
+done
+DSP="$dsp0"
+wm --restart
+done
+_exit

@@ -1,0 +1,27 @@
+#_FLAGS="$_FLAGS -fomit-frame-pointer"
+_FLAGS="$_FLAGS -fno-ident -fivopts -fbranch-target-load-optimize"
+_FLAGS="$_FLAGS -finline-small-functions -findirect-inlining"
+_FLAGS="$_FLAGS -ffast-math"
+# ?
+#_FLAGS="$_FLAGS -fgcse-sm -fgcse-las"
+# O2
+_FLAGS="$_FLAGS -fschedule-insns2 -fsched-spec-load -fsched-pressure"
+# broken on x86 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=38768). I get worked exlude elfutils -ftracer
+#_FLAGS="$_FLAGS -fschedule-insns"
+# O3
+_FLAGS="$_FLAGS -fgcse-after-reload -fipa-cp-clone -fpredictive-commoning -ftree-loop-distribute-patterns -funswitch-loops -ftree-vectorize"
+# O3 4.8
+_FLAGS="$_FLAGS -fvect-cost-model -ftree-partial-pre"
+# 4.9
+#_FLAGS="$_FLAGS -fno-var-tracking-assignments"
+
+# looks like help other optimizers, but too increase code size
+#_FLAGS="$_FLAGS -ftracer"
+
+# modulo
+_FLAGS="$_FLAGS -fmodulo-sched -fmodulo-sched-allow-regmoves -freschedule-modulo-scheduled-loops"
+
+#_FLAGS="$_FLAGS -fno-stack-protector"
+
+# 5 "improve code quality"? to grok
+#_FLAGS="$_FLAGS -fno-semantic-interposition"

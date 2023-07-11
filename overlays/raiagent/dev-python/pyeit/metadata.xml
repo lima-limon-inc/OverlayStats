@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<stabilize-allarches/>
+	<upstream>
+		<!--FIXME: Uncomment *AFTER* this project publishes to PyPI.
+		           remote-id type="pypi">pyEIT</remote-id-->
+		<remote-id type="github">liubenyuan/pyEIT</remote-id>
+	</upstream>
+	<use>
+        <flag name="3d">Enable 3D mesh visualization</flag>
+		<flag name="thorax">Enable thoracic mesh building and reconstruction</flag>
+	</use>
+</pkgmetadata>

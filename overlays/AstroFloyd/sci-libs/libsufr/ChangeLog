@@ -1,0 +1,124 @@
+# ChangeLog for sci-libs/libsufr
+# Copyright 1999-2021 Gentoo Authors; Distributed under the GPL v2
+# $Header: $
+
+*libsufr-0.7.6 (22 Aug 2021)
+*libsufr-0.7.7 (22 Aug 2021)
+
+  22 Aug 2021; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.7.6.ebuild,
+  +libsufr-0.7.7.ebuild, -libsufr-0.7.4-r1.ebuild:
+  sci-libs/libsufr: version bump to v0.7.7.
+
+*libsufr-0.7.4-r1 (05 Oct 2020)
+*libsufr-0.7.5-r1 (05 Oct 2020)
+
+  05 Oct 2020; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.7.4-r1.ebuild,
+  +libsufr-0.7.5-r1.ebuild, -libsufr-0.7.4.ebuild, -libsufr-0.7.5.ebuild:
+  sci-libs/libsufr: revision bumps to 0.7.4-r1 and 0.7.5-r1.
+
+*libsufr-0.7.5 (11 Jan 2020)
+
+  11 Jan 2020; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.7.5.ebuild,
+  -libsufr-0.7.3.ebuild:
+  sci-libs/libsufr: version bump to v0.7.5
+
+*libsufr-0.7.4 (31 May 2019)
+
+  31 May 2019; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.7.4.ebuild,
+  -libsufr-0.7.2.ebuild, libsufr-0.7.3.ebuild:
+  sci-libs/libsufr: version bump to v0.7.4
+
+  01 Apr 2017; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.5.ebuild,
+  +libsufr-0.7.3.ebuild:
+  Version bump
+
+*libsufr-0.7.2 (03 Apr 2016)
+
+  03 Apr 2016; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.7.1.ebuild,
+  +libsufr-0.7.2.ebuild:
+  Version bump
+
+*libsufr-0.7.1 (02 Apr 2016)
+
+  02 Apr 2016; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.4.ebuild,
+  +libsufr-0.7.1.ebuild:
+  Version bump
+
+*libsufr-0.7.0 (23 Nov 2015)
+
+  23 Nov 2015; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.5.4.ebuild,
+  +libsufr-0.7.0.ebuild:
+  Version bump
+
+*libsufr-0.6.5 (21 May 2015)
+
+  21 May 2015; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.3.ebuild,
+  +libsufr-0.6.5.ebuild:
+  Version bump
+
+*libsufr-0.6.4 (09 May 2015)
+
+  09 May 2015; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.2.ebuild,
+  +libsufr-0.6.4.ebuild:
+  Version bump
+
+*libsufr-0.6.3 (19 Apr 2015)
+
+  19 Apr 2015; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.1.ebuild,
+  +libsufr-0.6.3.ebuild:
+  Version bump
+
+*libsufr-0.6.2 (04 Apr 2015)
+
+  04 Apr 2015; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.6.0.ebuild,
+  +libsufr-0.6.2.ebuild:
+  Version bump
+
+  08 Dec 2013; AstroFloyd <AstroFloyd@gmail.com> -libsufr-0.3.0.ebuild,
+  -libsufr-0.3.1.ebuild, -libsufr-0.5.1.ebuild, -libsufr-0.5.2.ebuild,
+  -libsufr-0.5.3.ebuild:
+  Remove older versions
+
+*libsufr-0.6.1 (08 Dec 2013)
+
+  08 Dec 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.6.1.ebuild:
+  Version bump
+
+*libsufr-0.6.0 (08 Dec 2013)
+
+  08 Dec 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.6.0.ebuild:
+  Version bump
+
+*libsufr-0.5.4 (20 Oct 2013)
+
+  20 Oct 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.5.4.ebuild:
+  Version bump
+
+*libsufr-0.5.3 (26 Aug 2013)
+
+  26 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.5.3.ebuild:
+  Version bump
+
+*libsufr-0.5.2 (20 Aug 2013)
+
+  20 Aug 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.5.2.ebuild:
+  Version bump
+
+*libsufr-0.5.1 (31 Jul 2013)
+
+  31 Jul 2013; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.5.1.ebuild:
+  Version bump
+
+*libsufr-0.3.1 (14 Nov 2011)
+
+  14 Nov 2011; AstroFloyd <AstroFloyd@gmail.com> +libsufr-0.3.1.ebuild,
+  edited metadata.xml:
+  Added ebuild for version 0.3.1; files/libsufr-0.3.0-multilib.patch no longer
+  needed
+
+*libsufr-0.3.0 (09 Nov 2011)
+
+  09 Nov 2011; Kacper Kowalik <xarthisius@gentoo.org> +libsufr-0.3.0.ebuild,
+  +files/libsufr-0.3.0-multilib.patch, +metadata.xml:
+  Initial import, ebuild written by AstroFloyd <AstroFloyd@gmail.com>,
+  edited by me

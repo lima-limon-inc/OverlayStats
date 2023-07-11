@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>o.freyermuth@googlemail.com</email>
+    <name>Oliver Freyermuth</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/italiangrid/voms/issues</bugs-to>
+    <remote-id type="github">italiangrid/voms</remote-id>
+  </upstream>
+  <use>
+    <flag name="clients">Install VOMS client components.</flag>
+    <flag name="server">Install VOMS server component.</flag>
+  </use>
+</pkgmetadata>

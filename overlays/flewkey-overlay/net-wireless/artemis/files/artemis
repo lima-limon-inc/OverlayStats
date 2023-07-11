@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /opt/artemis
+python3 artemis.py $@

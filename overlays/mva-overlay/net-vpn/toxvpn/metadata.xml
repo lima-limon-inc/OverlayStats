@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>mva@gentoo.org</email>
+    <name>Vadim A. Misbakh-Soloviov</name>
+  </maintainer>
+  <use>
+    <flag name="zeromq">Use net-libs/zeromq for queues management</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">cleverca22/toxvpn</remote-id>
+  </upstream>
+</pkgmetadata>

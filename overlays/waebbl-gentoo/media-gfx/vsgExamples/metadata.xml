@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>waebbl-gentoo@posteo.net</email>
+	<name>Bernd Waibel</name>
+</maintainer>
+<longdescription>
+	Example programs that test and illustrate how to use the
+	VulkanSceneGraph and optional add-on libraries.
+</longdescription>
+<use>
+	<flag name="source">
+		Install source files of example programs as well
+	</flag>
+</use>
+<upstream>
+	<remote-id type="github">vsg-dev/vsgExamples</remote-id>
+</upstream>
+</pkgmetadata>

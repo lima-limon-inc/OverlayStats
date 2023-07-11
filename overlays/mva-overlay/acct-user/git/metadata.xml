@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>mva@gentoo.org</email>
+    <description>Also, you can find me on IRC (Libera.Chat) as mva, or in Telegram as @mva_name</description>
+    <name>Vadim A. Misbakh-Soloviov</name>
+  </maintainer>
+  <use>
+    <flag name="gitea">Set home directory for git hosting via <pkg>www-apps/gitea</pkg>.</flag>
+    <flag name="gitolite">Set home directory for git hosting via <pkg>dev-vcs/gitolite</pkg> or <pkg>dev-vcs/gitolite-gentoo</pkg>.</flag>
+    <flag name="gitprep">Set home directory for git hosting via <pkg>www-apps/gitprep</pkg>.</flag>
+  </use>
+</pkgmetadata>

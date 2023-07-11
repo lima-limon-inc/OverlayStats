@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  schedule:
+    - cron: '0/28 * * * *'
+
+  workflow_dispatch:
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Run the repoman action
+    - uses: prototype99/action-repoman@master
+
+    - name: Run a multi-line script
+      run: |
+        git config user.name Seirra Blake
+        git config user.email sophietheopossum@yandex.ru
+        git pull
+        git add -A && git commit -m "update manifest"
+        git push origin

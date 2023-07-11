@@ -1,0 +1,5 @@
+*3.34.2-r1
+::prototype99			bump eapi
+*3.34.2
+::gnome-next			add missing dependency
+::dantrell-gnome-3-34	base ebuild

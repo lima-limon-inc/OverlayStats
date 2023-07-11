@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<!-- maintainer-needed -->
+	<longdescription>
+		Oubliette - ebuild version bumps
+
+		An extremely simple screen locking utility based on xtrlock. Supports
+		multiple hash-types, shadow passwords, and PAM.
+
+		Version 2.x was forked from mgumz/alock in 2014 by Arkadiusz Bokowy
+		https://github.com/Arkq/alock
+		
+		Version 1.x was written in 2005-2011 by Mathias Gumz
+		https://darkshed.net/projects/alock
+		https://github.com/mgumz/alock
+		
+		Based on xtrlock 1993–1994 by Ian Jackson
+	</longdescription>
+	<upstream>
+		<maintainer>
+			<name>Mathias Gumz</name>
+		</maintainer>
+		<remote-id type="github">Arkq/alock</remote-id>
+	</upstream>
+	<use>
+		<flag name="xbacklight">Build with <pkg>x11-apps/xbacklight</pkg>.</flag>
+	</use>
+</pkgmetadata>

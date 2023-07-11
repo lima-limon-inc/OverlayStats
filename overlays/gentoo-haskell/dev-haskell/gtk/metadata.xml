@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="deprecated">Include definitions in this library that are considered obsolete.</flag>
+		<flag name="fmode-binary">Set the default file translation mode for file I/O operations to _O_BINARY.
+Some GTK libraries open image files without specifing binary mode.
+If you have trouble loading gtk in ghci, then it may help to turn this
+option off.</flag>
+		<flag name="gio">Depend on GIO package, thereby enabling certain features.</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">gtk</remote-id>
+		<remote-id type="github">gtk2hs/gtk2hs</remote-id>
+	</upstream>
+</pkgmetadata>

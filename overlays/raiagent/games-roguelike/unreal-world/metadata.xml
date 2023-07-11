@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<upstream>
+		<doc lang="en">http://unrealworld.wikia.com/wiki/Unreal_World_Wiki</doc>
+		<bugs-to>http://z3.invisionfree.com/UrW_forum/index.php?showforum=4</bugs-to>
+	</upstream>
+</pkgmetadata>

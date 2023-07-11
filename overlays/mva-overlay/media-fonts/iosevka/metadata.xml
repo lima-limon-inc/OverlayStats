@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>fonts@gentoo.org</email>
+    <name>Fonts</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">be5invis/Iosevka</remote-id>
+  </upstream>
+  <use>
+    <flag name="web">Build (9999) or install (non-live) web versions (woff) of the font (and it's variants)</flag>
+  </use>
+</pkgmetadata>

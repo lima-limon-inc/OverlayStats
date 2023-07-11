@@ -1,0 +1,4 @@
+>=dev-libs/boost-1.78
+>=dev-util/boost-build-1.78
+sys-apps/systemd
+sys-apps/systemd-utils

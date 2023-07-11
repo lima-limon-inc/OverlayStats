@@ -1,0 +1,39 @@
+# any-of ( mysql postgres sqlite )
+mail-client/roundcube sqlite
+
+# any-of ( iptables nftables )
+net-misc/connman iptables
+
+# any-of ( emacs fcitx4 ibus )
+app-i18n/mozc -ibus fcitx4
+
+# any-of ( cgi mono perl go lua php pypy python python_asyncio python_gevent ruby )
+www-servers/uwsgi python
+
+# any-of ( java lua mono perl php python ruby tcl )
+dev-libs/xapian-bindings python
+
+# at-most-one-of ( alsa pulseaudio )
+games-action/descent3-demo alsa -pulseaudio
+
+# any-of ( mysql postgres sqlite )
+mail-client/roundcube postgres -sqlite
+
+# any-of ( perl python ruby php5-6 php7-1 php7-2 )
+www-servers/nginx-unit python
+
+# any-of ( client server )
+media-plugins/vdr-streamdev server
+
+# connection-sharing? ( any-of ( iptables nftables ) )
+net-misc/networkmanager iptables
+
+# any-of ( keyring pass )
+app-containers/docker-credential-helpers keyring
+
+# any-of ( qt5 qt6 )
+dev-libs/qxlsx qt5
+sci-astronomy/calcmysky qt5
+
+# opengl? ( any-of ( fltk gui ) )
+sci-mathematics/octave gui

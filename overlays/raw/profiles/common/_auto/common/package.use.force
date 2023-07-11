@@ -1,0 +1,4 @@
+app-misc/sphinx mariadb -mysql
+dev-perl/DBD-MariaDB mariadb -mysql
+dev-perl/DBD-mysql mariadb
+dev-ruby/mysql2 mariadb -mysql

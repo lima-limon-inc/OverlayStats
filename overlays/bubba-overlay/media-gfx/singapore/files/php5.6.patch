@@ -1,0 +1,96 @@
+Fix incompatibilities with php 5.6
+
+Patch by Gordon Bos
+
+--- a/includes/config.class.php
++++ b/includes/config.class.php
+@@ -24,7 +24,7 @@
+    * Implements the Singleton design pattern by always returning a reference
+    * to the same sgConfig object. Use instead of 'new'.
+    */
+-  function &getInstance()
++  public static function &getInstance()
+   {
+     static $instance;
+     if(!is_object($instance))
+--- a/includes/io.class.php
++++ b/includes/io.class.php
+@@ -120,7 +120,8 @@
+           $gal->images[$i] = $dir->files[$i];
+     } else {
+       //selected gallery does not exist
+-      return null;
++      $gal=null;
++      return $gal;
+     }
+     
+     //discover child galleries
+--- a/includes/io_csv.class.php
++++ b/includes/io_csv.class.php
+@@ -208,7 +208,7 @@
+    * Fetches hit data from file.
+    * @param sgGallery  gallery object to load hits into
+    */
+-  function getHits(&$gal) {
++  function getHits($gal) {
+     
+     $fp = @fopen($this->config->base_path.$this->config->pathto_galleries.$gal->id."/hits.csv","r");
+     
+--- a/includes/singapore.class.php
++++ b/includes/singapore.class.php
+@@ -124,7 +124,7 @@
+     }
+     
+     //set current gallery to root if not specified in url
+-    $galleryId = isset($_GET[$this->config->url_gallery]) ? $_GET[$this->config->url_gallery] : ".";
++    $galleryId = isset($_REQUEST[$this->config->url_gallery]) ? $_REQUEST[$this->config->url_gallery] : ".";
+     
+     //load config from gallery ini file (gallery.ini) if present
+     $this->config->loadConfig($basePath.$this->config->pathto_galleries.$galleryId."/gallery.ini");
+@@ -845,7 +845,7 @@
+       return stripslashes($toStrip);
+   }
+   
+-  function thumbnailPath($gallery, $image, $width, $height, $forceSize, $mode = 1)
++  public static function thumbnailPath($gallery, $image, $width, $height, $forceSize, $mode = 1)
+   {
+     $config = sgConfig::getInstance();
+     switch($mode) {
+@@ -863,7 +863,7 @@
+    * @returns stdClass|false  a data object representing the directory and its contents
+    * @static
+    */
+-  function getListing($wd, $mask = null, $getHidden = false)
++  public static function getListing($wd, $mask = null, $getHidden = false)
+   {
+     $dir = new stdClass;
+     $dir->path = realpath($wd)."/";
+@@ -961,7 +961,7 @@
+    * @param bool    set false to prevent canonicalisation of paths (optional)
+    * @return bool   true if $child is contained within or is $parent 
+    */
+-  function isSubPath($parent, $child, $canonicalise = true) 
++  public static function isSubPath($parent, $child, $canonicalise = true) 
+   {
+     $parentPath = $canonicalise ? realpath($parent) : $parent;
+     $childPath = $canonicalise ? realpath($child) : $child;
+--- a/includes/translator.class.php
++++ b/includes/translator.class.php
+@@ -4,7 +4,7 @@
+  * Translation class.
+  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
+  * @copyright (c)2003-2005 Tamlyn Rhodes
+- * @version $Id: translator.class.php,v 1.6 2010/08/28 07:03:37 zhangweiwu Exp $
++ * @version $Id: translator.class.php,v 1.5 2006/02/06 18:47:57 tamlyn Exp $
+  */
+  
+ /**
+@@ -43,7 +43,7 @@
+    * @param string  language code (optional)
+    * @static
+    */
+-  function &getInstance($language = 0)
++  public static function &getInstance($language = 0)
+   {
+     static $instances = array();
+     

@@ -1,0 +1,20 @@
+--- Makefile	2014-01-15 10:44:16.291327593 +0100
++++ Makefile2	2014-01-15 10:43:55.145327595 +0100
+@@ -42,7 +42,7 @@
+ 	@mkdir -p $(DIST_DIR)/bin
+ 	cp misc/bin/mount.tmsu $(DIST_DIR)/bin/
+ 	@mkdir -p $(DIST_DIR)/man
+-	gzip -kfc misc/man/tmsu.1 >$(DIST_DIR)/man/tmsu.1.gz
++	gzip -fc misc/man/tmsu.1 >$(DIST_DIR)/man/tmsu.1.gz
+ 	@mkdir -p $(DIST_DIR)/misc/zsh
+ 	cp misc/zsh/_tmsu $(DIST_DIR)/misc/zsh/
+ 	tar czf $(DIST_FILE) $(DIST_DIR)
+@@ -54,7 +54,7 @@
+ 	cp misc/bin/mount.tmsu $(MOUNT_INSTALL_DIR)
+ 	@echo "* Installing man page"
+ 	mkdir -p $(MAN_INSTALL_DIR)
+-	gzip -kfc misc/man/tmsu.1 >$(MAN_INSTALL_DIR)/tmsu.1.gz
++	gzip -fc misc/man/tmsu.1 >$(MAN_INSTALL_DIR)/tmsu.1.gz
+ 	@echo "* Installing Zsh completion"
+ 	mkdir -p $(ZSH_COMP_INSTALL_DIR)
+ 	cp misc/zsh/_tmsu $(ZSH_COMP_INSTALL_DIR)

@@ -1,0 +1,1677 @@
+#!/usr/bin/perl
+# (c) Denis Kaganovich, Anarchy or GPLv2
+# Network manager OpenBox pipe menu v0.5
+#
+# This is very initial version...
+#
+# Fast runtime operations. No deep configuring, just start/stop wifi, configured ppp, dhcpcd
+# on empty interfaces. DNS (resolv.conf) updating only if .head & .tail exists and some magic.
+# Default route - only if none exists (only first). Devices and operations showed only if I
+# think it [possible] enabled now, others - hidden.
+#
+# For root - wifi information changed runtime, for users - via "sudo rescan" [and after
+# operations - todo].
+#
+# Primary for normal portable users, who just want fast accessibility for everyday operations.
+#
+# TODO:
+# - improve check IP/network visibility (route) for current resolv.conf & pptp|tonnels;
+# - other tonnels;
+# - keys (via gtkdialog? or terminal+bash?);
+# - filter visible wifi over current keyset;
+# - bridges (for VM, IMHO just connect/disconnect to active bridge).
+
+use POSIX;
+use bigint;
+$ioctl=eval('require "sys/ioctl.ph"');
+
+$NOTIFY=1; # 0 - none; 1 - libnotify||terminal; 2 - terminal||libnotify; 3 - only terminal
+
+$AUTO=$>||$ENV{OB3MENUNET_USER}; # do some auto-ops: iface up/down. disable for root.
+
+# use absolute path to sbin to check permissions
+$iwconfig='/sbin/iwconfig';
+$iwlist='/sbin/iwlist';
+$rfcomm='/usr/bin/rfcomm';
+$ppporc='/usr/sbin/ppporc';
+$wpa_cli='/usr/bin/wpa_cli';
+
+$stop='-- ';
+
+$hciscan="$ENV{HOME}/.cache/ya/hciscan.";
+
+@IAM=($0);
+
+# always offline scanning
+#$iwlast=" last";
+
+$SIG{__DIE__}=sub{
+	$SIG{__DIE__}=sub{};
+	unshift @_,"$0: ";
+	notify(@_);
+	&_waitkey;
+};
+
+sub _waitkey{
+	$SUDO || $notify_ || return;
+	print "\nPress enter...";
+	my $i=<STDIN>;
+}
+
+sub notify{
+print STDERR "\n",@_;
+if($DBUS_NOTIFY && !(($SUDO || $notify_) && $NOTIFY>1)){
+	($>,$))=($ENV{OB3MENUNET_USER},$ENV{OB3MENUNET_GRP}) if($SUDO);
+	@x=($bin.'notify-send','-t',6000,join('',@_));
+	$ENV{OB3MENUNET_DEBUG}?system(@x):exec(@x);
+}
+}
+
+$DBUS_NOTIFY=$DBUS=-e '/var/run/dbus/system_bus_socket';
+$DBUS_NOTIFY&&=($NOTIFY!=3) && exists($ENV{DBUS_SESSION_BUS_ADDRESS});
+$notify=$NOTIFY&&$DBUS_NOTIFY;
+
+$cellppp='ya-cell';
+$pppask='APN= ;PH= ;echo;read -p APN: APN && read -p Number[*99#]: PH && export APN PH && ';
+
+@user=getpwuid($>);
+
+sub xml{
+	~s/([	\n<>\'\"\&\\])/'&#'.ord($1).';'/gse for(@_);
+	join(' ',@_);
+}
+
+sub _iwhelp{
+	my $NNN="(?:\"[^\"]*\"|'[^']*'|[^'\"\\s]*)";
+	$iw=1;
+	for $i(split(/\n/,`$iwconfig --help 2>&1`)){
+	$i=~s/^\s*interface\s+(\S+)\s+(.*?)\s*$/
+		xml(my $x=$1); my $o=$2;
+		my $op=quotemeta($1);
+		my @v;
+		for(keys %iw){
+			if(exists($iw{$_}->{$x})){
+				push @v,$_;
+			}
+		}
+		@v=($x) if(!@v);
+		if($o=~s\/^\{(.*)\}$\/$1\/s){
+#			$mult{$x}=$mult{$v}=1;
+		}
+		for my $v (@v){
+			while(($o=~s\/^\|?((?:[^\|\[\]]*(?:\[.*?\])?)*)\/$op=$1;''\/es) && $op ne ''){
+				$op=~s\/\[\/ *(?:\/;
+				$op=~s\/\]\/) ?\/;
+				next if($op eq '...');
+				$op=~s\/\.\/\\.\/g;
+				my $n;
+				$op=~s\/N\/$n++;'N'\/gse;
+				if($n==3 && ($op=~s\/NNN\/$NNN\/s)){
+				}elsif($n==1){
+					if($x eq 'ap'){
+						$op='(?:[0-9A-Fa-f]{2}:)*[0-9A-Fa-f]{2}'
+					}else{
+						$op=~s\/N\/$n++;'[0-9\.]+ ?'\/ge;
+					}
+				}elsif($n){
+					$op=~s\/N\/$n++;'[0-9]'\/ge;
+				}
+				$iw{$v}->{$x}->{$op}=undef;
+			}
+		}
+	''/e;
+	}
+#	$current=_iwdata($i=_getprg($iwconfig.' 2>/dev/null'),undef,1);
+	$current=_iwdata($i=`$iwconfig 2>/dev/null`,undef,1);
+}
+
+sub term{
+	system('ya-session','--run',"+@_");
+
+}
+
+sub _iwdata{
+my $r;
+my $pr=$_[1]||'\s';;
+my $if1;
+for(split(/\n/,$_[0])){
+	if($_[2]){
+		~s/^(\S+)/$if_{$if1=$1}=''/se;
+		next if($if1 ne $if);
+	}
+	for my $s(keys %iw){
+		$s||next;
+		for my $o(keys %{$iw{$s}}){
+			my $pt=_iwpattern($s,$o);
+			$pt="$pr(?:${s})[:=] *($pt)";
+			my $i=$_;
+			$i=~s/$pt/
+#				$r->{$s}->{$o}=$1;
+				$r->{$s}->{$o}=exists($r->{$s}->{$o})?"$r->{$s}->{$o} $1":$1;
+			' '/gsei;
+		}
+	}
+}
+$r;
+}
+
+sub _iwpattern{
+	my $p=join('|',keys %{$iw{$_[0]}->{$_[1]}});
+	$mult{$_[0]}?"(?:$p,)*(?:$p)":"(?:$p)";
+}
+
+sub _ex{
+	xml(my $i=$_[0],my $l=$_[-1]);
+	my $id="$id ";
+	if(!$NOTIFY){
+		my $x=join('|',keys %sudo,keys %nosudo,'--');
+		$id='' if(!($i=/^(?:$x)/));
+	}
+	"<item label='$l'><action name='execute'><execute>${id}$i</execute></action></item>\n";
+}
+
+sub _cur{
+	xml(my $i=$_[0]);
+	"<separator label='*$i'/>"
+}
+
+sub _undef{
+	xml(my $i=$_[0]);
+	"<separator label='$i'/>"
+}
+
+sub _menu{
+	xml(my $i=$_[0],my $l=$_[-1]);
+	"<menu id='$ENV{OB3MENUNET_DEBUG}$id $i' label='$l' execute='$id $i'/>\n";
+}
+
+sub _menu1{
+	xml(my $i=$_[0],my $l=$_[-1]);
+	"<menu id='$ENV{OB3MENUNET_DEBUG}$id $i' label='$l'>\n";
+}
+
+%iw=(
+	'Mode'=>{'mode'=>{}},
+	'Channel'=>{'channel'=>{}},
+	'Tx-Power'=>{'txpower'=>{}},
+	'Frequency'=>{'freq'=>{}},
+	'ESSID'=>{'essid'=>{}},
+	'RTS thr'=>{'rts'=>{}},
+	'Fragment thr'=>{'frag'=>{}},
+	'Encryption key'=>{'key'=>{}},
+	'Power Management'=>{'power'=>{}},
+	'Retry  long limit'=>{'retry limit'=>{}},
+	'Address|Access Point'=>{'ap'=>{}},
+	'Bit Rates?|Bit Rate'=>{'rate'=>{},'bit'=>{}},
+#	'Signal level'=>{'Signal level'=>{'[0-9-]*'=>''}},
+#	'Quality'=>{'Link Quality'=>{'[0-9/]*'=>''}},
+	'Quality'=>{'Quality'=>{'[0-9]*'=>''}},
+#	'Retry  long lifetime'=>{'retry lifetime'=>{}},
+	''=>{'commit'=>{}},
+);
+
+sub _read{
+	open(my $F,'<',$_[0])||return;
+	read($F,my $s,$_[1]||-s $F);
+	close($F);
+	$s;
+}
+
+%noerr=(
+	'pppd'=>{1280=>1,1536=>1},
+	'/usr/sbin/pppd'=>{1280=>1,1536=>1},
+#	$ENV{SHELL}=>{4096=>1,1280=>1,1536=>1},
+	$ENV{SHELL}=>{1280=>1,1536=>1}, # 4096 = pppd terminating by peer
+);
+
+# ip, mask, gw, dev, vmask
+sub ip2n{
+	my @i=@_;
+	my $x255='((?:1?[0-9]{1,2}|2[0-4][0-9]|25[1-5]))';
+	my $b6='([0-9a-f]{4}|)';
+	for(@i[0,1,2,5,6]){
+		if(!defined($_)){
+		}elsif($_=~s/^$x255\.$x255\.$x255\.$x255$/hex(sprintf('%02x%02x%02x%02x',$1,$2,$3,$4))/e){ # ipv4
+			$i[4]=0xFFFFFFFF;
+		}elsif($_=~s/^([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/hex($4.$3.$2.$1)/ie){ # /proc/net/route
+			$i[4]=0xFFFFFFFF;
+		}elsif($_=~s/^\[?([0-9a-f:]+)\]?$/$1/i){
+			~s/(^|:)([0-9a-f]{1,3})(:|$)/$1.sprintf('%04s',$2).$3/gei;
+			while(length($_)<39){
+				$_=~s/::/::0000:/ or last;
+			}
+#			~s/::/:/;if(length($_)!=39){$_=undef;next;}
+			~s/://g;
+			if(length($_)!=32){
+				$_=undef;
+				next;
+			}
+			$_=hex($_);
+			$i[4]=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+#		}elsif($i[4]==0xFFFFFFFF && ($_=~/^[0-9]{1,2}$/i)){
+#			my $x=32-hex($_);
+#			$_=($i[4]>>$x)<<$x;
+		}elsif($_=~/^[0-9a-f]{2}$/i){
+			my $x=128-hex($_);
+			$_=($i[4]>>$x)<<$x;
+		}else{
+			$_=undef;
+		}
+	}
+	$i[1]=$i[4] if(!defined($i[1]));
+	@i;
+}
+
+sub routestat{
+	my $F;
+	if(open($F,'<','/proc/net/if_inet6')){
+		while(<$F>){
+			chomp($_);
+			~s/.*\s+//gs;
+			$if_ip{$_}=1;
+		}
+		close($F);
+	}
+	if(open($F,'<','/proc/net/ipv6_route')){
+		while(<$F>){
+			chomp($_);
+			~s/.*\s+//gs;
+			$if_ip{$_}=1;
+			my @a=split(/\s+/,$_);
+			ip2n($a[0],$a[1],$a[4],$a[9],$a[2],$a[3]);
+		}
+		close($F);
+	}
+	if(open($F,'<','/proc/net/route')){
+		while(<$F>){
+			$_=~s/(\S+)\s+([0-9A-F]{8})\s+([0-9A-F]{8})\s+\S+\s+\S+\s+\S+\s+\S+\s+([0-9A-F]{8})/push @route,[ip2n($2,$4,$3,$1)];''/sei;
+		}
+	}elsif(open($F,'-|','route -n')){
+		while(<$F>){
+			$_=~s/([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+.*(\S+)\s*$/push @route,[ip2n($1,$2,$3,$4)];''/se;
+		}
+	}
+	for(@route){
+		$default_route+=!$_->[0] && !$_->[1];
+		$if_ip{$_->[3]}=undef;
+	}
+	$F && close($F);
+}
+
+# a in b
+sub ip_in{
+	my $v=$_[0]->[4];
+	$v == $_[1]->[4] &&
+#	($_[0]->[0] & $_[0]->[1]) >= ($_[1]->[0] & $_[1]->[1])
+	$_[0]->[0] >= $_[1]->[0]
+	&& ($_[0]->[0] | ($_[0]->[1] ^ $v)) <= ($_[1]->[0] | ($_[1]->[1] ^ $v))
+}
+
+sub n2ip{
+	my $x=sprintf('%08x',$_[0]);
+	my $X='([0-9a-f]{2})';
+	$x=~s/^$X$X$X$X$/hex($1).'.'.hex($2).'.'.hex($3).'.'.hex($4)/gei;
+	$x;
+}
+
+sub checkroute{
+	my @r;
+	for(@route){
+		my $x1=n2ip($_->[0] | ($_->[1]^0xFFFFFFFF));
+		my $x2=n2ip($_[0] | ($_[1]^0xFFFFFFFF));
+		push @r,$_ if(ip_in([@_],$_));
+	}
+	$r;
+}
+
+my @ID=('Quality','ESSID','Frequency','Channel','Address|Access Point');
+my @WPAID=('signal level','ssid','frequency','bssid','proto');
+my @WPAID1=('network id','ssid','bssid','proto');
+
+sub _getprg{
+	my $cmd=$_[0];
+	my $n=$cmd;
+	$n=~s/\s+/ /gs;
+	$n=~s/\W/_/gs;
+	$n="$ENV{HOME}/.cache/ya/net.$n.tmp";
+	my $s;
+	if($>){
+		open(my $F,'<',$n)||return;
+		flock($F,1);
+		read($F,$s,-s $F);
+		close($F);
+	}else{
+		if($AUTO && (my ($if)=$_[0]=~/^$iwlist+\s+(\S+)/) && _read("/sys/class/net/$if/carrier",1) eq ''){
+			$cmd="$cmd || ( ifconfig $if up && ( $cmd || ( sleep 1 && $cmd ) ; ifconfig $if down ) )";
+		}
+		print "#:$AUTO:$ENV{OB3MENUNET_USER} $cmd\n" if($ENV{OB3MENUNET_DEBUG});
+		$s=`$cmd`;
+	}
+	if($if eq ''){
+		$tmp{$n}=undef;
+		open(my $F,'>>',$n)||die "$n: $!";
+		flock($F,2);
+		chown(@USER,$F);
+		seek($F,0,0);
+		truncate($F,0);
+		print $F $s;
+		close($F);
+	}
+	$s;
+}
+
+# visually waiting, but closing window don't affect process
+sub can_background{
+	return if($WAIT_++);
+	$SIG{CHLD}='IGNORE';
+	my $i=fork();
+	$i || return;
+	print "\nWaiting:";
+	waitpid($i,0);
+}
+
+sub rescan{
+	if($SUDO){
+		&can_background && return;
+		print " rescanning...";
+	}
+	$if=undef;
+	@USER=($ENV{OB3MENUNET_USER},$ENV{OB3MENUNET_GRP});
+	$ENV{HOME}=$ENV{OB3MENUNET_HOME};
+	_iwhelp();
+	_getprg("$iwlist $_ scanning 2>&1") for(keys %if_);
+	for("$ENV{HOME}/.cache/ya/net.*.tmp"){
+		exists($tmp{$_})||unlink $_;
+	}
+	exit;
+}
+
+sub _resolv{
+	my $r={};
+	open(my $F,'<','/etc/resolv.conf'.$_[0])||return @r;
+	while(<$F>){
+		~s/^\s*([a-z]*)\s+[0-9\.]*\s*$/$r->{$1}->{$2}=undef/esi;
+	}
+	close($F);
+	$r;
+}
+
+sub resolvstat{
+	my $r=_resolv();
+	for(_resolv('.head'),_resolv('.tail')){
+		for my $x(keys %$_){
+			delete($r->{$x}->{$_}) for(keys %{$_->{$x}});
+		}
+	}
+	if((!$default_route) && -e '/etc/resolv.conf.head' && -e '/etc/resolv.conf.tail'){
+		checkroute(ip2n($_)) || delete($r->{'nameserver'}->{$_}) for(keys %{$r->{'nameserver'}});
+	}
+	$enable_ch_resolv=!scalar(%$r);
+}
+
+sub aplist{
+	pop @_;
+	$id=join(' ',@IAM,@_);
+	my $i=_getprg("$iwlist $if scanning$iwlast 2>&1");
+	my $keys=join('|',keys %{$iw{'Encryption key'}->{'key'}});
+	if(!$! && index($i,'Cell')>=0){
+		print '<separator label="'.$header.join(',',map{join('|',keys %{$iw{$_}})}@ID).'"/>';
+		my @res;
+		for(split(/\n\s*Cell\s+/s,$i)){
+			my %v;
+			$_=~s/^(\S+)\s+-\s+/$v{cell}=$1;''/se or next;
+			my $v=_iwdata("\n ".$_);
+			$v || next;
+			my $avail=!grep(/(?:$keys)/,values %{$v->{'Encryption key'}});
+			my ($i,$s,$sep,$cur);
+			for(@ID){
+				next if(!exists($v->{$_}));
+				for my $x(values %{$v->{$_}}){
+					$x=~s/\s//gs if(!($x=~/\"/));
+					$s.=",$x";
+				}
+				for my $o (keys %{$v->{$_}}){
+					# current "Channel" don't visible in "iwconfig"
+					# ignore list?
+					if($o ne 'Channel'){
+					$cur&&=$current->{$_}->{$o} eq $v->{$_}->{$o};
+					}
+					$i.="$o $v->{$_}->{$o} "
+				}
+			}
+			$s=substr($s,1);
+			$res[$avail].=$cur?_cur($s):_ex($i,$s);
+		}
+		print $res[0];
+		$res[$_] && print '<separator/>',$res[$_] for(1..$#_);
+	}
+}
+
+sub wpaopen{
+	open my $F,'-|',"$wpa_cli @_ -i $if" or die $!;
+	$F;
+}
+
+sub wpa_vars{
+	my ($f,@f,%f,$p);
+	$p->{'ssid'}='"\"'.$_[0]->{'ssid'}.'\""';
+	$f=$_[0]->{'flags'};
+#	if($f eq '[ESS]'){
+		$p->{'key_mgmt'}='NONE';
+#	}
+	$f=~s/^\[|\]$//gs;
+	@f=split(/\]\[/,$f);
+	for my $c ('WPA2-PSK','WPA-PSK','WEP'){
+		for(grep(/^$c/,@f)){
+			$f{$_}=1 for(split(/[+-]/,$_));
+		}
+		%f && last;
+	}
+	$f{$_} && ($p->{'pairwise'}=$_) for('TKIP','CCMP');
+	$f{$_} && ($p->{'proto'}=$_) for('WPA','WPA2');
+	if(($f{'WPA2'}||$f{'WPA'})){
+		$p->{'auth_alg'}='OPEN';
+		$f{$_} && ($p->{'key_mgmt'}="WPA-$_") for('PSK','EAP');
+		$p->{'auth_alg'}='LEAP' if($f{'LEAP'});
+	}elsif($f{'WEP'}){
+		$p->{'auth_alg'}='SHARED';
+	}
+	$p->{'psk'}=undef if(%f);
+	$p->{'bssid'}=$_[0]->{'bssid'} if(!%f);
+	$p;
+}
+
+sub wpa_cli_{
+	my $F;
+	(open($F,'|-',"$wpa_cli -i $if") && print($F join("\n",@_)) && close($F)) || die $!;
+}
+
+# ssid flags bssid
+# do not reconnect if add failed
+sub WPA_ADD{
+	wpa_cli_("disconnect\nreconfigure\n");
+	wpa_cli('add_network')||die;
+	my ($id)=$RES=~/^(\d+)$/;
+	my $s;
+	$|=1;
+	for(@_){
+		$_=~s/=/ /;
+		if($_ eq 'psk '){
+			my $psk=getline(1,'PSK:');
+			$_.='"'.$psk.'"';
+		}
+		$s.="set_network $id $_\n";
+	}
+#	$s.="select_network $id\nsave_config\n";
+	$s.="enable_network $id\nsave_config\nreconfigure\n";
+	wpa_cli_($s);
+	wpa_cli1('select_network',$id);
+	wpa_cli1('reconnect');
+	$cmd="WPA_ADD";
+	0;
+}
+
+sub WPA_REMOVE{
+	wpa_cli_("disconnect\nreconfigure\n");
+	wpa_cli1("remove_network $_[0]");
+	wpa_cli_("save_config\nreconfigure\n");
+	0;
+}
+
+sub _wpalist{
+	my (@a,@f,$i,$res);
+	my $F=wpaopen(@_);
+	$i="$if";
+	while(my $s=readline($F)){
+		chomp($s);
+		@a=split(/ \/ /,$s);
+		if($#a){
+			@f=@a;
+			next;
+		}
+		@a=split(/	/,$s,-1);
+		if($#a==$#f){
+			my $x={};
+			$x->{$f[$_]}=$a[$_] for(0..$#f);
+			if(exists($x->{'network id'})){
+				for('proto'){
+					wpa_cli('get_network',$x->{'network id'},'proto')||next;
+					$RES=~s/.*\n//gs;
+					$RES=~s/RSN/WPA2/g;
+					$x->{$_}=$RES;
+				}
+			}else{
+				$x->{''}=my $v=wpa_vars($x);
+				exists($v->{$_}) && ($x->{$_}=$v->{$_}) for('proto');
+			}
+			push @{$res->{$i}},$x;
+			next;
+		}
+		$s=~s/\'(.*?)\'$/$i=$1/gse;
+	}
+	close($F);
+	$res;
+}
+
+sub wpa_status{
+	wpa_cli(@_)||return;
+	my $r;
+	$RES=~s/^([a-z]+)=(.*)$/$r->{$1}=$2/gme;
+	$r;
+}
+
+sub wpalist{
+	my $sr=_wpalist('scan_results');
+	my $ln=_wpalist('list_networks');
+	my $st=wpa_status('status');
+	print '<separator/><separator label="Configured: '.join(',',@WPAID1),'"/>';
+#	for $if (keys %$ln){
+		for my $cf (@{$ln->{$if}}){
+			for my $sc (@{$sr->{$if}}){
+				next if(!(($cf->{'ssid'} eq '' || $cf->{'ssid'} eq $sc->{'ssid'}) && ($cf->{'bssid'} eq 'any' || $cf->{'bssid'} eq $sc->{'bssid'})));
+				my $id=$cf->{'network id'};
+				my $s=join(',',map{$cf->{$_}}@WPAID1);
+				$sc->{'*'}=1;
+				print $cf->{'flags'} eq '[CURRENT]'?
+				    _cur($s.($cf->{$bssid} eq 'any'?" ($sc->{'bssid'})":'')):
+				    _ex("$if $wpa_cli select_network $id -i $if",$s);
+				last;
+			}
+		}
+#	}
+	print '<separator/><separator label="Scanned: '.join(',',@WPAID).'"/>';
+#	for $if (keys %$ln){
+		for my $ap (@{$sr->{$if}}){
+			$ap->{'signal level'}=abs($ap->{'signal level'});
+			my $l=join(',',map{$ap->{$_}}@WPAID);
+			if($ap->{'*_'}){
+				print _cur($l);
+			}else{
+				my $s="$if WPA_ADD";
+				while(my ($x,$y)=each(%{$ap->{''}})){$s.=" $x=$y"};
+				print _ex($s,$l);
+			}
+		}
+#	}
+}
+
+sub btpath{
+	my ($d,$nodie)=(@_);
+	my $p=$btpath{$d};
+	$p && return $p;
+	my $i=_run_("dbus-send --system --dest=org.bluez --print-reply / org.bluez.Manager.FindAdapter string:$d");
+	if(!$? && (($p)=$i=~/object path \"(.*?)\"/s) && $p){
+		return $btpath{$d}=$p;
+	}
+	$nodie || die "DBUS: org.bluez.Manager.FindAdapter($d) error\n";
+}
+
+# devel
+sub btnet{
+	while(my ($a,$d)=each %btdev){
+		my $p=btpath($a);
+		_run("dbus-send --system --dest=org.bluez --print-reply $p org.bluez.Agent.RequestPinCode object:/bin/true");
+#		_run("dbus-send --system --dest=org.bluez --print-reply $p org.bluez.Adapter.GetProperties");
+		for my $c(keys %{$btname{$a}}){
+			my $x=$c;
+			$x=~s/:/_/gs;
+#			_run("dbus-send --system --dest=org.bluez --print-reply $p/dev_$x org.bluez.Device.GetProperties");
+#			_run("dbus-send --system --dest=org.bluez --print-reply $p/dev_$x org.bluez.Device.DiscoverServices string:");
+#			print "$c OK\n";
+		}
+	}
+	exit;
+	while(my ($a,$p)=each %btpath){
+		if($_[0]){
+#			my $net=`dbus-send --system --dest=org.bluez --print-reply $p org.bluez.NetworkServer.Unregister string:nap`;
+#			my $net=`dbus-send --system --dest=org.bluez --print-reply $p org.bluez.NetworkServer.Unregister string:nap`;
+#			my $net=`dbus-send --system --dest=org.bluez --print-reply $p org.bluez.NetworkServer.Register string:nap string:$_[0]`;
+#			print STDERR "nap:$net\n\n";
+#			for my $uuid('gn','panu','nap'){
+#				print "===$uuid===\n";
+#				my $net=`dbus-send --system --dest=org.bluez --print-reply $p org.bluez.NetworkServer.Register string:$uuid string:$_[0]`;
+#				print STDERR "$uuid:$net\n\n";
+#			}
+		}
+#return;
+		for my $c(keys %{$btname{$a}}){
+			my $x=$c;
+			$x=~s/:/_/gs;
+			for my $uuid('gn','panu','nap'){
+				my $s="dbus-send --system --dest=org.bluez --print-reply $p/dev_$x org.bluez.Network.Connect  string:$uuid";
+#				my $s="dbus-send --system --dest=org.bluez --print-reply $p org.bluez.Network.Connect string:$uuid";
+				print "## $s\n";
+				my $net=`$s`;
+#				my $net=`dbus-send --system --dest=org.bluez --print-reply $p/dev_$x org.bluez.Network.Connect string:$uuid string:what`;
+#				print STDERR "$uuid:$net\n\n";
+#				my $net=`dbus-send --system --dest=org.bluez --print-reply $p/dev_$x org.bluez.Network.GetProperties`;
+#				print STDERR "$uuid:$net\n\n";
+			}
+		}
+	}
+}
+
+sub dbus_bluez{
+	my ($if,$x,$c)=@_;
+	if($c){
+		$c=~s/:/_/g;
+		$c="/dev_$c";
+	}
+	my $i=_run('dbus-send --system --dest=org.bluez --print-reply '.btpath($if)."$c org.bluez.$x");
+	my $r={};
+	$i=~s/\n\s*([^:]*):\s*\"([^\"]*)\"/$r->{$1}=$2;''/ges;
+	$r;
+}
+
+sub _btdbus{
+	my ($if,$x,$c)=@_;
+	if($c){
+		$c=~s/:/_/g;
+		$c="/dev_$c";
+	}
+	'dbus-send --system --dest=org.bluez --print-reply '.btpath($if,1)."$c org.bluez.$x";
+}
+
+sub btstat{
+	for(glob('/sys/class/bluetooth/*')){
+		my $d=$_;
+		$d=~s/.*\///gs;
+		my $a=_read("$_/address",32);
+		chomp($a);
+		my $u=_read("$_/uevent",1024);
+		if($u=~/(?:^|\n)DEVTYPE=link(?:\n|$)/){
+			$c=$a;
+			$a=_read("$_/device/address",32);
+			chomp($a);
+			$btlink{$d}=$c;
+#			$btconn{$a}->{$c}->{$d}=undef;
+			for(glob("$_/rfcomm*")){
+				~s/.*\///gs;
+				$rfcomm{$a}->{$c}->{$_}=$btname{$a}->{$c}||$c;
+				$rfcomm_{$_}=[$a,$c];
+			}
+			next;
+		}
+		$btdev{$a}=$d;
+		$btdev_{$d}=$a;
+		my $dir="/var/lib/bluetooth/$a";
+		if(open(my $F,'<',"$dir/names")){
+			while(<$F>){
+				chomp($_);
+				my ($c,$n)=split(/\s+/,$_,2);
+				$btname{$a}->{$c}=$n;
+			}
+			close($F);
+		}
+		if(open(my $F,'<',"$dir/profiles")){
+			while(<$F>){
+				chomp($_);
+				my ($c,@a)=split(/\s+/,$_);
+				$_=~s/^0000([0-9A-F]{4}).*$/$bts{$a}->{$c}->{$1}=1;$bts_{$a}->{$1}->{$c}=1;''/ie for(@a);
+			}
+			close($F);
+		}
+		if(open(my $F,'<',"$dir/linkkeys")){
+			while(<$F>){
+				~s/^$are/$btkey{$1}=1/e;
+			}
+			close($F);
+		}
+	}
+	my $a;
+	($a)=(keys %btdev) if(scalar(keys %btdev)==1);
+	for(glob("/sys/class/tty/rfcomm*")){
+		my $r=$_;
+		$r=~s/.*\///gs;
+		if(!exists($rfcomm_{$r})){
+			my $c=_read("$_/address");
+			chomp($c);
+			$rfcomm{$a}->{$c}->{$r}=$btname{$a}->{$c}||$c;
+			$rfcomm_{$r}=[$a,$c];
+		}
+	}
+	scalar(%btdev)||return;
+	$rf=0;
+	while(exists($rfcomm_{"rfcomm$rf"})){$rf++};
+	$rf="rfcomm$rf";
+	unlink("/var/lock/LCK..$rf");
+	if(open(my $F,'-|',"/usr/sbin/hciconfig")){
+		my $i;
+		while(<$F>){
+			$_=~s/^(\S*):/$i=$1/e and next;
+			$DOWN{$i}=1 if($_=~/^\s*DOWN\s*$/);
+		}
+		close($F);
+	}
+	if(defined($if)){
+		our $a=$btdev_{$if};
+		$id=join(' ',@IAM,$if);
+		$APN=1;
+		if(open(my $F,'-|',"hcitool -i $if con")){
+			while(<$F>){
+				my ($c)=$_=~/$are/ or next;
+				$btconn{$a}->{$c}=$btname{$a}->{$c};
+			}
+			close($F);
+		}
+	}
+}
+
+# if user have access to device - '/usr/sbin/', if no - ''
+# remember GID of device if it is not active & user can be joined
+sub _ppppath{
+	my $p='/usr/sbin/';
+	if($> && (my @s=stat("/dev/$_[0]")) && $s[4] ne $user[3]){
+		my $g=$s[5];
+		my $e=(" $) "=~/ $g /);
+		if(-w _){
+			return $p if(!$e);
+			$grp0{$g}=1;
+		}else{
+			return if($e);
+			$p='';
+			$grp1{$g}=1;
+		}
+		$grp{$g}->{$_[0]}=1;
+	}
+	$p
+}
+
+sub _btmisc{
+	my ($d,$c,$s)=@_;
+	return if(!$DBUS || !btpath($d,1));
+	my $chk=_btdbus($d,"$s.GetProperties",$c);
+	$chk=`$chk`;
+	return if($?);
+	return _ex(_btdbus($d,"$s.Connect",$c),"- $s") if($chk=~/disconnected|false/);
+	return _ex(_btdbus($d,"$s.Disconnect",$c),"+ $s") if($chk=~/connected|true/);
+	return _ex(_btdbus($d,"$s.Disconnect",$c),"* $s") if($chk=~/playing/);
+	return _ex(undef,"~ $s") if($chk=~/connecting/);
+	return _ex(undef,"? $s");
+}
+
+sub _btrelease{
+	my ($rf)=@_;
+	($rf=~s/^\w+ (.*)$/$1/)?"\@kill $rf":"$rfcomm release $rf";
+}
+
+# too wanted to do "rfcomm bind/release" via dbus, but bluetoothd serial waiting for sender process
+sub btmodem{
+	my ($a,$c,$ch)=(@_);
+	# we can check to restart ppp on existing closed connection, but simplify behaviour:
+	# if ppp broken - something wrong. better to restart whole
+	if(exists($rfcomm{$a}->{$c})){
+		my $r=$rfcomm{$a}->{$c};
+		my $p=$devppp{$r};
+		$p&&="$p ";
+		my $r1=$r;
+		$r1=~s/ .*//g;
+		return (_btrelease($r),"$stop$p$r1 ");
+	}
+	my $d=$btdev{$a};
+	my $cmd;
+	my $p=$cellppp;
+	if($APN){
+		$p.='-apn';
+		$cmd.=$pppask;
+	}
+	("RFCOMM_BIND $d $c $rf $ch ".($DOWN{$d}||0)." $p$ppp1","$rf ");
+}
+
+sub pppstat{
+	if($default_route){
+		$ppp1.=' nodefaultroute';
+		$ppp2.=' !gw';
+	}
+	if($enable_ch_resolv){
+		$ppp1.=' usepeerdns';
+	}else{
+		$ppp2.=' !dns';
+	}
+	$ppp1.=' debug nodetach' if($ENV{OB3MENUNET_DEBUG});
+	for(glob('/var/run/ppp*.pid')){
+		open(my $F,'<',$_)||next;
+		my $p=<$F>;
+		chomp($p);
+		close($F);
+		open($F,'<',"/proc/$p/cmdline")||next;
+		my $s=<$F>;
+		close($F);
+		my @a=split(/\x0/,$s);
+		$i=$_;
+		$i=~s/^.*\/(.*?)\.pid$/$1/g;
+		for(0..$#a-1){
+			if($a[$_] eq 'call'){
+				$pppd{$a[$_+1]}=$p;
+				$ppp{$a[$_+1]}=$i;
+			}
+		}
+		my $x;
+		if($a[1] eq 'pty'){
+			@a=split(' ',$a[2]);
+			my ($m)=$a[0]=~/([^\/\s]*)$//gs or goto FD;
+			$x=join(' ',$m,map{~s/.*\///g;$_}glob("/proc/$p/task/*"));
+			if($m eq 'ppporc'){
+				my @l;
+				my $c=$a[1];
+				while(my ($d,$c1)=each %btlink){
+					push @l,$d if($c1 eq $c);
+				}
+				if(!$#l){
+					my $d=$l[0];
+					$d=~s/:.*//g;
+					my $a=$btdev_{$d};
+					$rfcomm{$a}->{$c}=$x;
+					$rfcomm_{$x}=[$a,$c];
+				}
+			}
+		}else{
+			$x=$a[1];
+		}
+		if(defined($x)){
+			$devppp{$x}=$i;
+			$pidppp{$x}=$p;
+		}
+FD:
+		$fd{readlink($_)}=undef for(glob('/proc/$p/fd/*')); # root
+	}
+}
+
+sub wpa_cli{
+	my @x=@_;
+	push @x,'-i',$if if(defined($if));
+	$RES=`$wpa_cli @x`;
+	!$?
+#	!system($wpa_cli,@_);
+}
+
+sub wpa_cli1{
+	wpa_cli(@_)||die $!;
+	($RES=~/OK$/gs)||die "\n$RES";
+}
+
+sub ifstat{
+	for(glob('/sys/class/net/*')){
+		$i=$_;
+		$i=~s/.*\///g;
+		$if=$i;
+#		next if($i eq 'lo');
+		my $w=(-e "$_/phy80211" || -e "$_/wireless");
+		if(!$w){
+		}elsif(wpa_cli('ping')){
+			$wpa+=($wpa{$i}=1);
+		}else{
+			$iw+=1;
+			push @wlan,$i;
+		}
+		$carrier{$i}=_read("$_/carrier",1);
+		if(-e "$_/bridge"){
+			$bridge{$i}=[];
+			for(glob("$_/brif")){
+				~s/.*\///g;
+				push @{$bridge{$i}},$_;
+			}
+		}
+		next if(exists($if_ip{$i}) && !-e "/var/run/dhcpcd-$i.pid");
+		$if{$i}=1;
+	}
+	$if=undef;
+}
+
+sub _nap{
+	my ($a,$c,$ch,$t,$on)=@_;
+	# todo: check local caps against $t
+	# || return;
+	$on?("NAP $a $c $ch $t",'Connect'):("-NAP $a $c $ch $t",'Disonnect')
+}
+
+%btservice=(
+	'0x1103'=>{'modem'=>\&btmodem},
+	'0x1115'=>{'PANU'=>[sub{_nap{@_,'panu',1}},sub{_nap{@_,'panu'}}]},
+	'0x1116'=>{'NAP'=>[sub{_nap{@_,'nap',1}},sub{_nap{@_,'nap'}}]},
+	'0x1117'=>{'GN'=>[sub{_nap{@_,'gn',1}},sub{_nap{@_,'gn'}}]},
+);
+
+$are='((?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2})';
+
+$ENV='^(?:OB3MENUNET_.*|DBUS_SESSION_BUS_ADDRESS|DISPLAY)$';
+
+%carr=(
+'0'=>' -',
+'1'=>' +',
+''=>' ?',
+);
+
+%submenu=(
+"$iwconfig ap"=>sub{
+	_iwhelp();
+	for(keys %{$iw{'Address|Access Point'}->{'ap'}}){
+		print _ex($_) if(!($_=~/[\[\(\|]/));
+	}
+	aplist(@_);
+},
+#'hcitool scan'=>sub{btscan(@_);},
+'sdptool browse'=>sub{
+	routestat();
+	resolvstat();
+	btstat();
+	pppstat();
+	_btbrowse($_[2]);
+},
+'hcitool con'=>sub{
+	routestat();
+	resolvstat();
+	btstat();
+	pppstat();
+	ifstat();
+	my $c=$_[2];
+	my $h=`hcitool -h`;
+	for(exists($btconn{$a}->{$c})?('dc','auth','key'):('cc','con+auth')){
+		my $i;
+		if($_ eq 'con+auth'){
+			print _ex("$ENV{SHELL} -c \"hcitool -i $if cc $c && hcitool -i $if auth $c\"","Connect & auth");
+			next;
+		}elsif(($i)=$h=~/\n\s*$_\s+([^\n]*)/s){
+		}else{
+			$i=$_;
+		}
+		print _ex("hcitool -i $if $_ $c",$i);
+	}
+	print _btmisc($if,$c,$_) for('Audio','Input','SimAccess','HandsfreeGateway');
+	# sdptool browse slow, then keep in separate menu
+	# todo: decode /var/lib/.../sdp file
+#	print '<separator label="Services:"/>'; _btbrowse($c);
+	print _menu("sdptool $c browse","Services");
+},
+);
+
+sub _run{
+	_run_(@_);
+	$? && die "$_[0]:$? $!\n$out\n";
+	$out;
+}
+
+sub _run_{
+	for(@_){
+		print STDERR "[run:$>:$user[0]] # $_[0]\n";
+		$out=`$_[0] 2>&1`;
+		print STDERR "$out";
+		$? || last;
+	}
+	$out;
+}
+
+
+%sudo=(
+'RESCAN'=>sub{rescan();exit;},
+'NAP2'=>\&NAP,
+'PAN'=>sub{
+	($a,$c,$ch,$t)=@_;
+#	my $s=serviceid($t);
+#	sdprec($s) || _run("sdptool -i $a add $s");
+#	my $pr=dbus_bluez($a,'Network.GetProperties',$c);
+#	dbus_bluez($p,'Network.Connect string:$pr->{UUID}');
+	# src vs. doc
+	dbus_bluez($a,"Network.Connect string:$t",$c);
+#	dbus_bluez($a,'Network.Connect',$c);
+},
+'-PAN'=>sub{
+	($a,$c,$ch,$t)=@_;
+	my $p=$c;
+	$p=~s/:/_/;
+	$p=btpath($a).'/dev_'.$p;
+#	my $pr=dbus_bluez($p,'Network.GetProperties');
+#	dbus_bluez($p,'Network.Connect string:$pr->{UUID}');
+	dbus_bluez($p,'Network.Disconnect');
+},
+'GPASSWD'=>sub{
+	my ($c,$u,@g)=@_;
+	my %chmod=( 'uucp'=>[$rfcomm,'/usr/sbin/pppd'], 'plugdev'=>['/sbin/halt','/sbin/openrc-shutdown']);
+	my $r;
+	for my $g (@g){
+		exists($chmod{$g}) || next;
+#		$out=map{my $x=`gpasswd $c '$u' '$_'`;$r||=$?;$x}@g;
+		_run("gpasswd $c '$u' '$g'");
+		if(!$r && !$#g){
+			# lazy
+			# increase security level of pppd too: currently /dev/ serials
+			# permitted to group 'uucp', but 'pty' (ppporc, etc) can access same resources too.
+			# so, permit to run root'ed pppd only for unifyed 'uucp' group.
+			(-e $_) && _run($c eq '-d'?"chmod u-s,o+x '$_' && chown 0:0 '$_'":"chown 0:$g '$_' && chmod u+s,g+x-w,o-x '$_'") for(@{$chmod{$g}});
+		}
+	}
+	$r;
+},
+'RFCOMM_BIND_SUDO'=>\&RFCOMM_BIND,
+);
+
+%nosudo=(
+'-NAP'=>sub{
+	($if)=@_;
+	dbus_bluez($if,"NetworkServer.Unregister string:nap");
+	my $nap=sdprec('0x1116');
+	$nap && _run("sdptool -i $if del $nap");
+	0;
+},
+'NAP'=>\&NAP,
+'RFCOMM_BIND'=>\&RFCOMM_BIND,
+'WPA_ADD'=>\&WPA_ADD,
+'WPA_REMOVE'=>\&WPA_REMOVE,
+);
+
+sub _system{
+	print STDERR join(' ',"[run:$>]#",@_),"\n";
+	system(@_);
+}
+
+# trying without login first
+sub RFCOMM_BIND{
+	my ($d,$c,$rf,$ch,$down,@ppp)=@_;
+	my @rf=($rf);
+	if(!stat("/dev/$rf")){
+		@cmd2=('RFCOMM_BIND_SUDO',@_) if($>);
+		# todo: read key vs. bluetoothd
+		$down && _system('/usr/sbin/hciconfig',$d,'up') && return $?;
+		($cmd2[4])=($ch)=_run("sdptool search --bdaddr $c $ch")=~/\n    Channel: (\d+)/s if($ch=~/\D/);
+		if(_system('/usr/bin/rfcomm','-i',$d,'bind',$rf,$c,$ch) || !stat("/dev/$rf")){
+			return $? if(!$ppporc || ! -x $ppporc);
+			$rf="pty \"$ppporc $c $ch\"";
+			@rf=('pty',"$ppporc $c $ch");
+		}
+	}
+	my $s;
+	$s='APN= ;PH= ;echo;read -p APN: APN && read -p Number[*99#]: PH && export APN PH && '.$s if($ppp[0]=~/-apn/);
+	my $p=(-w _ || ($rf=~/^pty/))?'/usr/sbin/pppd':'pppd';
+	@cmd2=$s?($ENV{SHELL},'-c',join(' ',$s,$p,$rf,'call',@ppp)):@ppp?($p,@rf,'call',@ppp):();
+}
+
+sub NAP{
+	($if,$br)=@_;
+	if(!defined($br)){
+		for($br=0; -e "/sys/class/net/br$br"; $br++){};
+		$br="br$br";
+	}
+	if(!-e "/sys/class/net/$br"){
+		if($>){
+			@cmd2=('NAP2',$if,$br);
+			return;
+		}
+		_run("(brctl addbr $br && ifconfig $br promisc up)");
+	}
+	sdprec('0x1116') || _run("sdptool -i $if add NAP");
+	dbus_bluez($if,"NetworkServer.Register string:nap string:$br");
+	0;
+}
+
+sub _sdpread{
+	my ($c)=@_;
+	return $sdp{$if}->{$c} if(exists($sdp{$if}->{$c}));
+	open(my $F,'-|',"sdptool -i $if browse $c")||return;
+	my @s=({});
+	my ($s,$x,$i);
+	while(<$F>){
+		chomp($_);
+		if($_ eq ''){
+			push @s,{};
+			($s,$x,$i)=();
+		}elsif($_=~s/^(\S.*?): (.+)$/($i,$s[-1]->{$1},$s,$x)=($1,$2);''/e){
+		}elsif($_=~s/^(\S.*?):$/($i,$s,$x)=($1);''/e){
+		}elsif($_=~s/^  \"([^\"]*)\" \((\S+)\)$/($s,$x,$s[-1]->{$i}->{$2})=($1,$2);''/e){
+		}elsif($_=~s/^    (\S.*?): (\S+)$/$s[-1]->{$i}->{$x}->{$1}=$2;''/e){
+		}
+	}
+	close($F);
+	$sdp{$if}->{$c}=[@s];
+}
+
+sub serviceid{
+	my $t=lc($_[0]);
+	while(my ($x,$y)=each %btservice){
+		return $x if(ref($y)?grep(/^$t$/i,keys %$y):(lc($y) eq $t));
+	}
+}
+
+sub sdprec{
+	for(@{_sdpread('local')}){
+		return $_->{'Service RecHandle'} if(exists($_->{'Service Class ID List'}->{$_[0]}));
+	}
+}
+
+sub _btbrowse{
+	my $c=$_[0];
+	for(@{_sdpread($c)}){
+		my $n=$_->{'Service Name'};
+		my $ch=$_->{'Protocol Descriptor List'}->{'0x0003'}->{'Channel'};
+		for my $s(sort keys %{$_->{'Service Class ID List'}}){
+			my $nn;
+			if(exists($btservice{$s})){
+				for my $sn(sort keys %{$btservice{$s}}){
+					my $x=$btservice{$s}->{$sn};
+					my @m;
+					if(ref($x) eq 'ARRAY'){
+						for(@$x){
+							my @r=&{$_}($a,$c,$ch);
+							push @m,[@r] if(@r);
+						}
+					}else{
+						my @r=&{$x}($a,$c,$ch);
+						push @m,[@r] if(@r);
+					}
+					if($#m>0){
+						print _menu1("$ch:$n ($sn)");
+						print _ex(@$_) for(@m);
+						print'</menu>';
+					}elsif(!$#m){
+#						$m[0]->[1].="$ch:$n ($sn)";
+						$m[0]->[1]="$ch:$n ($sn)";
+						print _ex(@{$m[0]})
+					}
+					$nn+=scalar(@m);
+				}
+			}
+			$nn || print _undef("$ch:$n ($s)");
+		}
+	}
+}
+
+
+sub _modem{
+	my ($p,$f)=@_;
+	if(exists($rfcomm_{$p})){
+		_ppppath($p);
+		return
+	}
+	if($ioctl && open(my $F,'<',"/dev/$p")){
+		my $r=ioctl($F,&TIOCMGET,my $x);
+		close($F);
+		return if(!(defined($r) && (unpack('i',$x) & (&TIOCM_DTR | &TIOCM_RTS))));
+	}else{
+		# dirty
+		for(glob("/sys/class/tty/$p/device/*")){
+			goto OK if(!($_=~/\/(?:driver|power|subsystem|tty|modalias|uevent)$/));
+		}
+		return;
+	}
+OK:
+	my $n;
+	if(defined($n=_read("/sys/class/tty/$p/device/interface"))){
+		chomp($n);
+		$n=~s/_/-/g;
+		$n="$p \"$n\"";
+	}else{
+		$n=$p;
+	}
+	$p=$p;
+	my $D=$debugppp{$f};
+	$f=_ppppath($p)."pppd $p call $f$ppp1";
+	exists($pidppp{$p})?_ex("$p kill $pidppp{$p}","$stop$n ($devppp{$p})"):($f eq $cellppp)?_ex("$D$p $f",$n):
+		_ex("$D$p $ENV{SHELL} -c \"$pppask $f\"",$n);
+}
+
+sub getline{
+	my $pipe="termpipe.$$";
+	unlink($pipe) if(-e $pipe);
+	mkfifo($pipe,0600)||die $!;
+	system('ya-session','--run',"+$0 --input $pipe @_");
+	open(my $F,'<',$pipe) or die $!;
+	unlink($pipe);
+	sysread($F,my $s,65536);
+	close($F);
+	$s;
+}
+
+sub netmenu{
+	my @cmd;
+	if($>){
+		$ENV{OB3MENUNET_HOME}=$ENV{HOME};
+		$ENV{OB3MENUNET_USER}=$>;
+		$ENV{OB3MENUNET_GRP}=$);
+		$ENV{OB3MENUNET_GRP}=~s/\s.*//gs;
+	}
+	while($_[0] eq '--debug'){
+		shift;
+		$ENV{OB3MENUNET_DEBUG}=1;
+	}
+	if($_[0] eq '--input'){
+		my ($xx,$pipe,$N,@o)=@_;
+		open(my $F,'>>',$pipe) or die $!;
+		unlink($pipe);
+		$N && system('stty', '-echo');
+		my $s;
+		if($N eq 2){
+			while(1){
+				print "\n[".(defined($s)+1)."] @o";
+				my $s1=readline(STDIN);
+				defined($s1)||die;
+				if(defined($s)){
+					if($s eq $s1){
+						open(my $F,'|-','(/usr/sbin/cracklib-check||echo OK)|grep -sq OK') or die $!;
+						print $F "$s\n";
+						close($F);
+						$? || last;
+						print " - too simple!";
+					}else{
+						print " - not same!";
+					}
+					$s1=undef;
+				}
+				$s=$s1;
+			}
+		}else{
+			print "@o";
+			$s=readline(STDIN);
+		}
+		chomp($s);
+		syswrite($F,$s)||die $!;
+		close($F);
+		exit;
+	}
+	my $i=$_[0];
+	$ENV{OB3MENUNET_DEBUG}=1 if($i=~s/^\++//);
+	push @IAM,'--debug' if($ENV{OB3MENUNET_DEBUG});
+	if(($SUDO=($i eq '--sudo')) || ($notify_=($i eq '--notify'))){
+		$DBUS_NOTIFY&&=($NOTIFY!=2);
+		$notify=$NOTIFY; # now we can notify in terminal
+		shift;
+		@cmd=@_;
+		goto SUDO;
+	}
+	$if=$i;
+	$id=xml(my @xxx=(@IAM,@_));
+	if($#_<0){
+		routestat();
+		resolvstat();
+		btstat();
+		pppstat();
+		ifstat();
+		print '<openbox_pipe_menu>';
+		print _menu($_,$_.$carr{$carrier{$_}}) for(sort keys %if);
+		my $pppopt=_read('/etc/ppp/options');
+		my $debugpp=$ENV{OB3MENUNET_DEBUG}||($pppopt=~/(?:^|\s)nodetach(?:\s|$)/s);
+		for(glob('/etc/ppp/peers/*')){
+			$i=$_;
+			$i=~s/.*\///g;
+			$d=_read($_);
+			$debugppp{$i}='+' if($debugppp||($d=~/(?:^|\s)nodetach(?:\s|$)/s));
+			if(exists($pppd{$i})){
+				if($i=~/^ya-/){
+					push @ya_ppp,$i;
+				}else{
+					print _ex("_ kill $pppd{$i}","$stop$ppp{$i} $i");
+				}
+			}else{
+				my ($default_route,$enable_ch_resolv)=($default_route,$enable_ch_resolv);
+				defined($d)||next;
+				$d="\n$d\n";
+				# todo: if pptp goes via default network - CAN replace default network, but keep destination subnet
+				if($d=~s/\npty\s+\"(?:\S+\/)?pptp\s+(\S+).*/$1/gs){
+					# todo: resolve host $d
+					my @r=checkroute(ip2n($d));
+					next if(!@r);
+					my %if;
+					for(@route){
+						$if{$_[3]}++ if(!($_->[0] && $_->[1]));
+					}
+					for(@r){
+						delete($if{$_[3]}) if($_->[0] && $_->[1]);
+					}
+					if(!scalar(%if)){
+						$default_route=0;
+					}
+					$d="pptp $i ($d)";
+				}elsif($d=~s/\npty\s+\"(?:\S+\/)?pppoe\s(?:.*\s)?-I\s+(\S+)\s.*/$1/gs){
+					next if(!$carrier{$d});
+					$default_route-=(!$_->[0] && $_[3] eq $i) for(@routes);
+					$d="pppoe $i ($d)";
+				}else{
+					my $dd;
+					($dd)=$d=~/\n\s*\/dev\/(\S+)/s or
+						$d=~s/\n\s*(\w+\d)\s/$dd=$1 if(-e "\/dev\/$1");''/gse or
+						next;
+					next if(!($dd && -e "/dev/$dd" && !-e "/var/lock/LCK..$dd"));
+					$d="ppp $i";
+					$devppp{$dd}=$i;
+				}
+				$i='_ '._ppppath($d)."pppd call $i$ppp1";
+				$d.="$ppp2";
+				print _ex($debugppp{$i}.$i,$d);
+			}
+		}
+		print _menu1("Serial modems (pppd $ppp2)").$i.'</menu>' if($i=join('',map{_modem(substr($_,15,-7),"$cellppp-apn")}glob('/sys/class/tty/*/device')));
+		my %bt;
+		for(sort values %btdev){
+			my $n=_read("/sys/class/bluetooth/$_/name");
+			chomp($n);
+			$n=$n?"$_ \"$n\"":$_;
+			print $DOWN{$_}?_ex("$_ /usr/sbin/hciconfig $_ up","$n up"):_menu($_,$n);
+		}
+		$btm_="Bluetooth modems (pppd $ppp2)";
+		while(my ($r,$x)=each %rfcomm_){
+			my ($a,$c)=@$x;
+			push @{$bt{$btm_}->{$c}},_ex("_ "._btrelease($r),"$stop$devppp{$r} $r \"$c\"");
+		}
+		for my $a(keys %btname){
+			while(my ($c,$n)=each %{$btname{$a}}){
+				if(exists($bts{$a}->{$c}->{1103}) && !exists($rfcomm{$a}->{$c})){
+					my @r=btmodem($a,$c,'dun');
+					push @{$bt{$btm_}->{$n}},_ex("$debugppp{$cellppp}$rf $r[0]","$r[1]\"$n\"");
+				}
+			}
+		}
+		print '<separator/>';
+		my $uu=quotemeta($user[0]);
+		if(scalar(%grp) && @user){
+			my ($x10,$x11,$x00,$x01,$x,$s);
+			for(sort keys %grp){
+				my ($i,@g)=getgrgid($_) or next;
+				$x.="$i ";
+				if(" $g[2] "=~/ $uu /){
+					$x00.=" \"$i\"";
+					$x01.=exists($grp0{$_})?" $i":" ($i)";
+				}else{
+					$x10.=" \"$i\"";
+					$x11.=exists($grp1{$_})?" $i":" ($i)";
+				}
+			}
+			$s=($x eq 'uucp ')?' & u+s,g+x-w,o-x rfcomm pppd':'';
+			$x10 && print _ex("_ GPASSWD -a \"$user[0]\" $x10","Join $x11$s");
+			$s=($x eq 'uucp ')?' & u-s,o+x rfcomm pppd':'';
+			$x00 && print _ex("_ GPASSWD -d \"$user[0]\" $x00","Leave $x01$s");
+		}
+		# other context, but I don't want to overcode
+		if(@user && (my ($i,@g)=getgrnam('plugdev'))){
+			if(" $g[2] "=~/ $uu /){
+				print _ex("_ GPASSWD -d \"$user[0]\" plugdev","Leave plugdev & u-s,o+x halt");
+			}else{
+				print _ex("_ GPASSWD -a \"$user[0]\" plugdev","Join plugdev & u+s,g+x-w,o-x halt");
+			}
+		}
+		print _menu("--debug",'debug') if(!$ENV{OB3MENUNET_DEBUG});
+		my ($sc,$sc1,$sc2,$sc3,$sc4);
+		if($DBUS){
+			for(values %btdev){
+				$sc1.="hciconfig $_ up ; hciconfig $_ piscan;";
+				$sc2.="(hcitool -i $_ inq & hcitool -i $_ scan & )|tee $hciscan$_ &";
+				$sc3.="; hciconfig $_ noscan";
+				$sc4.=";( hcitool -i $_ con|grep -q ACL || hciconfig $_ down )"
+			}
+			$sc="$sc1 $sc2 simple-agent $sc3 $sc4;false";
+			print _ex("_ $ENV{SHELL} -c \"$sc\"", 'Bluetooth ON - scan & agent - OFF') if(-e '/usr/bin/simple-agent');
+		}
+		if($wpa){
+			for $if (keys %wpa) { print _ex("$if $wpa_cli scan -i $if","rescan $if"); }
+#			print _ex("_ $wpa_cli scan","Wireless rescan");
+			for $if (keys %wpa){ wpalist() }
+		}
+		if($iw){
+			print _ex("_ RESCAN",'Wi-Fi rescan') if($> || $iwlast);
+			_iwhelp();
+			for(@wlan){
+				next if(!$AUTO && $carrier{$_} eq '');
+#				$carrier{$_} && next;
+				$header="$_ ";
+				$if=$_;
+				aplist($_,$iwconfig,$_,'ap')
+			}
+		}
+		for my $t(keys %bt){
+			for my $k(" label='$t'",undef){
+				print "<separator$k/>",map{$btkey{$_} ne $k?(sort @{$bt{$t}->{$_}}):()}sort keys %{$bt{$t}};
+			}
+		}
+		print "<separator label='Cell modems (pppd $ppp2)'/>",$i if($i=join('',map{_modem(substr($_,15,-17),$cellppp)}glob('/sys/class/tty/*/device/interface')));
+		print '</openbox_pipe_menu>';
+		exit;
+	}elsif(!$#_){
+		routestat();
+		resolvstat();
+		print '<openbox_pipe_menu>';
+		my $d="/sys/class/net/$if";
+		if(!-e $d){
+			if(-e ($d="/sys/class/bluetooth/$if")){
+				btstat();
+				pppstat();
+				print "<separator label='$a'/>";
+				if($DOWN{$if}){
+					print _ex("/usr/sbin/hciconfig $if up",'up');
+					goto EX;
+				}else{
+					print _ex("/usr/sbin/hciconfig $if down",'down');
+				}
+				my $r=sdprec('0x1116');
+				print _menu1("Network Access Point (NAP) $r");
+				if($DBUS && btpath($if,1)){
+					print _ex("NAP $if $_","$_: ".join(' ',@{$bridge{$_}})) for(sort keys %bridge);
+					print _ex("NAP $if",'Create new bridge');
+				}
+				if($r){
+					if(scalar(%bridge)){
+						print _ex("-NAP $if",'Remove');
+					}else{
+						print _ex("sdptool -i $if del $r",'Remove');
+					}
+				}else{
+					print _ex("sdptool -i $if add NAP",'Create without bridge');
+				}
+				print '</menu>';
+				print '<separator label="Bluetooth devices"/>';
+				my %bt;
+				$bt{"$btname{$a}->{$_} $_"}=$_ for(keys %{$btname{$a}},keys %{$btconn{$a}});
+				for(sort keys %bt){
+					my $c=$bt{$_};
+					print _menu("hcitool $c con",(exists($btconn{$a}->{$c})?'+':'-').$_);
+				}
+				if(open(my $F,'<',$hciscan.$if)){
+					print '<separator label="Scanned to pair"/>';
+					while(<$F>){
+						chomp($_);
+						my ($c,$n)=$_=~/^\s*$are\s+(.*)$/ or next;
+						exists($btname{$a}->{$c}) && next;
+						print _ex("$ENV{SHELL} -c \"hcitool -i $if cc $c && hcitool -i $if auth $c\"","$c $n");
+					}
+					close($F);
+				}
+			}
+			goto EX;
+		}
+		if(defined($i=_read("/var/run/dhcpcd-$if.pid",32))){
+			print _ex("kill $i",'stop dhcp');
+		}else{
+			my $p=$ENV{OB3MENUNET_DEBUG}?'Bd':'bq';
+			if($default_route){
+				$p.='G';
+				$i.=' !gw';
+			}
+			if(!$enable_ch_resolv){
+				$p.=' -C resolv.conf';
+				$i.=' !dns';
+			}
+			print _ex("dhcpcd -$p $if","start dhcp$i");
+		}
+		if(-e "$d/phy80211" || -e "$d/wireless"){
+			print '<separator label="Wi-Fi"/>';
+		    if(wpa_cli('ping')){
+			print _ex("$wpa_cli $_ -i $if",$_) for('scan','disconnect','reconnect','reconfigure','terminate','logon','logoff','reassociate','reauthenticate');
+			my $ln=_wpalist('list_networks');
+			print '<separator label="remove '.join(',',@WPAID1),'"/>';
+			for my $c (@{$ln->{$if}}){
+				print _ex("WPA_REMOVE $c->{'network id'}",join(',',map{$c->{$_}}@WPAID1));
+			}
+		    }else{
+			my $i;
+			_iwhelp();
+			my %o;
+			for my $s(keys %iw){
+				for my $o(keys %{$iw{$s}}){
+					if(!$s){
+						$o{$o}.=_ex("$iwconfig $if $o",$o);
+						next;
+					}
+					my $d=$current->{$s}->{$o};
+					my $t=$o;
+#					$t=lc($s) eq $t?$s:"$s ($t)";
+					my $def;
+					if(defined($d)){
+						$t.="  $d";
+						$def=_cur($d);
+					}
+					if($o eq 'ap'){
+						$o{$o}.=_menu("$iwconfig $if $o","$t:") if(scalar(%{$iw{'Address|Access Point'}->{'ap'}}));
+						next;
+					}
+					$i.=_menu1("$iwconfig $if $o",$t);
+					my $n;
+					for(sort keys %{$iw{$s}->{$o}}){
+						next if($_=~/[\[\(\|]/);
+						$n++;
+						if(lc($d) eq lc($_)){
+							$i.=$def;
+							$def=undef;
+						}else{
+							$i.=_ex("$iwconfig $if $o $_",$_);
+						}
+					}
+					$i.=$def.'</menu>';
+					$o{$o}.=$i if($n);
+					$i='';
+				}
+			}
+			print map{$o{$_}}sort keys %o;
+		    }
+		}
+EX:
+		print '</openbox_pipe_menu>';
+		exit;
+	}else{
+		for([1],[1,3],[1,4],[1,2],[1,2,3]){
+			if($#_ == $_->[-1] && ($i=$submenu{join(' ',@_[@$_])})){
+				print '<openbox_pipe_menu>';
+				&{$i}(@_);
+				print '</openbox_pipe_menu>';
+				exit;
+			}
+		}
+		@cmd=@_[1..$#_];
+		for(@cmd){
+			~s/^ap_$/ap/;
+		}
+	}
+SUDO:
+	die "Illegal --sudo context\n" if($SUDO && (!@cmd || $>));
+	$DEBUG||=$ENV{OB3MENUNET_DEBUG};
+	if(@cmd){
+#		$notify_||=$SUDO||exists($nosudo{$cmd[0]});
+		$notify_||=$SUDO;
+		$cmd{$_}++ for(@cmd);
+		my ($term,$root);
+		if(!$notify_ && $>){
+			$root||=exists($sudo{$cmd[0]});
+			# if path is absolute - check later
+			$i='iwconfig|iwlist|kill|pppd|dhcpcd|rfcomm|hciconfig';
+			$root||=$cmd{$ENV{SHELL}}?grep(/ (?:$i) /,@cmd):grep(/^(?:$i)$/,@cmd);
+			if(!$root && !$cmd{$wpa_cli}){ # to get permissions to [/usr]/[s]bin/ sometimes we need sudo
+				if($cmd{$ENV{SHELL}}){
+					for(@cmd){
+						my $i=$_;
+						$i=~s/(?:^| )((?:\/usr)?\/s?bin\/\w+)/$cmd{$1}++/gse;
+					}
+				}
+				for(grep(/^(?:\/usr)?\/s?bin\//,keys %cmd)){
+					next if($_=~/\s/);
+					my @s=stat($_);
+					last if($root=!(-x _ && ($s[2] & 04000)));
+				}
+			}
+		}
+		$cmd[0]=~s/\@//;
+		$term=!$notify_ && !$notify0_ && ($root || ($cmd{$ENV{SHELL}} && grep(/ read /,@cmd)) || ($NOTIFY>1 && !$notify) || $ENV{OB3MENUNET_DEBUG});
+		$term=0 if($term0 && !$root);
+		if($term){
+			~s/^(.*[\s\*\?].*)$/\"$1\"/s for(@cmd);
+		}
+		if($root){
+			$cmd.=join(' ',@cmd,'-- root password:');
+			$cmd=~s/([\"\'\\])/\\$1/gs;
+#			if($notify || exists($sudo{$cmd[0]}) || exists($nosudo{$cmd[0]})){
+			if($notify){
+				die 'Security problem' if(substr($0,0,1) ne '/');
+				shift @cmd if($cmd[0] eq $0);
+				unshift @cmd,@IAM,'--sudo';
+			}elsif(exists($sudo{$cmd[0]}) || exists($nosudo{$cmd[0]})){
+				die 'Security problem' if(substr($0,0,1) ne '/');
+				unshift @cmd,@IAM,'--notify';
+			}
+			unshift @cmd,map{"$_=\"$ENV{$_}\""}grep(/$ENV/,keys %ENV);
+			$cmd="[ob3menunet] $cmd";
+			unshift @cmd,'sudo','-p',"\"$cmd\"";
+		}elsif($term && $NOTIFY){
+			shift @cmd if($cmd[0] eq $0);
+			unshift @cmd,@IAM,'--notify';
+			$term=1;
+		}
+		if($term && !$notify_ && !$notify0_){
+			@cmd=('ya-session','--run','+'.join(' ',@cmd));
+			$DEBUG=1;
+		}
+#		$iw=$SUDO && ($iw || $cmd{$iwconfig}); # rescan if iwconfig+sudo
+		$iw=$SUDO; # rescan as possible
+		$iw&&=!$cmd{'kill'};
+		my $out;
+		$!='';
+		print STDERR ($cmd=join(' ',$user[0],'#',@cmd)."\n");
+		if($i=$sudo{$cmd[0]}||$nosudo{$cmd[0]}){
+			$r=&{$i}(@cmd[1..$#cmd]);
+			if(@cmd2){
+#				$notify_=undef;
+				$term0||=$term;
+				@cmd=@cmd2;
+				@cmd2=();
+				$notify0_||=$notify_;
+				$notify_=0;
+				$steps++;
+				goto SUDO;
+			}
+		}elsif($notify||($term && $NOTIFY)){
+			$r=system(@cmd);
+#			for(@cmd){
+#			}
+#			$cmd=join(' ',@cmd);
+#			$out=`( $cmd ) 2>&1`;
+#			$r=$?;
+		}else{
+			$r=exec(@cmd);
+		}
+		$r=0 if(exists($noerr{$cmd[0]}->{$r1=$r}));
+		$r && die "$cmd\nError: $cmd[0]:$r $!\n$out\n";
+		rescan() if($iw);
+		$ENV{OB3MENUNET_DEBUG} && (!$cmd{'kill'}) && _waitkey();
+		$cmd='' if($term||=$term0);
+		$notify_||=$notify0_;
+		if($out ne ''){
+			notify("[$r1] $cmd$out\n");
+			_waitkey();
+			exit $r;
+		}elsif($DBUS_NOTIFY && $notify && !$term){
+			notify('OK'.($r1?" [$r1]":'')."\n$cmd");
+		}
+		$DEBUG||=grep(/pppd/,@cmd) if($term);
+		# if debug or possible fork from terminal - wait (vs. early exit problem)
+		$DEBUG && _waitkey();
+		exit $r
+	}
+}
+
+sub _m{
+	my $i=shift;
+	my $p=join(' ',@_);
+	$i=~s/( execute=\')([^\']*\')/$1$p $2/gs;
+	$i=~s/(<menu id=\')([^\']*\')/$1$p $2/gs;
+	$i=~s/(<execute>)([^[<>]*<\/execute>)/$1$p $2/gs;
+	$i;
+}
+
+#btstat();
+#btnet('br0');
+#exit;
+
+netmenu(@ARGV);

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>neuron@mail.uni-paderborn.de</email>
+	<description>Primary maintainer</description>
+</maintainer>
+<longdescription>Oneko is a screenmate for X written in C, it has different skins e.g. cat, dog, tora (striped cat), sakura (cardcaptor girl) chasing your mousecursor.</longdescription>
+<use>
+	<flag name="bsd-daemon">Enables Beastie mascot which is under the bsd-daemon-copyright.</flag>
+</use>
+</pkgmetadata>

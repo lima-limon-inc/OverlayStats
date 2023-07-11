@@ -1,0 +1,22 @@
+--- a/databases/lib/Makefile	2023-01-13 21:28:49.083112005 +0100
++++ b/databases/lib/Makefile.in	2023-01-13 21:28:57.829847114 +0100
+@@ -90,7 +90,7 @@
+ 		echo "Install shared library"
+ 		mkdir -p $(DESTDIR)$(libdir)
+ 		install -m 755 libipv6calc_db_wrapper.so.@PACKAGE_VERSION@ $(DESTDIR)$(libdir)
+-		/sbin/ldconfig -n $(DESTDIR)$(libdir)
++		/sbin/ldconfig $(DESTDIR)$(libdir)
+ else
+ 		echo "Nothing to do (shared library mode is not enabled)"
+ endif
+--- a/lib/Makefile	2023-01-14 10:03:00.935978593 +0100
++++ b/lib/Makefile.in	2023-01-14 10:03:05.896006895 +0100
+@@ -115,7 +115,7 @@
+ 		echo "Install shared library"
+ 		mkdir -p $(DESTDIR)$(libdir)
+ 		install -m 755 libipv6calc.so.@PACKAGE_VERSION@ $(DESTDIR)$(libdir)
+-		/sbin/ldconfig -n $(DESTDIR)$(libdir)
++		/sbin/ldconfig $(DESTDIR)$(libdir)
+ else
+ 		echo "Nothing to do (shared library mode is not enabled)"
+ endif

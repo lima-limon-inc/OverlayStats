@@ -1,0 +1,27 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.videoplayer, totem)-#
+
+[Added Associations]
+video/mp4=org.gnome.Totem.desktop;
+video/mpeg=org.gnome.Totem.desktop;
+video/ogg=org.gnome.Totem.desktop;
+video/quicktime=org.gnome.Totem.desktop;
+video/quicktime=org.gnome.Totem.desktop;
+video/vnd.mpegurl=org.gnome.Totem.desktop;
+video/x-m4v=org.gnome.Totem.desktop;
+video/x-msvideo=org.gnome.Totem.desktop;
+video/x-sgi-movie=org.gnome.Totem.desktop;
+
+[Default Applications]
+video/mp4=org.gnome.Totem.desktop;
+video/mpeg=org.gnome.Totem.desktop;
+video/ogg=org.gnome.Totem.desktop;
+video/quicktime=org.gnome.Totem.desktop;
+video/quicktime=org.gnome.Totem.desktop;
+video/vnd.mpegurl=org.gnome.Totem.desktop;
+video/x-m4v=org.gnome.Totem.desktop;
+video/x-msvideo=org.gnome.Totem.desktop;
+video/x-sgi-movie=org.gnome.Totem.desktop;

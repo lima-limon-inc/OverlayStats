@@ -1,0 +1,17 @@
+[Unit]
+Description=Matrix-Webhook service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=matrix-webhook
+Group=matrix-webhook
+EnvironmentFile=/etc/conf.d/matrix-webhook
+ExecStart=/usr/bin/python -m matrix_webhook
+WorkingDirectory=/var/lib/matrix-webhook
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

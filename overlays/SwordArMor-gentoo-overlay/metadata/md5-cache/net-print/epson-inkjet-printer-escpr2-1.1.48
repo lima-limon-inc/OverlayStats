@@ -1,0 +1,14 @@
+BDEPEND=app-arch/rpm2targz
+DEFINED_PHASES=install unpack
+DEPEND=app-text/ghostscript-gpl net-print/cups
+DESCRIPTION=Epson Inkjet Printer Driver 2 (ESC/P-R) for Linux
+EAPI=8
+HOMEPAGE=https://download.ebz.epson.net/dsc/search/01/search/?OSC=LX
+INHERIT=rpm
+KEYWORDS=~amd64
+LICENSE=GPL-2
+RDEPEND=app-text/ghostscript-gpl net-print/cups
+SLOT=0
+SRC_URI=https://download3.ebz.epson.net/dsc/f/03/00/13/52/26/977f2b2c13cc185981479fbd225b802c35c92beb/epson-inkjet-printer-escpr2-1.1.48-1lsb3.2.src.rpm
+_eclasses_=estack	055c42df72f76a4f45ec92b35e83cd56	rpm	f73e907469f65e52192f110dec72dce0
+_md5_=c1c7b9067aabd70f3d7031d82affd6cb

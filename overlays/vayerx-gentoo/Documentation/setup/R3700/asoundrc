@@ -1,0 +1,94 @@
+# Creative Sound Blaster Omni Surround 5.1
+pcm.S51_card {
+    type hw
+    card S51
+    channels 2
+    format S24_3LE
+    rate 48000      # 96000 and period/buffer sizes has compatibility problems
+}
+
+# Logitech C310 HD
+pcm.C310_card {
+    type hw
+    card U0x46d0x81b
+    rate 16000
+    format S16_LE
+}
+
+
+# Input
+pcm.snooper {
+    type plug
+    slave.pcm {
+        type dsnoop
+
+        ipc_key 142832
+        ipc_key_add_uid false
+        ipc_perm 0666
+        ipc_gid audio
+
+        slave.pcm S51_card
+        #slave.pcm C310_card
+    }
+    hint {
+        show on
+        description "ALSA snooper"
+    }
+}
+
+
+# Equalizer
+pcm.equal {
+    type plug
+    slave.pcm {
+        type equal
+        slave.pcm mixer
+    }
+    hint {
+        show on
+        description "ALSA equalizer"
+    }
+}
+
+ctl.equal {
+    type equal
+}
+
+
+# Output
+pcm.mixer {
+    type plug
+    slave.pcm {
+        type dmix
+
+        ipc_key 142831
+        ipc_key_add_uid false
+        ipc_perm 0666
+        ipc_gid audio
+
+        slave {
+            pcm S51_card
+
+            period_size 1024
+            buffer_size 16384
+        }
+    }
+    hint {
+        show on
+        description "ALSA mixer"
+    }
+}
+
+
+# Defaults
+pcm.!default {
+    type asym
+
+    playback.pcm equal
+    capture.pcm snooper
+}
+
+ctl.!default {
+    type hw
+    card S51
+}

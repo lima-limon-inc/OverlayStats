@@ -1,0 +1,15 @@
+Title: www-apps/mycorrhiza has been moved to GURU overlay, binary version removed
+Author: Eric Joldasov <bratishkaerik@getgoogleoff.me>
+Posted: 2022-08-17
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: www-apps/mycorrhiza
+
+www-apps/mycorrhiza has been moved to GURU overlay (binary version has been removed).
+
+Run these commands (root):
+
+    eselect repository enable guru && emaint sync -r guru
+    emerge -avu1 mycorrhiza::guru
+
+All done!

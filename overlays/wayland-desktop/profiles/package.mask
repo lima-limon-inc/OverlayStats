@@ -1,0 +1,34 @@
+# Aisha Tammy (2021-03-01)
+# DesQ projects are segfaulting
+gui-desq/desq-meta
+gui-desq/desq-session
+gui-desq/desq-shell
+gui-desq/libdesqwl
+gui-desq/plugins-sni
+gui-desq/util-clipboard
+gui-desq/util-dock
+gui-desq/util-osk
+gui-desq/util-panel
+gui-desq/util-polkitexec
+gui-desq/util-powerdaemon
+gui-desq/util-powermanager
+gui-desq/util-settingsdaemon
+gui-desq/util-splash
+
+# Aisha Tammy (2021-02-27)
+# Currently, liri projects are not working.
+# Mask until fixed
+gui-liri/libliri
+gui-liri/liri-cmake-shared
+gui-liri/liri-eglfs
+gui-liri/liri-fluid
+gui-liri/liri-platformtheme
+gui-liri/liri-qml-xwayland
+gui-liri/liri-qtaccountsservice
+gui-liri/liri-qtgsettings
+gui-liri/liri-qtudev
+gui-liri/liri-session
+gui-liri/liri-shell
+gui-liri/liri-wayland
+gui-liri/liri-xdg-desktop-portal
+

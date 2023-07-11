@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>haskell@gentoo.org</email>
+		<name>Gentoo Haskell</name>
+	</maintainer>
+	<use>
+		<flag name="exe">Enable @exe:cabal-plan@ component</flag>
+		<flag name="license-report">Enable @license-report@ sub-command (only relevant when the @exe@ flag is active)</flag>
+		<flag name="underline">Enable underlining of primary unit-ids</flag>
+	</use>
+	<upstream>
+		<remote-id type="hackage">cabal-plan</remote-id>
+		<remote-id type="github">hvr/cabal-plan</remote-id>
+	</upstream>
+</pkgmetadata>

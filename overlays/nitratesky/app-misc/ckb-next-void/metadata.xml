@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>overlay.maintain@vtimofeenko.com</email>
+	<description>Nitratesky Gentoo overlay</description>
+</maintainer>
+<use>
+	<flag name='0a14'>Applied patch for Void 0a14 device</flag>
+	<flag name='qt'>Enables GUI and depencies on qt</flag>
+	<flag name='animations'>Enables animations</flag>
+</use>
+</pkgmetadata>
+

@@ -1,0 +1,102 @@
+Portions of code Copyright 1999-2007 Gentoo Foundation,
+distributed under the terms of the GNU General Public License v2
+
+My own License: Anarchy. Original text written in Russian.
+==========================================================================
+Approximated:
+
+License: Anarchy.
+
+All spontaneous [translation problem: = "elemental"]
+(including social (including legal, moral, etc.))
+aspects of existence and use of the given code are force-majeur
+circumstances and the author do not interest.
+
+Money are welcome.
+
+(c) mahatma, 29.09.2006
+==========================================================================
+Original (utf-8):
+
+License: Anarchy.
+
+Все стихийные (включая социальные (включая юридические, моральные и т.д.))
+аспекты существования и использования данного кода являются форс-мажорными
+обстоятельствами и автора не интересуют.
+
+Money are welcome.
+
+(c) mahatma, 29.09.2006
+===========================================================================
+===========================================================================
+
+This is Gentoo Overlay, named "raw", moved from googlecode.
+
+Contains my raw stuff, helping me (and 2 anyone who take a risq)
+to unify, sync and build my servers & workstations.
+
+Must work with "layman -a raw" (as soon Gentoo Overlay directory
+follow my email about migration).
+
+Howto install around layman:
+Add to /etc/portage/repos.conf (/etc/portage/repos.conf/raw.conf):
+
+[raw]
+sync-type = git
+sync-uri = https://github.com/mahatma-kaganovich/raw.git
+location = /var/lib/layman/raw
+auto-sync = Yes
+
+OR
+
+[raw]
+sync-type = svn
+sync-uri = https://github.com/mahatma-kaganovich/raw.git/trunk
+location = /var/lib/layman/raw
+auto-sync = Yes
+
+# rm -Rf /var/lib/layman/raw || mkdir -p /var/lib/layman/raw
+# emerge --sync raw
+
+("svn" way will be incompatible with layman way)
+
+Add to make.conf:
+PORTDIR_OVERLAY="$PORTDIR_OVERLAY /var/lib/layman/raw"
+
+===========================================================================
+Kernel cmdline changes (some of):
+
+=== USE genkernel pnp -klibc:
+
+quiet=true|false - affect only initrd scripts;
+autoinstall - unpack modules from initrd to root if none;
+detect_root[=...] - detect root device;
+fast - not strict ordered, dangerous, etc operations;
+loadall - all modules bomb;
+telnetd - run telnetd;
+passwd=<passwd_line> - /etc/passwd whole line;
+transparent_hugepage_misc - additional early "always"/"defer";
+mdadm[=async|<params>] - "async" - run "mdadm --assemble ..." in background/parallel
+	- to avoid stuck large non-boot partitions in some strange cases.
+	or "mdadm --assemble <param>" (primary for "--uuid=...")
+fsck - run fsck (chroot'ed from RO newroot) & make root early RW.
+rootoverlay[=device1{[:deviceX]} - lowerdir(s) ("OR" or "+deviceX" to multiple).
+	"deviceX" are:
+		1) /dev/zramX:<compression>:<size> (default - /dev/zram0:lz4hc:8g),
+		mkdir.ext4 chrooted from newroot with hardcoded voluntary defaults;
+		2) other block device;
+		3) directory under new root.
+		As soon /newroot/boot is temporary place for squashfs image backend
+		device, "/boot" can be used for this image.
+	Default: "/dev/zram0" AKA "/dev/zram0:lz4hc:8g".
+	(Logical first device contains "upper" & "work", every next - lower.)
+rootoverlayflags=<flags> - additional mount flags for overlayfs
+
+Examples:
+	"real_root=/dev/sda2 loop=system.squashfs rootoverlay"
+		- mount system.squashfs from /dev/sda2 as root, /dev/zram0 LZ4HC 8G overlay;
+	"real_root=/dev/sda2 loop=system.squashfs fsck rootoverlay=+/dev/zram0:lz4hc:8g:/boot"
+		- same + /dev/sda2 as middle RW layer in overlay (good for SSD);
+	"real_root=/dev/sda2 loop=system.squashfs fsck rootoverlay=/dev/sdb1:+/dev/zram0:lz4hc:8g:+/boot"
+		- same, but first try [removable] /dev/sdb1 as overlay and skip other layers if OK.
+

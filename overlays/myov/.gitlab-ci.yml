@@ -1,0 +1,17 @@
+---
+
+
+image: registry.gitlab.com/src_prepare/gentoo-repoman-container:latest
+
+
+stages:
+  - test
+
+
+test:
+  stage: test
+  timeout: 20 minutes
+
+  script:
+    - make deps-versions
+    - make test

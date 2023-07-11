@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>gentoo+bugs@flussence.eu</email>
+		<name>flussence</name>
+	</maintainer>
+	<upstream>
+		<bugs-to>https://github.com/yshui/picom/issues</bugs-to>
+		<changelog>https://github.com/yshui/picom/releases.atom</changelog>
+		<remote-id type="github">yshui/picom</remote-id>
+	</upstream>
+	<use>
+		<flag name="doc">Installs manpages (requires <pkg>app-text/asciidoc</pkg>)</flag>
+		<flag name="drm">Enable (deprecated) DRM VSync method</flag>
+		<flag name="libconfig">Enable config file support, recommended</flag>
+		<flag name="opengl">Enable OpenGL backend (requires at least OpenGL 3.0)</flag>
+	</use>
+</pkgmetadata>

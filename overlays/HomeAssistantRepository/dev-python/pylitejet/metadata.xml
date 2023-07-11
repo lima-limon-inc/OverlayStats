@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>b@edevau.net</email>
+    <name>Andreas Billmeier</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">pylitejet</remote-id>
+    <remote-id type="github">joncar/pylitejet.git</remote-id>
+    <maintainer status="unknown">
+      <email>jon@joncaruana.com</email>
+      <name>Jon Caruana</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>

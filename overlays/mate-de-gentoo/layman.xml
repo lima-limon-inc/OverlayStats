@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<repositories version="1.0">
+	<repo quality="experimental" status="unofficial">
+		<name>mate-de-gentoo</name>
+		<description lang="en">MATE Desktop EBuilds</description>
+    		<homepage>https://wiki.gentoo.org/wiki/Project:MATE</homepage>
+		<owner>
+			<name>Oz Tiram</name>
+            <email>oz.tiram@gmail.com</email>
+		</owner>
+		<source type="git">git@github.com:oz123/mate-de-gentoo.git</source>
+        <source type="git">https://github.com/oz123/mate-de-gentoo.git</source>
+	</repo>
+</repositories>

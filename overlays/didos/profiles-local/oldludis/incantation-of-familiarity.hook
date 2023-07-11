@@ -1,0 +1,419 @@
+#!/usr/bin/env bash
+
+hook_run_sync_post() {
+	#source ${PALUDIS_ECHO_FUNCTIONS_DIR:-${PALUDIS_EBUILD_DIR}}/echo_functions.bash
+
+	#see https://github.com/aegypius/overlay/pull/75
+	if [[ $TARGET == 'x-aegypius' || $TARGET == 'aegypius' ]]; then
+		rm -r /var/db/repos/aegypius/metadata/news/2015-05-28-getting-ready-for-atom-1.0-release
+		rm -r /var/db/repos/aegypius/metadata/news/2017-10-03-introducing-atom-bin-slots
+	fi
+	if [[ $TARGET == 'x-ag-ops' || $TARGET == 'ag-ops' ]]; then
+		#bad versioning
+		rm /var/db/repos/ag-ops/media-video/vlc/vlc-3.0.9999.ebuild
+		rm /var/db/repos/ag-ops/media-video/vlc/vlc-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-alxu' || $TARGET == 'alxu' ]]; then
+		#bad versioning
+		rm /var/db/repos/alxu/x11-base/xorg-server/xorg-server-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-argent-main' || $TARGET == 'argent-main' ]]; then
+		#old
+		rm /var/db/repos/argent-main/app-crypt/gnupg/gnupg-2.0.25.ebuild
+		rm /var/db/repos/argent-main/app-crypt/gnupg/gnupg-2.0.26-r3.ebuild
+		rm /var/db/repos/argent-main/app-crypt/gnupg/gnupg-2.0.28.ebuild
+	fi
+	if [[ $TARGET == 'x-calculate' || $TARGET == 'calculate' ]]; then
+		#too new
+		rm /var/db/repos/calculate/sys-apps/kmod/kmod-27-r3.ebuild
+		#uses python2
+		rm /var/db/repos/calculate/dev-python/ipaddress/ipaddress-1.0.23-r2.ebuild
+	fi
+	if [[ $TARGET == 'x-cg' || $TARGET == 'cg' ]]; then
+		#bad versioning
+		rm /var/db/repos/cg/media-libs/babl/babl-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-chromiumos' || $TARGET == 'chromiumos' ]]; then
+		#bad keywording
+		rm /var/db/repos/chromiumos/dev-libs/double-conversion/double-conversion-3.1.5.ebuild
+		rm /var/db/repos/chromiumos/dev-libs/double-conversion/double-conversion-3.1.5-r1.ebuild
+		#bad versioning
+		rm /var/db/repos/chromiumos/media-libs/mesa/mesa-9999.ebuild
+		rm /var/db/repos/chromiumos/sys-devel/binutils/binutils-9999.ebuild
+		#chrome specific patches
+		rm /var/db/repos/chromiumos/dev-libs/openssl/openssl-1.1.1i.ebuild
+		rm /var/db/repos/chromiumos/dev-libs/openssl/openssl-1.1.1i-r1.ebuild
+		#no split build
+		rm /var/db/repos/chromiumos/sys-devel/llvm/llvm-12.0_pre408248_p20201125.ebuild
+		rm /var/db/repos/chromiumos/sys-devel/llvm/llvm-12.0_pre408248_p20201125-r4.ebuild
+		patch /var/db/repos/chromiumos/metadata/layout.conf /etc/paludis/patches/the-root-of-all-gentoo.patch
+		echo "chromiumos" > /var/db/repos/chromiumos/profiles/repo_name
+	fi
+	if [[ $TARGET == 'x-core-gl-kit' || $TARGET == 'core-gl-kit' ]]; then
+		#weird dependencies
+		rm /var/db/repos/core-gl-kit/virtual/opengl/opengl-7.0-r5.ebuild
+	fi
+	if [[ $TARGET == 'x-core-kit' || $TARGET == 'core-kit' ]]; then
+		#bad versioning
+		rm /var/db/repos/core-kit/sys-libs/libblockdev/libblockdev-9999.ebuild
+		#remove broken update
+		rm /var/db/repos/core-kit/profiles/updates/3Q-2019
+		#too new
+		rm /var/db/repos/core-kit/dev-util/cmake/cmake-3.19.4.ebuild
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome' || $TARGET == 'dantrell-gnome' ]]; then
+		#remove aggressively anti gentoo config
+		rm /var/db/repos/dantrell-gnome/profiles/package.mask
+		#old eapi
+		rm /var/db/repos/dantrell-gnome/sys-devel/gettext/gettext-0.19.8.1.ebuild
+		#bad keywording, unnecessary quotes
+		rm /var/db/repos/dantrell-gnome/app-eselect/eselect-pinentry/eselect-pinentry-0.7.ebuild
+		rm /var/db/repos/dantrell-gnome/app-eselect/eselect-pinentry/eselect-pinentry-0.7.1.ebuild
+		rm /var/db/repos/dantrell-gnome/gnome-base/gnome-keyring/gnome-keyring-3.36.0.ebuild
+		rm /var/db/repos/dantrell-gnome/sys-devel/gettext/gettext-0.20.1.ebuild
+	fi
+	#fix incompatible reponames
+	if [[ $TARGET == 'x-dantrell-gnome14' || $TARGET == 'dantrell-gnome14' ]]; then
+		patch /var/db/repos/dantrell-gnome14/profiles/repo_name /etc/paludis/patches/14.patch
+		rm /var/db/repos/dantrell-gnome14/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome16' || $TARGET == 'dantrell-gnome16' ]]; then
+		patch /var/db/repos/dantrell-gnome16/profiles/repo_name /etc/paludis/patches/16.patch
+		rm /var/db/repos/dantrell-gnome16/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome18' || $TARGET == 'dantrell-gnome18' ]]; then
+		patch /var/db/repos/dantrell-gnome18/profiles/repo_name /etc/paludis/patches/18.patch
+		rm /var/db/repos/dantrell-gnome18/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome20' || $TARGET == 'dantrell-gnome20' ]]; then
+		patch /var/db/repos/dantrell-gnome20/profiles/repo_name /etc/paludis/patches/20.patch
+		rm /var/db/repos/dantrell-gnome20/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome22' || $TARGET == 'dantrell-gnome22' ]]; then
+		patch /var/db/repos/dantrell-gnome22/profiles/repo_name /etc/paludis/patches/22.patch
+		rm /var/db/repos/dantrell-gnome22/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome24' || $TARGET == 'dantrell-gnome24' ]]; then
+		patch /var/db/repos/dantrell-gnome24/profiles/repo_name /etc/paludis/patches/24.patch
+		rm /var/db/repos/dantrell-gnome24/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome26' || $TARGET == 'dantrell-gnome26' ]]; then
+		patch /var/db/repos/dantrell-gnome26/profiles/repo_name /etc/paludis/patches/26.patch
+		rm /var/db/repos/dantrell-gnome26/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome28' || $TARGET == 'dantrell-gnome28' ]]; then
+		patch /var/db/repos/dantrell-gnome28/profiles/repo_name /etc/paludis/patches/28.patch
+		rm /var/db/repos/dantrell-gnome28/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome30' || $TARGET == 'dantrell-gnome30' ]]; then
+		patch /var/db/repos/dantrell-gnome30/profiles/repo_name /etc/paludis/patches/30.patch
+		rm /var/db/repos/dantrell-gnome30/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome32' || $TARGET == 'dantrell-gnome32' ]]; then
+		patch /var/db/repos/dantrell-gnome32/profiles/repo_name /etc/paludis/patches/32.patch
+		rm /var/db/repos/dantrell-gnome32/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome34' || $TARGET == 'dantrell-gnome34' ]]; then
+		patch /var/db/repos/dantrell-gnome34/profiles/repo_name /etc/paludis/patches/34.patch
+		rm /var/db/repos/dantrell-gnome34/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome36' || $TARGET == 'dantrell-gnome36' ]]; then
+		patch /var/db/repos/dantrell-gnome36/profiles/repo_name /etc/paludis/patches/36.patch
+		rm /var/db/repos/dantrell-gnome36/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-dantrell-gnome38' || $TARGET == 'dantrell-gnome38' ]]; then
+		patch /var/db/repos/dantrell-gnome38/profiles/repo_name /etc/paludis/patches/38.patch
+		rm /var/db/repos/dantrell-gnome38/profiles/package.mask
+	fi
+	if [[ $TARGET == 'x-kde-kit' || $TARGET == 'kde-kit' ]]; then
+		rm /var/db/repos/dev-kit/dev-util/idea-community/idea-community-2020.3.2.ebuild
+	fi
+	if [[ $TARGET == 'x-eclass-overlay' || $TARGET == 'eclass-overlay' ]]; then
+		echo "eclass-overlay" > /var/db/repos/eclass-overlay/profiles/repo_name
+	fi
+	if [[ $TARGET == 'x-fem-overlay' || $TARGET == 'fem-overlay' ]]; then
+		#bad versioning
+		rm /var/db/repos/fem-overlay/app-pda/libplist/libplist-9999.ebuild
+		rm /var/db/repos/fem-overlay/app-pda/libusbmuxd/libusbmuxd-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-frostyx' || $TARGET == 'frostyx' ]]; then
+		#bad versioning
+		rm /var/db/repos/frostyx/media-sound/pulseaudio/pulseaudio-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-funtoo-overlay' || $TARGET == 'funtoo-overlay' ]]; then
+		#bad versioning
+		rm /var/db/repos/funtoo-overlay/dev-libs/libevdev/libevdev-9999.ebuild
+		#less multilib support
+		rm /var/db/repos/funtoo-overlay/dev-libs/libevdev/libevdev-1.9.0.ebuild
+		#missing patch
+		rm /var/db/repos/funtoo-overlay/dev-libs/icu/icu-65.1.ebuild
+		rm /var/db/repos/funtoo-overlay/dev-libs/icu/icu-67.1.ebuild
+	fi
+	if [[ $TARGET == 'x-gentoo' || $TARGET == 'gentoo' ]]; then
+		#bad versioning
+		rm /var/db/repos/gentoo/dev-libs/libevdev/libevdev-9999.ebuild
+		rm /var/db/repos/gentoo/media-libs/babl/babl-9999.ebuild
+		rm /var/db/repos/gentoo/media-libs/x264/x264-9999.ebuild
+		rm /var/db/repos/gentoo/media-video/vlc/vlc-3.0.9999.ebuild
+		rm /var/db/repos/gentoo/media-video/vlc/vlc-9999.ebuild
+		rm /var/db/repos/gentoo/net-misc/rsync/rsync-9999.ebuild
+		rm /var/db/repos/gentoo/sys-apps/kmod/kmod-9999.ebuild
+		rm /var/db/repos/gentoo/sys-fs/udev/udev-9999.ebuild
+		rm /var/db/repos/gentoo/sys-libs/libblockdev/libblockdev-9999.ebuild
+		rm /var/db/repos/gentoo/x11-base/xorg-server/xorg-server-9999.ebuild
+		#bloat
+		rm -r /var/db/repos/gentoo/x11-terms/xterm
+		#old
+		rm /var/db/repos/gentoo/dev-lang/perl/perl-5.32.0-r1.ebuild
+		rm /var/db/repos/gentoo/dev-lang/vala/vala-0.36.20.ebuild
+		rm /var/db/repos/gentoo/dev-lang/vala/vala-0.40.20.ebuild
+		rm /var/db/repos/gentoo/dev-lang/vala/vala-0.40.23.ebuild
+		rm /var/db/repos/gentoo/dev-lang/vala/vala-0.40.24.ebuild
+		#too new
+		rm /var/db/repos/gentoo/app-crypt/gcr/gcr-3.38.1.ebuild
+		rm /var/db/repos/gentoo/app-crypt/pinentry/pinentry-1.1.1.ebuild
+		rm /var/db/repos/gentoo/dev-libs/libevdev/libevdev-1.11.0.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-50.3.0.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.0.0.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.1.0.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.1.1.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.1.2.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.3.1.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-51.3.3.ebuild
+		rm /var/db/repos/gentoo/dev-python/setuptools/setuptools-53.0.0.ebuild
+		rm /var/db/repos/gentoo/dev-util/cmake/cmake-3.18.5.ebuild
+		rm /var/db/repos/gentoo/dev-util/cmake/cmake-3.19.3.ebuild
+		rm /var/db/repos/gentoo/dev-util/cmake/cmake-3.19.4.ebuild
+		rm /var/db/repos/gentoo/dev-util/idea-community/idea-community-2021.3.1.203.6682.168.ebuild
+		rm /var/db/repos/gentoo/sys-apps/kmod/kmod-27-r2.ebuild
+		rm /var/db/repos/gentoo/sys-apps/kmod/kmod-28.ebuild
+		rm /var/db/repos/gentoo/sys-kernel/linux-headers/linux-headers-5.11.ebuild
+		rm /var/db/repos/gentoo/x11-libs/libdrm/libdrm-2.4.104.ebuild
+	fi
+	if [[ $TARGET == 'x-gnome' || $TARGET == 'gnome' ]]; then
+		#bad versioning
+		rm /var/db/repos/gnome/dev-libs/glib/glib-9999.ebuild
+		rm /var/db/repos/gnome/dev-libs/gobject-introspection-common/gobject-introspection-common-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-gnome-next' || $TARGET == 'gnome-next' ]]; then
+		#old
+		rm /var/db/repos/gnome-next/app-accessibility/at-spi2-atk/at-spi2-atk-2.34.1.ebuild
+	fi
+	if [[ $TARGET == 'x-go-overlay' || $TARGET == 'go-overlay' ]]; then
+		rm /var/db/repos/go-overlay/profiles/package.mask
+	fi
+	#if [[ $TARGET == 'x-kressh' || $TARGET == 'kressh' ]]; then
+	#	patch /var/db/repos/kressh/profiles/repo_name /etc/paludis/patches/kressh.patch
+	#fi
+	if [[ $TARGET == 'x-kde' || $TARGET == 'kde' ]]; then
+		#bad versioning
+		rm /var/db/repos/kde/kde-plasma/libkscreen/libkscreen-5.21.49.9999.ebuild
+		rm /var/db/repos/kde/kde-plasma/libkscreen/libkscreen-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-KBrown-pub' || $TARGET == 'KBrown-pub' ]]; then
+		#virtua;
+		rm /var/db/repos/KBrown-pub/dev-libs/openssl/openssl-9998.ebuild
+	fi
+	if [[ $TARGET == 'x-kdecherf' || $TARGET == 'kdecherf' ]]; then
+		rm -r /var/db/repos/kdecherf/metadata/news/2017-10-21-neomutt-update
+	fi
+	if [[ $TARGET == 'x-libressl' || $TARGET == 'libressl' ]]; then
+		#identical
+		rm /var/db/repos/libressl/app-arch/libarchive/libarchive-3.5.1.ebuild
+		rm /var/db/repos/libressl/dev-qt/qtnetwork/qtnetwork-5.15.2-r1.ebuild
+		#virtual
+		rm /var/db/repos/libressl/dev-libs/openssl/openssl-2.9.2.ebuild
+		rm /var/db/repos/libressl/dev-libs/openssl/openssl-3.1.3.ebuild
+	fi
+	if [[ $TARGET == 'x-llvm-kit' || $TARGET == 'llvm-kit' ]]; then
+		#no build-man use flag
+		rm /var/db/repos/llvm-kit/sys-devel/llvm/llvm-10.0.1.ebuild
+	fi
+	if [[ $TARGET == 'x-lto-overlay' || $TARGET == 'lto-overlay' ]]; then
+		rm /var/db/repos/lto-overlay/sys-config/ltoize/files/patches/app-arch/zstd/zstd-1.4.5-multi-thread-default.patch
+	fi
+	if [[ $TARGET == 'x-media-kit' || $TARGET == 'media-kit' ]]; then
+		#bad keywording
+		rm /var/db/repos/media-kit/media-libs/gd/gd-2.3.0.ebuild
+		#eapi 5
+		rm /var/db/repos/media-kit/media-libs/libcanberra/libcanberra-0.30-r5.ebuild
+		#identical to gentoo
+		rm /var/db/repos/media-kit/media-libs/libzmf/libzmf-0.0.2.ebuild
+		rm /var/db/repos/media-kit/media-libs/raptor/raptor-2.0.15-r2.ebuild
+	fi
+	if [[ $TARGET == 'x-mva' || $TARGET == 'mva' ]]; then
+		#bad versioning
+		rm /var/db/repos/mva/dev-libs/libgpg-error/libgpg-error-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-mysql' || $TARGET == 'mysql' ]]; then
+		#bad versioning
+		rm /var/db/repos/mysql/dev-db/mariadb/mariadb-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-perl-kit' || $TARGET == 'perl-kit' ]]; then
+		#bad keywording
+		rm /var/db/repos/perl-kit/dev-lang/perl/perl-5.32.0.ebuild
+		rm /var/db/repos/perl-kit/dev-perl/Pod-Parser/Pod-Parser-1.630.0-r1.ebuild
+		rm /var/db/repos/perl-kit/perl-core/File-Temp/File-Temp-0.230.900.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Carp/perl-Carp-1.500.0-r3.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Compress-Raw-Bzip2/perl-Compress-Raw-Bzip2-2.93.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Compress-Raw-Zlib/perl-Compress-Raw-Zlib-2.93.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-CPAN-Meta/perl-CPAN-Meta-2.150.10-r4.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-CPAN-Meta-YAML/perl-CPAN-Meta-YAML-0.18.0-r6.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Data-Dumper/perl-Data-Dumper-2.174.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Digest-MD5/perl-Digest-MD5-2.550.100_rc.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Digest-SHA/perl-Digest-SHA-6.20.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Encode/perl-Encode-3.60.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Exporter/perl-Exporter-5.740.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-ExtUtils-CBuilder/perl-ExtUtils-CBuilder-0.280.234.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-ExtUtils-Install/perl-ExtUtils-Install-2.140.0-r3.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-ExtUtils-MakeMaker/perl-ExtUtils-MakeMaker-7.440.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-ExtUtils-Manifest/perl-ExtUtils-Manifest-1.720.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-ExtUtils-ParseXS/perl-ExtUtils-ParseXS-3.400.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-File-Path/perl-File-Path-2.160.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-File-Spec/perl-File-Spec-3.780.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-File-Temp/perl-File-Temp-0.230.900.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Getopt-Long/perl-Getopt-Long-2.510.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-IO/perl-IO-1.430.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-IO-Compress/perl-IO-Compress-2.93.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-libnet/perl-libnet-3.110.0-r3.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-libnet/perl-libnet-3.110.0-r4.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-MIME-Base64/perl-MIME-Base64-3.150.0-r7.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Module-Metadata/perl-Module-Metadata-1.0.37.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-parent/perl-parent-0.238.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Perl-OSType/perl-Perl-OSType-1.10.0-r4.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-podlators/perl-podlators-4.140.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Scalar-List-Utils/perl-Scalar-List-Utils-1.550.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Storable/perl-Storable-3.210.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Sys-Syslog/perl-Sys-Syslog-0.360.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Term-ANSIColor/perl-Term-ANSIColor-5.10.0.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Test-Harness/perl-Test-Harness-3.420.0-r3.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Test-Simple/perl-Test-Simple-1.302.175.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Text-ParseWords/perl-Text-ParseWords-3.300.0-r7.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-Time-Local/perl-Time-Local-1.280.0-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-version/perl-version-0.992.400-r1.ebuild
+		rm /var/db/repos/perl-kit/virtual/perl-XSLoader/perl-XSLoader-0.300.0-r3.ebuild
+		#old
+		rm /var/db/repos/perl-kit/dev-perl/Net-SSLeay/Net-SSLeay-1.820.0.ebuild
+		rm /var/db/repos/perl-kit/dev-perl/Net-SSLeay/Net-SSLeay-1.850.0.ebuild
+		rm /var/db/repos/perl-kit/dev-perl/Net-SSLeay/Net-SSLeay-1.880.0.ebuild
+	fi
+	if [[ $TARGET == 'x-pg_overlay' || $TARGET == 'pg_overlay' ]]; then
+		#bad versioning
+		rm /var/db/repos/pg_overlay/dev-libs/zziplib/zziplib-9999.ebuild
+		rm /var/db/repos/pg_overlay/x11-libs/cairo/cairo-9999.ebuild
+		#no fhs use flag
+		rm /var/db/repos/pg_overlay/sys-fs/udisks/udisks-2.9.2.ebuild
+		#too new
+		rm /var/db/repos/pg_overlay/x11-libs/cairo/cairo-1.17.4.ebuild
+	fi
+	if [[ $TARGET == 'x-poly-c' || $TARGET == 'poly-c' ]]; then
+		#behind on patches
+		rm /var/db/repos/poly-c/sys-process/procps/procps-3.3.16-r2.ebuild
+		rm /var/db/repos/poly-c/sys-process/procps/procps-3.3.16-r3.ebuild
+		#too new
+		rm /var/db/repos/poly-c/dev-libs/fribidi/fribidi-1.0.10_pre.ebuild
+		rm /var/db/repos/poly-c/net-misc/curl/curl-7.75.0.ebuild
+		rm /var/db/repos/poly-c/net-misc/curl/curl-7.75.0_pre.ebuild
+		rm /var/db/repos/poly-c/sys-apps/kmod/kmod-27-r2.ebuild
+		rm /var/db/repos/poly-c/sys-apps/kmod/kmod-28.ebuild
+	fi
+	if [[ $TARGET == 'x-pross' || $TARGET == 'pross' ]]; then
+		#no mirror
+		rm /var/db/repos/pross/net-misc/openssh/openssh-8.4_p1-r3.ebuild
+	fi
+	if [[ $TARGET == 'x-python-modules-kit' || $TARGET == 'python-modules-kit' ]]; then
+		#no multicore support
+		rm /var/db/repos/python-modules-kit/dev-python/setuptools/setuptools-53.0.0.ebuild
+		#no use of mirrors
+		rm /var/db/repos/python-modules-kit/dev-python/alabaster/alabaster-0.7.12.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/imagesize/imagesize-1.2.0.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/mako/mako-1.1.4.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/markupsafe/markupsafe-1.1.1.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/pytz/pytz-2021.1.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/snowballstemmer/snowballstemmer-2.1.0.ebuild
+		#redundant dependencies
+		rm /var/db/repos/python-modules-kit/dev-python/chardet/chardet-4.0.0.ebuild
+		rm /var/db/repos/python-modules-kit/dev-python/jinja/jinja-2.11.3.ebuild
+		#too new
+		rm /var/db/repos/python-modules-kit/dev-python/setuptools/setuptools-52.0.0.ebuild
+	fi
+	if [[ $TARGET == 'x-qt' || $TARGET == 'qt' ]]; then
+		#bad versioning
+		rm /var/db/repos/qt/dev-qt/qtcore/qtcore-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qtdbus/qtdbus-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qtdeclarative/qtdeclarative-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qtgui/qtgui-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qtnetwork/qtnetwork-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qttest/qttest-5.15.9999.ebuild
+		rm /var/db/repos/qt/dev-qt/qtwidgets/qtwidgets-5.15.9999.ebuild
+	fi
+	if [[ $TARGET == 'x-redcore' || $TARGET == 'redcore' ]]; then
+		#bad versioning
+		rm /var/db/repos/redcore/sys-devel/libtool/libtool-2.4.6-r314.ebuild
+		rm /var/db/repos/redcore/virtual/notification-daemon/notification-daemon-1337.ebuild
+		rm /var/db/repos/redcore/virtual/rust/rust-1337-r1.ebuild
+		#old
+		rm -r /var/db/repos/redcore/virtual/cargo
+		#redcore specific patch
+		rm /var/db/repos/redcore/sys-apps/baselayout/baselayout-2.7-r10.ebuild
+	fi
+	if [[ $TARGET == 'x-rich0' || $TARGET == 'rich0' ]]; then
+		#bad versioning
+		rm /var/db/repos/rich0/x11-base/xorg-server/xorg-server-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-ROKO__' || $TARGET == 'ROKO__' ]]; then
+		#bad versioning
+		rm /var/db/repos/ROKO__/sys-fs/xfsdump/xfsdump-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-somasis' || $TARGET == 'somasis' ]]; then
+		rm -r /var/db/repos/somasis/metadata/news/2015-04-21-syncthing-protocol-breaking
+		rm -r /var/db/repos/somasis/metadata/news/2015-09-16-connman-gtk-renamed
+	fi
+	if [[ $TARGET == 'x-srcshelton' || $TARGET == 'srcshelton' ]]; then
+		#dated design
+		rm /var/db/repos/srcshelton/dev-libs/libxslt/libxslt-1.1.28-r2.ebuild
+		#no aqua use flag
+		rm /var/db/repos/srcshelton/dev-lang/python/python-2.7.12.ebuild
+		rm /var/db/repos/srcshelton/dev-lang/python/python-2.7.14.ebuild
+		rm /var/db/repos/srcshelton/dev-lang/python/python-2.7.14-r1.ebuild
+		#redundant dependency
+		rm /var/db/repos/srcshelton/dev-perl/Locale-gettext/Locale-gettext-1.70.0.ebuild
+		#too new
+		rm /var/db/repos/srcshelton/sys-apps/kmod/kmod-27-r1.ebuild
+		rm /var/db/repos/srcshelton/sys-apps/kmod/kmod-27-r2.ebuild
+		rm /var/db/repos/srcshelton/sys-apps/kmod/kmod-28.ebuild
+	fi
+	if [[ $TARGET == 'x-unity-gentoo' || $TARGET == 'unity-gentoo' ]]; then
+		#weird ubuntu stuff
+		rm /var/db/repos/unity-gentoo/dev-libs/gobject-introspection/gobject-introspection-1.66.1.ebuild
+		rm /var/db/repos/unity-gentoo/dev-libs/gobject-introspection-common/gobject-introspection-common-1.66.1.ebuild
+	fi
+	if [[ $TARGET == 'x-wbrana' || $TARGET == 'wbrana' ]]; then
+		#empty package
+		rm /var/db/repos/wbrana/media-fonts/dejavu/dejavu-9.9.9-r120809.ebuild
+		rm /var/db/repos/wbrana/media-fonts/urw-fonts/urw-fonts-9.9.9-r120809.ebuild
+	fi
+	if [[ $TARGET == 'x-x11' || $TARGET == 'x11' ]]; then
+		#bad versioning
+		rm /var/db/repos/x11/x11-libs/libfontenc/libfontenc-9999.ebuild
+	fi
+	if [[ $TARGET == 'x-xor-overlay' || $TARGET == 'xor-overlay' ]]; then
+		#worse patch logic
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-2.7.18_p4.ebuild
+		#does not use our virtuals
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.7.9_p1.ebuild
+		#old
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.4.10_p1.ebuild
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.5.9_p1.ebuild
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.6.12_p1.ebuild
+		#too new
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.8.7_p1.ebuild
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.9.1_p1.ebuild
+		rm /var/db/repos/xor-overlay/dev-lang/python/python-3.10.0_alpha3.ebuild
+		rm /var/db/repos/xor-overlay/dev-util/idea-community/idea-community-2020.3.2.ebuild
+	fi
+	if [[ $TARGET == 'x-xwing' || $TARGET == 'xwing' ]]; then
+		#bad versioning
+		rm /var/db/repos/xwing/media-fonts/croscorefonts/croscorefonts-20210108.ebuild
+	fi
+}

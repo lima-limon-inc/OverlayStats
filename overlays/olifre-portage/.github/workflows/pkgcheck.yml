@@ -1,0 +1,18 @@
+name: pkgcheck
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run pkgcheck
+      uses: pkgcore/pkgcheck-action@v1
+      with:
+        args: --net --keywords=-RedundantVersion,-MissingAccountIdentifier
+        pkgs: pkgcheck>=0.10.3 requests

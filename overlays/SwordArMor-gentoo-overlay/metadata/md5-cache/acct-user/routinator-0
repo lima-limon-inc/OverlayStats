@@ -1,0 +1,9 @@
+DEFINED_PHASES=install postinst preinst prerm pretend
+DESCRIPTION=User for routinator RPKI validator
+EAPI=7
+INHERIT=acct-user
+KEYWORDS=~amd64 ~x86
+RDEPEND=acct-group/routinator
+SLOT=0
+_eclasses_=user-info	83547b4df3e1ba5a6bf91a0837eaa664	acct-user	c2c51a8d8c646fbdbb4ae481366fca8c
+_md5_=a063b5621e0dda38bdb3b3514e7f7432

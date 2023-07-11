@@ -1,0 +1,93 @@
+image: registry.gitlab.fem-net.de/gentoo/fem-overlay-ci-image:master
+
+stages:
+  - overlint
+  - pkgcheck
+  - manifest
+  - global-scope-checks
+
+variables:
+  DISTDIR: ./tmp_distdir
+  NOCOLOR: "false"
+  PKGCHECK_CACHE: "pkgcheck-cache"
+  PKGCHECK_COMMON_OPTS: "--color true --cache-dir $PKGCHECK_CACHE"
+
+overlint:
+  stage: overlint
+  script:
+    - overlint-cli .
+  needs: []
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"
+
+.pkgcheck-cache:
+  cache:
+    key: "pkgcheck-cache"
+    paths:
+      - "$PKGCHECK_CACHE"
+
+pkgcheck_all:
+  extends:
+    - ".pkgcheck-cache"
+  stage: pkgcheck
+
+  script:
+    - pkgcheck scan $PKGCHECK_COMMON_OPTS
+  needs: []
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"
+
+pkgcheck_commits:
+  extends:
+    - ".pkgcheck-cache"
+
+  stage: pkgcheck
+  script:
+    - git fetch
+    - pkgcheck scan $PKGCHECK_COMMON_OPTS --commits origin/master..HEAD
+  needs: []
+  rules:
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
+
+
+.manifest:
+  stage: manifest
+  before_script:
+    - git fetch
+    - mkdir -p "${DISTDIR}"
+    - find "${DISTDIR}" -type f -ctime -14 -delete
+  script:
+    - /tools/manifest_packages.sh
+
+  needs: []
+
+  cache:
+    - key: "manifest.${CI_COMMIT_REF_SLUG}"
+      paths:
+        - "${DISTDIR}"
+
+manifest_all:
+  extends: .manifest
+  variables:
+    MANIFEST_ONLY_DIFF: "false"
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+manifest_commits:
+  extends: .manifest
+  variables:
+    MANIFEST_ONLY_DIFF: "true"
+
+  rules:
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
+
+pmaint_regen:
+  stage: global-scope-checks
+  script:
+    - pmaint regen `pwd`
+
+  needs: []
+
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"

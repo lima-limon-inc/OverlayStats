@@ -1,0 +1,11 @@
+<repositories encoding="unicode" version="1.1">
+  <repo priority="50" quality="experimental" status="unofficial">
+    <name>nitratesky</name>
+    <description lang="en">Miscellaneous package overlay by Vladimir Timofeenko</description>
+    <owner>
+      <email>overlay.maintain@vtimofeenko.com</email>
+      <name>Vladimir Timofeenko</name>
+    </owner>
+    <source type="git">https://github.com/VTimofeenko/nitratesky.git</source>
+  </repo>
+</repositories>

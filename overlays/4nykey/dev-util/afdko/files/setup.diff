@@ -1,0 +1,11 @@
+--- a/setup.py
++++ b/setup.py
+@@ -194,8 +193,6 @@ def main():
+               'wheel',
+               'setuptools_scm',
+               'scikit-build',
+-              'cmake',
+-              'ninja'
+           ],
+           tests_require=[
+               'pytest',

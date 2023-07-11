@@ -1,0 +1,11 @@
+DEFINED_PHASES=install
+DEPEND=net-analyzer/munin
+DESCRIPTION=A munin plugin to graph some usage and performance stats
+EAPI=7
+HOMEPAGE=https://www.tummy.com/blogs/2009/12/10/munin-plugins-for-powerdns-recursor/
+KEYWORDS=~amd64 ~x86
+LICENSE=public-domain
+RDEPEND=net-analyzer/munin
+SLOT=0
+SRC_URI=http://ftp.tummy.com/pub/tummy/munin-pdns_recursor/munin-pdns_recursor-1.03.tar.bz2
+_md5_=f528da89a502559c773369cdc9d27b90

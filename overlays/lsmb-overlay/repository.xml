@@ -1,0 +1,13 @@
+<repositories encoding="unicode" version="1.1">
+  <repo priority="50" quality="experimental">
+    <name>ledgersmb</name>
+    <description>LedgerSMB Project Official Overlay</description>
+    <homepage>https://github.com/ledgersmb/lsmb-overlay</homepage>
+    <irc>irc://#ledger-smb@freenode.net</irc>
+    <owner>
+      <email>chris.travers@gmail.com</email>
+      <name>Chris Travers</name>
+    </owner>
+    <source type="git"> https://github.com/ledgersmb/lsmb-overlay.git</source>
+  </repo>
+</repositories>

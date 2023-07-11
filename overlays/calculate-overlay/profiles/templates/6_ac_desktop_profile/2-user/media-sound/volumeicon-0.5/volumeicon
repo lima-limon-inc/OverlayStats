@@ -1,0 +1,17 @@
+# Calculate format=kde path=~/.config/volumeicon
+[Alsa]
+channel=PCM
+
+[Notification]
+show_notification=true
+notification_type=1
+
+[StatusIcon]
+onclick=changemixer
+lmb_slider=true
+use_panel_specific_icons=true
+
+[Hotkeys]
+up_enabled=true
+down_enabled=true
+mute_enabled=true

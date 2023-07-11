@@ -1,0 +1,8 @@
+# Calculate exec=/bin/bash ini(overlay-calculate.revision)<#-cut(0)-#
+
+#-ini(overlay-calculate.revision,#-cut(0)-#)-#
+
+rm -f /etc/runlevels/*/stmpfiles-setup
+rm -f /etc/runlevels/*/stmpfiles-dev
+
+exit 0

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>piotr.staroszczyk@get24.org</email>
+		<name>Piotr Staroszczyk</name>
+	</maintainer>
+	<maintainer type="person">
+		<email>cyber+gentoo@sysrq.in</email>
+		<name>Anna</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">aio-libs/aiopg</remote-id>
+		<maintainer>
+			<name>Andrew Svetlov</name>
+			<email>andrew.svetlov@gmail.com</email>
+		</maintainer>
+		<maintainer>
+			<name>Alexey Firsov</name>
+			<email>virmir49@gmail.com</email>
+		</maintainer>
+		<maintainer>
+			<name>Alexey Popravka</name>
+			<email>alexey.popravka@horsedevel.com</email>
+		</maintainer>
+		<maintainer>
+			<name>Yury Pliner</name>
+			<email>yury.pliner@gmail.com</email>
+		</maintainer>
+	</upstream>
+</pkgmetadata>

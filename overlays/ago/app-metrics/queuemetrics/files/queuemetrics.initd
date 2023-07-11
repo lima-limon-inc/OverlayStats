@@ -1,0 +1,64 @@
+#!/sbin/openrc-run
+# Copyright 2020 Agostino Sarubbo <ago@gentoo.org>
+# Distributed under the terms of the GNU General Public License v2
+
+PIDFILE="/run/${SVCNAME}.pid"
+
+start() {
+	ebegin "Starting ${SVCNAME}"
+	start-stop-daemon \
+				--start \
+				--quiet \
+				--background \
+				--stdout ${CATALINA_HOME}/logs/catalina.out \
+				--stderr ${CATALINA_HOME}/logs/catalina.out \
+				--chdir ${CATALINA_TMPDIR} \
+				--user ${SVCNAME}:${SVCNAME} \
+				--make-pidfile --pidfile ${PIDFILE} \
+				--exec java \
+				-- \
+					${JAVA_OPTS} \
+					org.apache.catalina.startup.Bootstrap \
+					start
+	eend $?
+}
+
+stop() {
+	MYPID="$( cat ${PIDFILE} )"
+
+	ebegin "Stopping ${SVCNAME}"
+	start-stop-daemon \
+				--stop \
+				--quiet \
+				--retry=60 \
+				--pidfile ${PIDFILE} \
+				--exec java \
+				-- \
+					${JAVA_OPTS} \
+					-Xms64m -Xmx64m \
+					org.apache.catalina.startup.Bootstrap \
+					stop
+	sleep 5
+
+	# check if the pid still exist and wait for a graceful shutdown
+	COUNT="1"
+	while [ -n "$( ps -p ${MYPID} | grep ${MYPID} )" ] && [ "${COUNT}" -lt "5" ]
+	do
+		echo "Waiting ${SVCNAME} stop for 3 seconds"
+		sleep 3
+		let COUNT++
+	done
+
+	# if the pid still exists, then kill it
+	if [ -n "$( ps -p ${MYPID} | grep ${MYPID} )" ]
+	then
+		start-stop-daemon --stop --quiet --pidfile ${PIDFILE} --signal=9
+		kill -9 ${MYPID}
+	fi
+
+	# WIPE temp and work
+	rm ${CATALINA_HOME}/temp/* -fr
+	rm ${CATALINA_HOME}/work/* -fr
+
+	eend $?
+}

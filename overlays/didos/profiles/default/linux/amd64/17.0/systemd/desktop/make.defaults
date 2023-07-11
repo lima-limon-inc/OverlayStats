@@ -1,0 +1,12 @@
+CPU_FLAGS_X86="avx2 fma3 sse4a"
+MAKEOPTS="-j16 -l16"
+NTHREADS="16"
+EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} -j16 -l16"
+#CCACHE_DIR="/gentoo/ccache"
+#CCACHE_RECACHE="yes"
+#CCACHE_SIZE="0"
+#CFLAGS="${CFLAGS} -march=native -pipe"
+#CMAKE_MAKEFILE_GENERATOR=ninja
+#LIBS="-Wl,-no-as-needed -ljemalloc -Wl,-as-needed"
+#USE="canon_printers_mx920 -pm-utils"
+#VIDEO_CARDS="nvidia"

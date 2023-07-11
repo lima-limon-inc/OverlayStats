@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>mva@gentoo.org</email>
+    <description>Also, you can find me on IRC (Libera.Chat) as mva, or in Telegram as @mva_name</description>
+    <name>Vadim A. Misbakh-Soloviov</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="cpan">Validator-Custom</remote-id>
+    <remote-id type="cpan-module">Validator::Custom</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::CheckFunction</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::Constraint</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::Constraints</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::FilterFunction</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::Result</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::Rule</remote-id>
+    <remote-id type="cpan-module">Validator::Custom::Validation</remote-id>
+  </upstream>
+</pkgmetadata>

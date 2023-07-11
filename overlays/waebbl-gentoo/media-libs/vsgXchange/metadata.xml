@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+	<email>waebbl-gentoo@posteo.net</email>
+	<name>Bernd Waibel</name>
+</maintainer>
+<longdescription>
+	Utility library for converting data and materials to and from
+	VulkanSceneGraph.
+	The package can directly read a range of shader and image formats.
+</longdescription>
+<use>
+	<flag name="assimp">
+		Support various 3D file formats using <pkg>media-libs/assimp</pkg>
+	</flag>
+	<flag name="freetype">
+		Enable font conversion through <pkg>media-libs/freetype</pkg>
+	</flag>
+	<flag name="gdal">
+		Support GIS related formats using <pkg>sci-libs/gdal</pkg>
+	</flag>
+	<flag name="openscenegraph">
+		Support data exchange with <pkg>dev-games/openscenegraph</pkg>
+	</flag>
+</use>
+<upstream>
+	<remote-id type="github">vsg-dev/vsgXchange</remote-id>
+</upstream>
+</pkgmetadata>

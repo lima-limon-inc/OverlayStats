@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>flewkey@2a03.party</email>
+		<name>Ryan Fox</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">repology/py-libversion</remote-id>
+		<maintainer status="active">
+			<email>amdmi3@amdmi3.ru</email>
+			<name>Dmitry Marakasov</name>
+		</maintainer>
+	</upstream>
+</pkgmetadata>

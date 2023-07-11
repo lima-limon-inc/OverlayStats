@@ -1,0 +1,24 @@
+app-admin/lsyncd
+app-doc/doxygen
+app-i18n/enca
+app-misc/jq
+dev-libs/boost
+dev-libs/jsoncpp
+dev-libs/libxml2
+dev-util/cmake
+dev-util/geany
+dev-util/google-perftools
+dev-util/heaptrack
+dev-util/meld
+dev-util/strace
+dev-util/uncrustify
+dev-util/valgrind
+dev-vcs/git-lfs
+dev-vcs/git[tk]
+sci-calculators/galculator
+sci-visualization/gnuplot
+sys-devel/gcc # latest
+sys-fs/inotify-tools
+sys-process/parallel
+sys-process/tiptop
+vayerx/develop

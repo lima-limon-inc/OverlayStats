@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>mva@gentoo.org</email>
+    <description>Also, you can find me on IRC (Libera.Chat) as mva, or in Telegram as @mva_name</description>
+    <name>Vadim A. Misbakh-Soloviov</name>
+  </maintainer>
+  <use>
+    <flag name="http">enable handling of accidental HTTP requests</flag>
+    <flag name="log">enable packet logging</flag>
+    <flag name="queue">enable queueuing of packets while connecting setup</flag>
+    <flag name="relay">disable source ip checking before forwarding</flag>
+    <flag name="rtt">enable inband RTT measurement</flag>
+    <flag name="i2p">install GarliCat (I2P-version)</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">rahra/onioncat</remote-id>
+  </upstream>
+</pkgmetadata>

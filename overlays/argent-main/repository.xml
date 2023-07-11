@@ -1,0 +1,19 @@
+<repositories xmlns="" version="1.0">
+<repo quality="experimental" status="unofficial">
+<name>argent-main</name>
+<description>Argent Distro Servers ebuilds</description>
+<homepage>
+https://gitlab.com/argent/argent-main/wiki/
+</homepage>
+<owner type="project">
+<email>stefan.cristian+gentoo at rogentos.ro</email>
+<name>Steven Cristian</name>
+</owner>
+<source type="git">https://gitlab.com/argent/argent-main.git</source>
+<source type="git">
+https://gitlab.com/argent/argent-main.git
+</source>
+<feed>
+</feed>
+</repo>
+</repositories>

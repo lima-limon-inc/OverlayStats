@@ -1,0 +1,5 @@
+tun
+bridge
+vhost_net
+vhost_scsi
+vhost_vsock

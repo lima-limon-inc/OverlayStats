@@ -1,0 +1,1342 @@
+#!/usr/bin/perl
+# (c) Denis Kaganovich, Anarchy or GPLv2
+# openbox config pipe menu v0.12
+# using /usr/share/openbox*/rc.xsd
+
+%xml_=('<'=>'lt','>'=>'gt',"'"=>'apos','"'=>'quot','&'=>'amp');
+$xml_=join('',keys %xml_);
+$MENU='config';
+$bin='/usr/bin/';
+
+$allfont='MenuItem';
+$xrfont='!Font';
+$cursor='Xcursor.theme';
+
+%gtk=(
+$xrfont=>'gtk-font-name',
+'Xcursor.theme'=>'gtk-cursor-theme-name',
+'Xcursor.size'=>'gtk-cursor-theme-size',
+);
+
+my %config=(
+'config_mode'=>{
+	($config_mode='TREE/xml')=>sub{($sel1,$sel2,$xml_mode)=('*')},
+	'tree/XML'=>sub{($sel1,$sel2,$xml_mode)=('&lt;','&gt;',1)},
+},
+);
+
+$SIG{__DIE__}=sub{
+return if(!exists($ENV{DBUS_SESSION_BUS_ADDRESS}));
+print STDERR ($e=join('',"$0: ",@_));
+exec($bin.'notify-send','-t',6000,$e);
+};
+
+sub utf8_encode{};
+sub utf8_decode{};
+if(1){ # perl version?
+	*utf8_encode=*utf8::encode;
+	*utf8_decode=*utf8::decode;
+#	$filemode=':utf8';
+}
+
+for(@ARGV){
+	if($_=~s/^--//){
+		undef $P{$i=$_};
+	}else{
+		push(@{$P{$i}},$_);
+	}
+}
+
+if(exists($P{''}) && substr(scalar(%P),0,2) eq '1/'){
+#	$P{profile}='ya';
+	$P{fix}=$P{''};
+}
+
+if($prof=$P{profile}->[0]){
+	$cfg="$ENV{HOME}/.config/$prof";
+	@rc=("$cfg/rc.xml");
+}else{
+	if(!($cfg=$P{config}->[0])){
+		my $s=`${bin}obxprop --root`;
+		$s=~s/^([A-Z0-9_]*)\([A-Z0-9_]*\) = (\"[^\"]*\"(?:, \"[^\"]*\")*|[^\n]*)$/$prop{$1}=$2;''/gme;
+		$cfg=$prop{'_OB_CONFIG_FILE'};
+		$cfg=~s/\"//gs;
+	}
+	@rc=($cfg);
+	($cfg=~s/[^\/]*$//) &&
+	(($prof)=$cfg=~/.*\/([^\/]+)\/*$/);
+}
+push @rc,"/etc/xdg/$prof/rc.xml";
+
+my (%type,%xsd,%fontcfg,%fonts,%fonts_,%CNT,%xtype,%add_del,%add);
+
+$fix=$0.' --fix';
+$fix=~s/^\/usr\/bin\///gs if(!$bin);
+
+$ID='ob:openbox_config';
+
+%call_tags=(
+	'font'=>0,
+#	'ob:action'=>0,
+#	'ob:actionname'=>0,
+#	'action'=>0,
+);
+
+%subinit=(
+'ob:openbox_config:theme:font'=>\&fonts,
+);
+
+%xtype=(
+'ob:keyname'=>"<menu id='' label='' execute='--menu ob:keyname &quot;&quot;'/>",
+'ob:button'=>"<menu id='' label='' execute='--menu ob:button &quot;&quot;'/>",
+);
+
+%menu=(
+'ob:keyname'=>\&keymap,
+'ob:button'=>\&button,
+'setxkbmap'=>\&setxkbmap,
+'.Xresources'=>\&xresources,
+);
+
+%cmd=(
+'fix'=>\&fixrc,
+'id'=>sub{
+	$ID=$_[0];
+	&{$subinit{$ID}}(@_) if(exists($subinit{$ID}));
+	$MENU=join(':',$MENU,@_);
+},
+# current submenu design looks not best, but simple, fast & recursive
+'menu'=>sub{
+	my $m=shift;
+	for(@_){
+		~s/([$xml_])/\&$xml_{$1};/gs;
+		$_="&apos;$_&apos;"
+	}
+	$MENU.=":$m:$_[1]:$$";
+	print '<openbox_pipe_menu>';
+	&{$menu{$m}}(@_);
+	print '</openbox_pipe_menu>';
+	exit;
+},
+);
+
+%stdio=('<-'=>*STDIN,'>-'=>*STDOUT);
+
+sub load_xml{
+	my $F=$_[0];
+	my $s;
+	if(my $l=-s $F){
+		flock($F,1) if($_[1]==2);
+		read($F,$s,$l) || die $!;
+		close($F);
+	}else{
+		while(<$F>){$s.=$_}
+	}
+	utf8_decode($s);
+	### bugfix
+	if($_[1]==1){
+		$s=~s/name=\"monitor\" type=\"ob:primarymonitor\"/name=\"primaryMonitor\" type=\"ob:primarymonitor\"/;
+		$s=~s/:enumeration value=\"\[0-/:pattern value=\"[0-/;
+		if(!($s=~/\"(?:Active|Inactive)OnScreenDisplay\"/)){
+			$s=~s/(<xsd:enumeration value=\")(OnScreenDisplay\"\/>)/$1Active$2$1Inactive$2/;
+		}
+	}elsif($_[1]==2){
+		_fixrc($s);
+	}
+	### /bugfix
+	$s=~s/<!--(?: ob3menuconfig:([^:]*):(.*?) |.*?)-->/
+		$1 && exists($config{$1}) && exists($config{$1}->{$2}) && &{$config{$1}->{${$1}=$2}}();
+	''/gse;
+	$s=~s/<\?.*?\?>//gs;
+	my @tag=({});
+	$s=~s/<([\/!]?)([^<>\s\/]*)([^<>]*?)(\/?)>([^<]*)/
+	    my ($c,$i);
+	    if($1 eq '\/'){
+		pop @tag;
+		$c=$tag[-1];
+	    }else{
+		push @tag,$c=\%{$tag[-1]->{$xml_mode?scalar(keys %{$tag[-1]}):0}->{$2}->{$3}};
+		if($4 || $1){
+			$c=pop @tag
+		}elsif(exists($c->{1})){
+			$i=1;
+		}
+	    }
+	    if(my ($x)=$5=~\/^\s*(\S.*?)\s*$\/s){
+		if($xml_mode){
+			$i+=scalar(keys %$c)||1;
+			for(my $ii=$i; ref($c->{$i}); $i--||($i=$ii+1)){};
+		}else{
+			$i+=(scalar(keys %$c)-exists($c->{0}))||1;
+		}
+		$c->{$i}.=$c->{$i} ne ''?' '.$x:$x;
+	    }
+	''/ges;
+	map{ref($_)?$_:()}(values %{$tag[0]});
+}
+
+%xsd_class=(
+	'xsd:attribute'=>'=',
+);
+
+sub sort_xsd{
+	for my $t(keys %{$_[0]}){
+		for my $a(keys %{$_[0]->{$t}}){
+			my $id=$_[1];
+			my $i=$a;
+			my %a;
+			$i=~s/([^=\s]+)(?:=\"([^=\"]*)\"|=\'([^=\']*)\'|)/$a{$1}=$2;''/gse;
+			$id.=':'.($a{'name'}.=$xsd_class{$t}) if(exists($a{'name'}));
+			$type{$id}=$a{'type'} if(exists($a{'type'}));
+			while(my ($x,$y)=each %a){
+				push @{$xsd{$t}->{$id}->{$x}},$y;
+			}
+			ref($_) && sort_xsd($_,$id) for(values %{$_[0]->{$t}->{$a}});
+		}
+	}
+}
+
+sub _call{
+for(@{$_[1]},$_[0]){
+#	next if(!exists($call_tags{$_}) && ref($_) ne SCALAR_);
+	next if(!exists($call_tags{$_}));
+	my $i=$_[0];
+	$i=~s/([$xml_])/\&$xml_{$1};/gs;
+	$_[2]=~s/\'>$/:\' execute='$0 --id $i $CNT{$_[0]}'\/>/s;
+	utf8_encode($_[2]);
+	return print $_[2];
+}
+}
+
+sub cmpid{
+	if(($_[1]=$_[0] cmp $ID)<0){
+		$_[2]=1;
+		return index($ID.':',$_[0].':');
+	}elsif($_[1]>0){
+		return index($_[0].':',$ID.':');
+	}
+	exists($P{id}) && $P{id}->[1] ne $CNT{$_[0]}
+}
+
+sub _add_del{
+	return; # under construction
+	my ($id,$type,$ed)=(@_);
+	my $i;
+	if(exists($add{$id})){
+		my $ed1=$ed;
+		$ed1=~s/^(.*)\&lt;(.*?)$/$1&lt;\/$2/;
+		$i.="<item label='+[$add{$id}]'><action name='execute'><execute>$fix $stub{$type} $ed1</execute></action></item>";
+	}
+	if(exists($add_del{$id})){
+		my $x=$id;
+		$x=~s/^.*://;
+		$i.="<item label='-[$x]'><action name='execute'><execute>$fix $type $ed -</execute></action></item>";
+	}
+	$i.='<separator/>' if(defined($i));
+	$i;
+}
+
+sub _chk_attr{
+	my $i=$_[1];
+	my $a=$_[2];
+	($i=~s/( $a[\"\'])[^\'\"]*([\'\"])/$1$_[3]$2/) && exists($_[0]->{$i});
+}
+
+sub sort_tags{
+	for my $t(sort keys %{$_[0]}){
+		my $id="$_[1]:$t";
+		$CNT{$id}++;
+		cmpid($id,my $cmpid,my $silent) && next;
+		my $submenu;
+		my $A=scalar(keys %{$_[0]->{$t}});
+		my $type=$type{$id};
+		my $menu1;
+		if($cmpid){
+			my $i=$t;
+			$i=~s/_/-/g;
+			$i.=(keys %{$_[0]->{$t}})[0] if($A==1);
+			$i=~s/([$xml_])/\&$xml_{$1};/gs;
+			$conf++;
+			$submenu="<menu id='$MENU:$conf' label='$i'>";
+			next if(!$silent && _call($id,[$t,$type],$submenu));
+		}elsif(!exists($P{id})){
+			$silent=1;
+		}
+		for my $aa(sort keys %{$_[0]->{$t}}){
+			my $ed=$_[2];
+			my ($i,$menu2,%a);
+			if($t ne ''){
+				$i=$t.(($A==1 && $aa && !scalar(%a))?substr($aa,0,1):$aa.'>');
+				$i=~s/([$xml_])/\&$xml_{$1};/gs;
+				$ed.=' &apos;&lt;'.$i.'&apos;';
+			}
+			$i=$aa;
+			$i=~s/([^=\s]+)(?:=\"([^=\"]*)\"|=\'([^=\']*)\'|)/my $x=$type{"$id:$1="};$a{$1.'='}=$2 if(ref($x) ne 'HASH' || scalar(%$x));''/gse;
+			my $branch=$_[0]->{$t}->{$aa};
+			if(!$silent && ($A>1 || scalar(%$branch) || ($aa=~/\S/s) || exists($add{$type}) || exists($add_del{$id}) || $xml_mode)){
+			    $menu1||=$submenu;
+			    if($A>1){
+				$i=$aa;
+				$i=~s/^\s*//s;
+				$i=~s/_/-/gs;
+				$i=~s/([$xml_])/\&$xml_{$1};/gs;
+				$conf++;
+				$submenu.="<menu id='$MENU:$conf' label='$i'>";
+				$menu2=1;
+			    }
+			    $submenu.=_add_del($id,$type,$ed) if($submenu);
+			    utf8_encode($submenu);
+			    print $submenu;
+			}
+			$i=!$submenu;
+			$submenu=undef;
+			my $r=ref($type);
+			for(sort{$a<=>$b}keys %$branch,undef,sort keys %a){
+			    my ($d,$menu3);
+			    my ($id,$r,$ed,$type)=($id,$r,$ed,$type);
+			    my $attr;
+			    if(exists($branch->{$_})){
+				$d=delete($branch->{$_});
+				if(ref($d)){
+					sort_tags($d,$id,$ed);
+					next;
+				}
+				$ed.="[$i]" if($i=$edcount{$ed}++);
+			    }elsif(exists($a{$_})){
+				$attr=quotemeta($_);
+				$d=delete($a{$_});
+				$id.=':'.$_;
+				$CNT{$id}++;
+				cmpid($id,my $cmpid,my $silent=$silent) && next;
+				$type=$type{$id};
+				$type || next;
+				$r=ref($type);
+				$i=$_;
+				$i=~s/([$xml_])/\&$xml_{$1};/gs;
+				$ed.=" &apos;$i&apos;";
+#				_edcnt($ed); # multiple equal tag+attribute
+				$conf++;
+				$i="<menu id='$MENU:$conf' label='$i'>";
+				next if($cmpid && ($silent || _call($id,[$type],$i)));
+				if(!$silent){
+					$i.=_add_del($id,$type,$ed);
+					$menu3=1;
+					utf8_encode($i);
+					print $i,;
+				}
+			    }elsif($silent){
+				next;
+			    }else{
+				scalar(%a) && !$xml_mode && print '<separator/>';
+				next;
+			    }
+			    if($d ne ''){
+				~s/([$xml_])/\&$xml_{$1};/gs for($d);
+				my $def="<separator label='$sel1$d$sel2'/>";
+				if($r eq ARRAY){
+					for(@{$type}){
+						if($_ eq $d){
+							($i,$def)=($def);
+						}else{
+							$attr && _chk_attr($_[0]->{$t},$aa,$attr,$_) && next;
+							$i="<item label='$_'><action name='Execute'><execute>$fix &quot;$_&quot; $ed &quot;$d&quot;</execute></action></item>"
+						}
+						utf8_encode($i);
+						print $i;
+					}
+				}elsif($r eq HASH){
+					for(sort keys %{$type}){
+						my $x=$i=$type->{$_};
+						($i,$x)=@{$i} if(ref($i));
+						~s/([$xml_])/\&$xml_{$1};/gs for($i,$x);
+						if($d=~/^$_$/){
+							($i,$def)=("<separator label='$sel1$x$sel2'/>");
+						}else{
+							$attr && _chk_attr($_[0]->{$t},$aa,$attr,$i) && next;
+							$i="<item label='$x'><action name='Execute'><execute>$fix &quot;$i&quot; $ed &quot;$d&quot;</execute></action></item>"
+						}
+						utf8_encode($i);
+						print $i;
+					};
+				}elsif($r eq SCALAR){
+					$i=$xtype{$$type};
+					$i=$xtype{$$type}=&{$i}() if(ref($i) eq CODE);
+					$i=~s/(<menu id=[\'\"])/$conf++;"$1$MENU:$conf"/gse;
+					$i=~s/(<execute>)([^<>]*)(<\/execute>)/$1$fix $2 $ed &quot;$d&quot;$3/gs;
+					my $x=$$type;
+					$x=~s/^[^:]*://;
+					$i=~s/ label=\'\'/ label=\'[$x]\'/gs;
+#					my $ed=$ed;
+					$ed=~s/(\s)/'&#'.ord($1).';'/gse;
+					$i=~s/( execute=\')([^\']*)(\')/$1$fix $2 $ed &quot;$d&quot;$3/gs;
+					$def.=$i;
+					undef $i;
+#				}elsif(substr($type,0,1) eq '<'){
+#					$def=$type;
+				}
+				if(defined($def)){
+					utf8_encode($def);
+					print $def;
+				}
+			    }
+			    $menu3 && print '</menu>';
+			}
+			$menu2 && print '</menu>';
+		}
+		$menu1 && print '</menu>';
+	}
+}
+
+sub fc_list{
+	my %r;
+	if(!defined($fcl)){
+		my $lang=':';
+		for('LANG','LC_ALL'){
+			($lang)=$ENV{$_}=~/^([a-z][a-z_]+)/i or next;
+			$lang=~s/_/-/g;
+			$lang=":lang=$lang";
+			last;
+		}
+		for(split(/\n/,`$bin/fc-list $lang --format '%{family[0]}:%{style}:%{scalable}:%{spacing}\n'`)){
+			my @f=split(/:/,$_);
+			for my $st (split(/,/,$f[1])){
+				$fcl{($f{3} eq '')+0}->{$f[2]}->{$st}->{$f[0]}=undef;;
+			}
+		}
+	}
+	for my $sp (@{$_[0]}?(@{$_[0]}):(keys %fcl)){
+		exists($fcl{$sp}) || next;
+		for my $sc (@{$_[1]}?@{$_[1]}:(keys %{$fcl{$sp}})){
+			exists($fcl{$sp}->{$sc}) || next;
+			for my $st (@{$_[2]}?@{$_[2]}:(keys %{$fcl{$sp}->{$sc}})){
+				exists($fcl{$sp}->{$sc}->{$st}) || next;
+				if(defined($_[2])){
+					$r{"$_:style=$st"}=undef for(keys %{$fcl{$sp}->{$sc}->{$st}});
+				}else{
+					%r=(%r,%{$fcl{$sp}->{$sc}->{$st}});
+				}
+			}
+		}
+	}
+	\%r;
+}
+
+sub fontconfig{
+	for(@_){
+		next if(defined($fontcfg{$_}));
+		$fontcfg{$_}++;
+		if(stat($_) && -f && -r _ && -s _){
+			my $d=$_;
+			$d=~s/[^\/]*$//;
+			sort_fonts($_,$d) for(load_xml(open_(my $F,'<',$_)));
+		}
+	}
+}
+
+sub walk{
+	my $x=$_[1];
+	ref($_[0])?defined($x)?ref($x)?map{walk($_[0]->{$_},@_[2..$#_])}(grep(/$x->[0]/,keys %{$_[0]})):walk($_[0]->{$x},@_[2..$#_]):$#_?map{walk($_[0]->{$_},@_[2..$#_])}(keys %{$_[0]}):($_[0]):$#_?():($_[0]);
+}
+
+sub sort_fonts{
+	for(walk($_[0],'fontconfig',undef,undef,'include',undef,undef)){
+		next if(ref($_));
+		my $f=$_;
+		$f="$_[1]$f" if(substr($f,0,1) ne '/');
+		fontconfig($f,"$f.conf",glob('[0-9][0-9]-$f.conf'),glob("$f/[0-9][0-9]-*.conf"))
+	}
+	for(walk($_[0],'fontconfig',undef,undef,'alias',undef,undef)){
+		next if(ref($_) ne 'HASH');
+		my @a=walk($_,undef,undef,undef,undef,undef,undef);
+		for my $x (walk($_,'family',undef,undef)){
+			next if(ref($x) || exists($fonts{quotemeta($x)}));
+			for my $y (@a){
+				$fonts_{$x}->{quotemeta($y)}='*' if(!ref($y));
+			}
+		}
+	}
+	for(walk($_[0],'fontconfig',undef,undef,'match',['\starget=["\']pattern["\']'],undef)){
+		next if(ref($_) ne 'HASH');
+		my @a=walk($_,'edit',['\sname=["\']family["\']'],undef,'string',undef,undef);
+		for my $x (walk($_,'test',['\sname=["\']family["\']'],undef,'string',undef,undef)){
+			next if(ref($x) || exists($fonts{quotemeta($x)}));
+			for my $y (@a){
+				$fonts_{$x}->{quotemeta($y)}='~' if(!ref($y));
+			}
+		}
+	}
+}
+
+
+sub open_{
+	(($_[0]=$stdio{$_[1].$_[$_]}) || open($_[0],$_[1]?$_[1].$filemode:$_[1],$_[$_])) && return $_[0] for(2..$#_);
+	die "Error open '".join('|',@_[2..$#_])."'\n";
+}
+
+sub _fixrc{
+	my $r;
+	$r+=$_[0]=~s/ -->(
+       if this is a negative)/$1/s;
+	if($_[0]=~/<showIcons>/){
+		$r+=$_[0]=~s/ *<applicationIcons>yes<\/applicationIcons>\n//s;
+	}elsif($_[0]=~s/applicationIcons>/showIcons>/gs){
+		$r++;
+	}else{
+		$r+=$_[0]=~s/(<menu>.*?<\/file>)/$1
+<showIcons>yes<\/showIcons>/s;
+	}
+	$r
+}
+
+sub _write{
+if($_[0] ne '-'){
+	open_(my $F,'>',my $f=$_[0].'.$$$');
+	flock($F,2);
+	(print($F $_[1]) && close($F) && rename($f,$_[0])) || die $!;
+	return 1;
+}else{
+	open_(my $F,'>','-');
+	flock($F,2);
+	print($F $_[1]) || die $!;
+	return 0;
+}
+}
+
+sub fixrc(){
+open_(my $F,'<',@rc);
+mkdir($cfg)||die $! if($cfg && ! -d $cfg);
+my $s;
+if(my $l=-s $F){
+	flock($F,1);
+	read($F,$s,$l)||die $!;
+	close($F);
+}else{
+	while(<$F>){$s.=$_}
+}
+utf8_decode($s);
+goto FIX if((_fixrc($s) || $rc[0] eq '-') && $#_<0);
+exit if($#_<0);
+my ($from,$to);
+$to=shift;
+if(substr($_[-1],0,2) ne '</'){
+	$from=quotemeta(pop(@_));
+}
+my ($p1,$p2);
+if(substr($_[-1],-1) eq '='){
+	my $a=pop @_;
+	my $t=pop @_;
+	$t=~s/>$//;
+	my $t1=$t;
+	$t1=~s/(\s)$a([\'\"])$from[\'\"]/$1$a$2$to$2/s or die "Not found";
+	$from=quotemeta($t);
+	$to=$t1;
+}
+my $mycfg;
+for(@_){
+	my $n=0;
+	my $x=$_;
+	$x=~s/\[(\d+)\]$/$n=$1;''/se;
+	if(substr($x,0,2) eq '</'){
+		$p2=quotemeta($x).'.*?'.$p2 for(0..$n);
+	}else{
+		$p1.='.*?'.quotemeta($x);
+		if(substr($x,0,4) eq '<!--'){
+			$p2='-->.*'.$p2 for(0..$n);
+			$mycfg=1;
+			$from=undef;
+		}else{
+			$x=~s/\s.*/>/s;
+			substr($x,1,0)='/';
+			$p2=quotemeta($x).'.*'.$p2 for(0..$n);
+		}
+	}
+}
+my $sl='/';
+($s=~s/($p1)(.*?)($p2)/
+	my @x=($1,$2,$3);
+	if(defined($from)){
+		$x[1]=~s\/$from\/$to\/s or  die "Not found $from";
+	}else{
+		$x[1]=$to;
+	}
+	join('',@x)
+/se) || ($mycfg?($s.=join('',@_,$to,"-->\n")):die "Not found");
+FIX:
+utf8_encode($s);
+if(_write($rc[0],$s)){
+	xresources($s='-') if($_[2] eq "<font place=\"$allfont\">");
+	exec($bin.'openbox','--reconfigure');
+}
+exit;
+}
+
+sub fonts{
+$fonts{quotemeta($_)}=[$_,$_] for(keys %{fc_list()});
+if(!$?){
+	fontconfig('/etc/fonts/fonts.conf');
+	for(my ($n,$n1)=(1); $n ne $n1; ($n,$n1)=(scalar(%fonts),$n)){
+		for(keys %fonts_){
+			for my $i (keys %{$fonts_{$_}}){
+				if(exists($fonts{$i})){
+					my $x=$fonts{$i}->[1];
+					$x=~s/[^\*\~]*//;
+					$fonts{quotemeta($_)}=[$_,"$_ ".delete($fonts_{$_})->{$i}.$x];
+					last
+				}
+			}
+		}
+	}
+}
+%fonts_=();
+}
+
+sub _menu{
+	join('',map{
+		my $k=$_;
+		my $x=delete($_[0]->{$k});
+		my $i;
+		while(($i=ref($x)?scalar(keys %$x):0)==1 && defined($_[1])){
+			my $n=(keys %$x)[0];
+			$x=$x->{$n};
+			$k.=$_[1].$n;
+		}
+		$k=~s/([$xml_])/\&$xml_{$1};/gs;
+		$k1=$k;
+		$k1=~s/_/ /g;
+		$i?"<menu id='$MENU".(++$conf)."' label='$k1'>"._menu($x,@_[1..$#_]).'</menu>':
+		"<item label='$k1'><action name='execute'><execute>$0 $_[2]&quot;$k&quot; $_[3]</execute></action></item>"
+	}sort{lc($a) cmp lc($b)||$a cmp $b}keys %{$_[0]});
+}
+
+sub keymap{
+	my (%k,%kk);
+	my $ed=join(' ',@_[1..$#_]);
+	open(my $F,'-|',$bin.'xmodmap -pke');
+	while(<$F>){
+		~s/^keycode\s+(\d+)\s+=\s+(.+?)\s*$/$k{$_}=$1 for(split(\/\s+\/,$2));''/ge;
+	}
+	close($F);
+	for('A','C','M','S','W'){
+		next if($_[0]=~/$_-/);
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$_-' execute='$0 --menu ob:keyname $_[0]$_- $ed'/>";
+	}
+	print '<separator/>';
+	for my $p('[0-9]','[a-z]','[A-Z]','F[0-9]+'){
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$p'>";
+		for(sort{length($a)<=>length($b)||lc($a) cmp lc($b)||$a cmp $b}grep(/^$p$/,keys %k)){
+			delete($k{$_});
+			~s/([$xml_])/\&$xml_{$1};/gs;
+			print "<item label='$_'><action name='execute'><execute>$0 $_[0]&quot;$_&quot; $ed</execute></action></item>\n"
+		}
+		print '</menu>';
+	}
+	for(keys %k){
+		my $x=\%kk;
+		$x=\%{$x->{$_}} for(split(/_/,$_));
+	}
+	print '<separator/>',_menu(\%kk,'_',$_[0],$ed)
+}
+
+sub button{
+	my (%k,%kk);
+	my $ed=join(' ',@_[1..$#_]);
+	for('A','C','M','S','W'){
+		next if($_[0]=~/$_-/);
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$_-' execute='$0 --menu ob:button $_[0]$_- $ed'/>";
+	}
+	print '<separator/>';
+	for('Left','Middle','Right','Up','Down',map{"Button$_"}(0..12)){
+			print "<item label='$_'><action name='execute'><execute>$0 $_[0]&quot;$_&quot; $ed</execute></action></item>\n"
+	}
+}
+
+sub xsd{
+for(keys %{$xsd{'xsd:union'}}){
+	for my $i (map{split(/\s+/,$_)}(@{$xsd{'xsd:union'}->{$_}->{'memberTypes'}})){
+		for my $t(keys %xsd){
+			push @{$xsd{$t}->{$_}->{'value'}}, @{$xsd{$t}->{$i}->{'value'}} if(exists($xsd{$t}->{$i}));
+		}
+	}
+}
+$_->{'value'}=[sort @{$_->{'value'}}] for(values %{$xsd{'xsd:enumeration'}});
+$xsd{'xsd:enumeration'}->{'ob:bool'}->{'value'}={'(?:yes|true|on)'=>'on','(?:no|false|off)'=>'off'};
+for my $t(values %type){
+    for(ref($t)?@$t:$t){
+	if(exists($xtype{$_})){
+		my $i=$_;
+		$t=\$i;
+	}elsif(exists($xsd{'xsd:pattern'}->{$_})){
+		my %e;
+		if(ref($xsd{'xsd:enumeration'}->{$_}->{'value'}) eq 'ARRAY'){
+			$e{quotemeta($_)}=$_ for(@{$xsd{'xsd:enumeration'}->{$_}->{'value'}});
+		}
+		for(@{delete($xsd{'xsd:pattern'}->{$_})->{'value'}}){
+			$i=$_;
+			$i=~s/\[([a-z])([a-z])\]/$1/gsi;
+			if($i=~/[\[\]\{\}\*\.\|\+]/){
+#				$enum=(); last;
+				next;
+			}
+			$e{$_}=$i;
+		}
+		$xsd{'xsd:enumeration'}->{$_}->{'value'}=\%e;
+	}
+	$_=$xsd{'xsd:enumeration'}->{$_}->{'value'}||$_;
+    }
+}
+_types('ob:openbox_config');
+for my $x (values %xsd){
+	for my $t (keys %$x){
+		for(@{$x->{$t}->{'maxOccurs'}}){
+			next if($_ ne 'unbounded');
+			my $i=$t;
+			$i=~s/^[^:]*//;
+			$i=quotemeta($i);
+			for(grep(/$i$/,keys %type)){
+				$add_del{$_}=$x->{$t}->{'minOccurs'}->[0];
+				my ($x1,$x2)=$_=~/^(.*):([^:]*)$/ or next;
+				$add{$x1}=$x2;
+			}
+		}
+	}
+}
+%xsd=();
+}
+
+sub _types{
+	my $i=quotemeta($_[0]);
+	my @r=grep(/^$i:/,keys %type);
+	for(@r){
+		my $t=$type{$_};
+		next if(ref($t) || $walked{$t}++);
+		for my $i (_types($t)){
+			my $x=$_.substr($i,length($t));
+			push @r,$x;
+			$type{$x}=$type{$i};
+		}
+	}
+	@r;
+}
+
+my %dup_tags=(
+'ob:action:execute'=>0,
+);
+
+sub stub{
+my $r1;
+my $r2;
+my $type=type($_[0]);
+my $i=quotemeta($type.':');
+my @e=split(/:/,$_[0]);
+my $r1=$e[-1];
+for(sort grep(/^$i[^:]*$/,keys %type)){
+	next if($_ eq $_[0] || exists($dup_tags{$_}));
+	next if(!ref(type($_)));
+	if(substr($_,-1) eq '='){
+		$r1.=' '.substr($_,length($type)+1)."''";
+	}else{
+		$r2.=stub($_,@_[1..$#_]);
+	}
+}
+"<$r1>$r2</$e[-1]>"
+}
+
+sub _kbname{
+	exists($c{$_[0]}->{$_[1]})?$c{$_[0]}->{$_[1]}:defined($_[2])?$_[2]:$_[1];
+}
+
+sub _xkbmap{
+	my (%k,%k1,%ch);
+	while(my ($c,$v)=each %kb){
+		$k{$c}=[@$v];
+	}
+	my $n;
+	if(defined($_[2])){
+		my $s=1;
+		for(0..$#{$_[0]}){
+			my ($c,$v)=($_[0]->[$_],$_[2]->[$_]);
+			my $v1=($c eq 'variant')?"$_[2]->[1]:$v":$v;
+			$ch{$c}=1;
+			$k{$c}->[$_[1]]=$v;
+			$n||=_kbname($c,$v1,$v);
+			$s&&=exists($kb1{$c}->{$v})==($v ne '');
+		}
+		$n="*$n" if($s);
+	}elsif($_[1]>=0){
+		for(@{$_[0]}){
+			$ch{$_}=1;
+			my $v=$k{$_}->[$_[1]];
+			if($n){
+			}elsif($_ eq 'variant'){
+				my $l=$k{'layout'}->[$_[1]];
+				$n=_kbname('layout',$l);
+				$n.=':'._kbname($_,"$l:$v",$v) if($v);
+			}else{
+				$n=_kbname($c,$v);
+			}
+			splice(@{$k{$_}},$_[1],1);
+		}
+		$n="- *$n";
+	}else{
+		$kch{$_} || return for(@{$_[0]});
+		$kch{$_}=0 for(@{$_[0]});
+		$n.='DEFAULT';
+	}
+	print "<item label='$n'><action name='execute'><execute>$0 --menu setxkbmap";
+	my $n;
+	while(my ($c,$v)=each %k){
+		$kch{$c}||$ch{$c}||next;
+		$n++;
+		if($c eq 'option'){
+			print join(" -$c '",'','',@$v)."'";
+		}else{
+			print " -$c '".join(',',@$v)."'";
+		}
+	}
+	$n||print ' -';
+	print '</execute></action></item>';
+}
+
+sub _mparam{
+	for(@_){
+		~s/^\&apos\;//;
+		~s/\&apos\;$//;
+	}
+	$#_>-1;
+}
+
+# can be separated to another module
+sub setxkbmap{
+	if(_mparam(@_)){
+		my $s="@_";
+		if($s eq '-'){
+			unlink($cfg.'xkbmap');
+			exit;
+		}
+		_write($cfg.'xkbmap',$s);
+		`${bin}setxkbmap $s -print|${bin}xkbcomp - $ENV{DISPLAY}` if($ENV{DISPLAY} ne ':0.0' || $ENV{DISPLAY} ne ':0');
+		exec($bin.'setxkbmap',@_);
+		die;
+	}
+	if(open($F,'<',$cfg.'xkbmap')){
+		my $s=<$F>;
+		close($F);
+		for(split(/\s+/,$s)){
+			$kch{$_}=1 if($_=~s/^-//);
+		}
+	}
+	my @prop=split(/, /,$prop{_XKB_RULES_NAMES},-1);
+	if($#prop!=4){
+		# ???
+		open_($F,'-|',$bin.'setxkbmap -query');
+		while(<$F>){
+			chomp($_);
+			my ($c,$x)=split(/:\s*/,$_,2);
+			$c='option' if($c eq 'options');
+			$kb{$c}=$x;
+		}
+		close($F);
+	}else{
+		($kb{'rules'},$kb{'model'},$kb{'layout'},$kb{'variant'},$kb{'option'})=@prop;
+		~s/\"//g for(values %kb);
+	}
+	$_=[split(/,/,$_,-1)] for(values %kb);
+	while(my ($o,$v)=each %kb){
+		$kb1{$o}->{$_}=undef for(@$v);
+	}
+	# lst is simple, but xml have vendor
+	open_(my $F,'<','/usr/share/X11/xkb/rules/base.lst');
+	while(<$F>){
+		chomp($_);
+		next if(!$_ || ($_=~s/^\!\s+(.*)/$c=$1/e));
+		~s/^\s+//;
+		~s/^Compose key/compose/; # fixme. possible there are Compose+key, but I get no working
+		my ($x,$y)=split(/\s+/,$_,2);
+		# base.lst partially xml'ed. safe:
+		$y=~s/\&lt;/</gsi;
+		$y=~s/\&gt;/>/gsi;
+		$y=~s/([$xml_])/\&$xml_{$1};/g;
+		if($c eq 'variant' && (my ($l,$t)=$y=~/^(\S+): (.*)$/)){
+			$x="$l:$x";
+			$y=$t;
+		}
+		exists($c{$c}->{$x}) && print STDERR "WARNING: xkb '$c' duplicate: '$x'\n";
+		$c{$c}->{$x}=$y;
+	}
+	close($F);
+	open_(my $F,'<','/usr/share/X11/xkb/rules/base.xml');
+	read($F,my $s,-s $F);
+	close($F);
+	my $sl='/';
+	$s=~s/<configItem>(.*?)<\/configItem>/
+		my $x=$1;
+		if((my ($n)=$x=~\/<name>(.*?)<${sl}name>\/s) && (my ($v)=$x=~\/<vendor>(.*?)<${sl}vendor>\/s)){
+			$vendor{$v}->{$n}=undef if(exists($c{'model'}->{$n}));
+		}
+	;''/gse;
+	for(['Cherry','cherryblue'],['BTC','btc9116u']){
+		$vendor{$_->[0]}->{$_->[1]}=undef if(exists($vendor{$_->[0]}) && exists($c{'model'}->{$_->[1]}));
+	}
+	while(my ($v1,$t)=each %{$c{'variant'}}){
+		my ($l,$v)=split(/:/,$v1,2);
+		if(exists($c{'layout'}->{$l})){
+			my $n=quotemeta($c{'layout'}->{$l});
+			$t=~s/^\s*$n\s*\((.*)\)\s*$/$1/i;
+			$lv{$l}->{$v}=$c{'variant'}->{$v1}=$t;
+		}
+	}
+	$s='';
+	$ko{$kb{'option'}->[$_]}=$_ for(0..$#{$kb{'option'}});
+    for(0,1){
+	$conf++;
+	print "<menu id='$MENU:$conf' label='model'>";
+	_xkbmap(['model'],-1);
+	my %m;
+	for(sort keys %vendor){
+		my $s=exists($vendor{$_}->{"@{$kb{'model'}}"})?'*':'';
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$s$_'>";
+		for(sort keys %{$vendor{$_}}){
+			$m{$_}=undef;
+			_xkbmap(['model'],0,[$_]);
+		}
+		print '</menu>';
+	}
+	exists($m{$_}) || _xkbmap(['model'],0,[$_]) for(sort keys %{$c{'model'}});
+	print '</menu>';
+	$conf++;
+	print "<menu id='$MENU:$conf' label='options'>";
+	_xkbmap(['option'],-1);
+	my $xx;
+	my $n=$#{$kb{'option'}}+1;
+	_xkbmap(['option'],$ko{$_}) for(@{$kb{'option'}});
+	print '<separator/>';
+	for(sort keys %{$c{'option'}}){
+		my $t=$c{option}->{$_};
+		my $x=$_;
+		$x=~s/:.*//gs;
+		if($x ne $xx){
+			print '</menu>' if($xx);
+			$xx=$x;
+			$x=quotemeta($x);
+			$conf++;
+			print "<menu id='$MENU:$conf' label='".(grep(/^$x:/,@{$kb{'option'}})?'*':'').($xx eq $_?$t:$xx)."'>";
+			next if($xx eq $_);
+		}
+		_xkbmap(['option'],exists($ko{$_})?($ko{$_}):($n,[$_]));
+	}
+	print '</menu>' if($xx);
+	print '</menu>';
+	print '<separator/>';
+	_xkbmap(my $i=['variant','layout'],-1);
+	_xkbmap($i,$_) for(0..$#{$kb{'layout'}});
+	$conf++;
+	print "<menu id='$MENU:$conf' label='+'>";
+	my $n=$#{$kb{'layout'}}+1;
+	for(sort{$c{'layout'}->{$a} cmp $c{'layout'}->{$b}}keys %{$c{'layout'}}){
+		if(!exists($lv{$_})){
+			_xkbmap($i,$n,['',$_]);
+			next;
+		}
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$c{'layout'}->{$_}'>";
+		_xkbmap($i,$n,['',$_]);
+		print '<separator/>';
+		for my $v (sort{$lv{$_}->{$a} cmp $lv{$_}->{$b}}keys %{$lv{$_}}){
+			_xkbmap($i,$n,[$v,$_]);
+		}
+		print '</menu>';
+	}
+	print '</menu>';
+	if($_){
+		print '</menu>';
+	}else{
+		$conf++;
+		print "<separator/><menu id='$MENU:$conf' label='IDs'>";
+		for(values %c){
+			for my $v(keys %$_){
+				$_->{$v}=$v;
+				$_->{$v}=~s/_/ /g;
+			}
+		}
+	}
+    }
+}
+
+sub simple_menu{
+	$s='[ 	]*';
+	my $lx;
+	for(sort keys %{$_[0]}){
+		my $m=$_;
+		$m=~s/ .*//g;
+		my $d=$_[1]->{$m};
+		my $i=$_;
+		~s/([$xml_])/\&$xml_{$1};/g for($i,$d,$m);
+		my ($lx1,$i1);
+		$i=$i1 if(($lx1,$i1)=$i=~/^([^\.\*]+[\.\*])(.*)$/);
+		if($lx1 ne $lx){
+			print '</menu>' if($lx ne '');
+			print "<menu id='$MENU:$lx1' label='$lx1'>" if($lx1 ne '');
+			$lx=$lx1;
+		}
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$i'>";
+		my $def;
+		$def="<separator label='*$d'/>" if($d ne '');
+		my $ly;
+		for(@{$_[0]->{$_}}){
+			my ($i,$i0,$ly1,$i1);
+			$i=$_;
+			$i=~s/([$xml_])/\&$xml_{$1};/g;
+			$i0=$i;
+			$i=$i1 if(($ly1,$i1)=$i=~/^([^:]+)([:].*)$/);
+			if($ly1 ne $ly){
+				print '</menu>' if($ly ne '');
+				print "<menu id='$MENU:$conf:$ly1' label='$ly1'>" if($ly1 ne '');
+				$ly=$ly1;
+			}
+			if($i eq $d && defined($def)){
+				print $def;
+				$def=undef;
+			}else{
+				print "<item label='$i'><action name='execute'><execute>$0 --@ARGV &quot;$m&quot; &quot;$i0&quot;</execute></action></item>";
+			}
+		}
+		print '</menu>' if($ly ne '');
+		print $def,'</menu>';
+	}
+	print '</menu>' if($lx ne '');
+}
+
+sub _conffile{
+	my ($f,$r,$r1,$v,$x,$a)=@_;
+	my $s;
+	if(open(my $F,'<',$f)){
+		read($F,$s,-s $F);
+		close($F);
+	}elsif(-e $f){
+		die $!;
+	}
+	my $i=quotemeta($v);
+	my $ss='[ 	]*';
+	if(!($s=~s/^($ss$i$ss$r$ss).*?$/$1$x/gm)){
+		defined($a)||return;
+		my $s1=($a&&"$a\n")."$v$r1$x";
+		my $a1=quotemeta($a);
+		if(!($a && ($s=~s/^$ss$a1$ss$/$s1/m))){
+			$s.="\n" if($s ne '' && substr($s,-1) ne "\n");
+			$s.="$s1\n";
+		}
+	}
+	_write($f,$s);
+	$s;
+}
+
+sub getcfg{
+	my @font;
+	for(load_xml(open_($F,'<',@rc),2)){
+		for my $f (walk($_,undef,undef,undef,'theme',undef,undef,'font',['\splace=["\']'.$allfont.'["\']'],undef)){
+			for('name','weight','slant','size'){
+				for(walk($f,$_,undef,undef)){
+					push @font,$_ if(!ref($_) && $_ ne 'normal');
+				}
+			}
+		}
+	}
+	("@font");
+}
+
+sub _gtk1{
+	return $_[0]=$gtk{$_[0]} if(exists($gtk{$_[0]}));
+	$_[0]=~s/\./-/g;
+	$_[0]='gtk-'.lc($_[0]);
+}
+
+sub _xrdb{
+	my $i="$_[0]:	$_[1]";
+	for('all','screen','screens','global'){
+#		for('all','screen'){
+		open_($F,'|-',$bin."xrdb -merge -$_");
+		print $F "$i\n";
+		close($F);
+		$? && die "Merging xrdb: '$i'";
+	}
+	_conffile("$ENV{HOME}/.Xresources",':',':	',@_,'')
+}
+
+sub xresources{
+
+my @xfiles=(
+['.gtkrc-2.0','=','=',\&_gtk1,
+sub{$_[0]="\"$_[0]\"" if($_[0]=~/\D/)},
+sub{eval q(
+#dev-perl/gtk2-perl
+use Gtk2 '-init';
+my $event = Gtk2::Gdk::Event->new("GDK_CLIENT_EVENT");
+$event->send_event(1);
+$event->window(undef);
+$event->message_type(Gtk2::Gdk::Atom->intern("_GTK_READ_RCFILES", 0));
+$event->data_format(8);
+$event->data('burp');
+Gtk2::Gdk::Event->send_clientmessage_toall($event);
+);},''],
+['.config/gtk-3.0/settings.ini','=','=',\&_gtk1,
+sub{$_[0]="$_[0]" if($_[0]=~/\D/)},
+sub{},'[Settings]'],
+['.xscreensaver',':',':	',sub{$_[0]=~s/^xscreensaver\.//},sub{},sub{}],
+['.config/Trolltech.conf','=','=',sub{
+	return $_[0]='font' if($_[0] eq $xrfont);
+},sub{
+	$_[0]='"'.join(',',$fontn,$fontsz,-1,5,$fontb*25+50,$fonti+0,'0,0,0,0').'"';
+},sub{},'[Qt]'],
+);
+
+my $b=[0,1];
+my $bb=['True','False'];
+my $tm=[1,3,5,10,15,30,40,60,90,120];
+($font)=getcfg();
+$fontn=$font;
+$fontb=($fontn=~s/ bold / /);
+$fonti=($fontn=~s/ italic / /);
+($fontn,$fontsz)=$fontn=~/^(.*?)\s+(\d+)$/;
+my %xrparam=(
+'Xft.antialias'=>$b,
+'Xft.autohint'=>$b,
+'Xft.hinting'=>$b,
+'Xft.hintstyle'=>['hintnone','hintslight','hintmedium','hintfull'],
+'Xft.rgba'=>['rgb','bgr','vrgb','vbgr','none'],
+'Xft.lcdfilter'=>['lcdnone','lcddefault','lcdlight','lcdlegacy'],
+'Xft.embolden'=>$b,
+'Xft.minspace'=>$b,
+'Xft.render (Xft client-side)'=>$b,
+'Xft.core (Xft server-side)'=>$b,
+'Xft.embeddedbitmap'=>$b,
+'Xft.verticallayout'=>$b,
+'Xcursor.theme'=>['default',(map{substr($_,28)}glob('/usr/share/cursors/xorg-x11/*'))],
+'Xcursor.theme_core'=>$b,
+'Xcursor.size'=>[3..100],
+'xscreensaver.timeout'=>$tm,
+'xscreensaver.cycle'=>$tm,
+'xscreensaver.dpmsEnabled'=>$bb,
+'xscreensaver.dpmsStandby'=>$tm,
+'xscreensaver.dpmsSuspend'=>$tm,
+'xscreensaver.dpmsOff'=>$tm,
+'xscreensaver.dpmsQuickOff'=>$bb,
+'xscreensaver.mode'=>['random','random-same','one','blank','off','X','lock'],
+
+'xscreensaver.passwdTimeout'=>$tm,
+'xscreensaver.lock'=>$bb,
+'xscreensaver.lockTimeout'=>$tm,
+'xscreensaver.visualID'=>['default','best','mono','gray','color','GL'], # number: xdpyinfo
+'xscreensaver.installColormap'=>$bb,
+'xscreensaver.splash'=>$bb,
+'xscreensaver.nice'=>[-20..19],
+'xscreensaver.fade'=>$bb,
+'xscreensaver.unfade'=>$bb,
+'xscreensaver.fadeSeconds'=>[0..20],
+'xscreensaver.fadeTicks'=>[5,10,20,30,40],
+'xscreensaver.ignoreUninstalledPrograms'=>$bb,
+'xscreensaver.GetViewPortIsFullOfLies'=>$bb,
+#'xscreensaver.selected'=>,
+'xscreensaver.procInterrupts'=>$bb,
+#'XTerm.*.faceName'=>'*',
+#'XTerm.*.faceSize'=>$fontsz,
+'XTerm.*.faceName'=>['','*','Monospace','Monospace:style=bold','Monospace:antialias=false','Monospace:antialias=false:style=bold',sort keys %{fc_list([1],['True'],[])}],
+'XTerm.*.faceNameDoublesize'=>['','*','Monospace:style=Italic','Monospace:style=bold',sort keys %{fc_list([1],['True'],[])}],
+'XTerm.*.faceSize'=>['',5..32],
+'XTerm.*.reverseVideo'=>$bb,
+'XTerm.*.scrollBar'=>$bb,
+'XTerm.*.rightScrollBar'=>$bb,
+'XTerm.*.selectToClipboard'=>$bb,
+'XTerm.*.jumpScroll'=>$bb,
+'XTerm.*.fastScroll'=>$bb,
+'XTerm.*.multiScroll'=>$bb,
+'XTerm.*.saveLines'=>[100,500,1000,5000],
+'XTerm.*.autoWrap'=>$bb,
+'XTerm.*.titeInhibit'=>$bb,
+'XTerm.*.visualBell'=>$bb,
+'XTerm.*.scrollKey'=>$bb,
+'XTerm.*.scrollTtyOutput'=>$bb,
+'XTerm.*.utf8Title'=>$bb,
+
+'XTerm.keyboardType'=>['unknown','default','legacy','hp','sco','sun','tcap','vt220'],
+'XTerm.scaleHeight'=>[0.9,1.0,1.1,1.2,1.3,1.4,1.5],
+"$xrfont (=$allfont)"=>$font,
+'font'=>['','auto','[xfontsel]'],
+#'Xft.dpi'=>
+#'Xft.scale'=>
+#'Xft.maxglyphmemory'=>
+);
+my %exec=(
+'[xfontsel]'=>sub{`$bin/xfontsel -print -fn ''`},
+);
+my %cname=(
+'font'=>['*font'],
+);
+my %def=(
+'font'=>'auto',
+);
+my %auto=(
+'font: auto'=>sub{"-misc-fixed-medium-r-normal-*-$fontsz-*-*-*-*-*-*-*"},
+);
+#my $s=`${bin}xrdb -query`;
+#$? && return;
+my $s=$prop{'RESOURCE_MANAGER'};
+$s=~s/^\"//s;
+$s=~s/\"$//s;
+$s.="\n";
+my $ss='[ 	]*';
+my %x;
+for(keys %xrparam){
+	my $y=$xrparam{$_};
+	my $m=$_;
+	$m=~s/ .*//g;
+	if(ref($y)){
+		my $x=quotemeta($m);
+		($x{$m})=$s=~/^$x:$ss(.*?)$ss$/m or ($x{$m}=$def{$m});
+	}elsif($y ne $x{$m}){
+		_xrdb($m,$x{$m}=$y);
+	}
+	my $x="$m: $x{$m}";
+	$x=exists($auto{$x})?&{$auto{$x}}():$x{$m};
+	for(@{$cname{$m}}){
+		_xrdb($_,$x{$_}=$xrparam{"$_ (=$m)"}=$x) if($x{$_} ne $x);
+	}
+}
+for(@xfiles){
+	my $f;
+	my $fn="$ENV{HOME}/$_->[0]";
+	if(open(my $F,'<',$fn)){
+		read($F,$f,-s $F);
+		close($F);
+	}elsif(defined($_->[6])){
+		my $d=$fn;
+		mkdir($d) if($d=~s/\/[^\/]*$//);
+	}else{
+		next;
+	}
+	for my $x (keys %xrparam){
+		my $y=$xrparam{$x};
+		my $m=$x;
+		$m=~s/ .*//g;
+		my $i=$m;
+		my $r=$_->[1];
+		&{$_->[3]}($i) || next;
+		my $i1=quotemeta($i);
+#		my ($d)=$f=~/^$i1$r$ss(.*?)$ss$/m or next;
+		my ($d)=$f=~/^$ss$i1$ss$r$ss(.*?)$ss$/m or (ref($y) && next);
+		($d=~s/^\"//) && ($d=~s/\"$//);
+		next if($x{$m} eq $d);
+		if(!ref($y)){
+			next if($m ne $xrfont);
+			&{$_->[4]}(my $x=$x{$m});
+			_conffile($fn,$_->[1],$_->[2],$i,$x,$_->[6]) && &{$_->[5]}();
+			next;
+		}
+		# collect all
+		#_conffile("$ENV{HOME}/.Xresources",':',':	',$m,$d,'');
+		$x{$m}=$d;
+		if(defined($x{$m})){
+			# or not collect?
+			_conffile("$ENV{HOME}/.Xresources",':',':	',$m,$d);
+			$m=quotemeta($m);
+			$s=~s/^($m:$ss).*?$/$1$d/gm;
+		}else{
+			$s.="$m:	$d\n";
+		}
+	}
+}
+if(_mparam(@_)){
+	return if("@_" eq '-'); # todo: run menu here to resize panel
+	return if(exists($exec{$_[1]}) && ($_[1]=&{$exec{$_[1]}}()) eq '');
+	$x{$_[0]}=$_[1];
+	my $s;
+	my $i="$_[0]: $_[1]";
+	my $x=exists($auto{$i})?&{$auto{$i}}():$_[1];
+	$s=_xrdb($_,$_ eq $_[0]?$_[1]:$x) for($_[0],@{$cname{$_[0]}});
+	for(@xfiles){
+		my ($x,$y)=@_;
+		&{$_->[3]}($x) || next;
+		&{$_->[4]}($y);
+		_conffile("$ENV{HOME}/$_->[0]",$_->[1],$_->[2],$x,$y) && &{$_->[5]}();
+	}
+	if($i=~/^X\..*/){
+		exec($bin.'openbox','--restart');
+	}elsif($i=~/^xscreensaver/){
+		if($i eq 'xscreensaver.mode: off' || $i eq 'xscreensaver.mode: X'){
+			system($bin.'xscreensaver-command','-exit');
+			# xset code make dpms optional. let's separate
+			system($bin.'xset','-dpms');
+			system($bin.'xset','s','off');
+		}
+		if($x{'xscreensaver.mode'} eq 'X'){
+			my @t=($x{'xscreensaver.dpmsStandby'},$x{'xscreensaver.dpmsSuspend'},$x{'xscreensaver.dpmsOff'});
+			my @t1=($x{'xscreensaver.timeout'},$x{'xscreensaver.cycle'});
+			my $dpms=lc($x{'xscreensaver.dpmsEnabled'}) ne 'false';
+			my $dpms1=lc($x{'xscreensaver.dpmsQuickOff'}) eq 'true';
+			my ($h,$m,$s);
+			$_=(($h,$m,$s)=$_=~/^(\d+):(\d+):(\d+)$/)?$s+60*($m+60*$h):$_*60 for(@t,@t1);
+			for(@t){
+				$_=$x if($_<$x);
+			}
+			system($bin.'xset','dpms',$dpms?(@t,'+dpms'):$dpms1?(0,0,0):(@t,'-dpms'));
+			exec($bin.'xset','s','blank','s','expose','s',$dpms && $dpms1?'off':('on','s',@t1));
+		}elsif(lc($x{'xscreensaver.mode'}) ne 'off'){
+			system($bin.'xscreensaver-command','-restart') && exec($bin.'xscreensaver');
+		}
+	}elsif($i=~/^Xcursor\./){
+		system($bin.'xsetroot','-xcf','/usr/share/cursors/xorg-x11/'.$x{'Xcursor.theme'}.'/cursors/left_ptr',$x{'Xcursor.size'}) if(exists($x{'Xcursor.theme'}) && exists($x{'Xcursor.size'}) && $x{'Xcursor.theme'} ne '' && $x{'Xcursor.size'} ne '');
+	}
+	exit;
+}
+delete($xrparam{$_}) for($x{'xscreensaver.mode'} eq 'X'?grep(/xscreensaver\.(?!mode|dpms|timeout|cycle|lock)/,keys %xrparam):());
+simple_menu(\%xrparam,\%x);
+}
+
+###########################################
+for(keys %P){
+	&{$cmd{$_}}(@{$P{$_}}) if(exists($cmd{$_}));
+}
+
+&{$config{$_}->{${$_}}}() for(keys %config);
+
+my @fx=('<',(glob('/usr/share/doc/openbox*/rc.xsd*'))[-1]);
+@fx=('-|',"bzip2 -dc $fx[1]") if($fx[1]=~/.bz2$/);
+sort_xsd($_,'ob') for(load_xml(open_($F,@fx),1));
+xsd();
+
+$type{'ob:openbox_config:theme:name'}=[(map{substr($_,18,-10)}glob('/usr/share/themes/*/openbox-3')),'/dev/null'];
+$type{'ob:openbox_config:desktops:firstdesk'}=[$prop{'_NET_CURRENT_DESKTOP'}+1];
+$type{'ob:openbox_config:desktops:number'}=[$prop{'_NET_NUMBER_OF_DESKTOPS'}||()];
+$type{'ob:openbox_config:theme:font:name'}=\%fonts;
+$type{'ob:openbox_config:theme:font:size'}=[(5..32)];
+($X,$Y)=$prop{'_NET_DESKTOP_GEOMETRY'}=~/(\d+), (\d+)/;
+$X||=256;
+$Y||=256;
+$i=0;
+$type{'ob:openbox_config:margins:'.$_}=[0..8,12,16,20,24,28,32,map{$_*8}5..(($i++&1)?$Y:$X)/16] for('left','top','right','bottom');
+
+print '<openbox_pipe_menu>';
+sort_tags($_,'ob') for(load_xml(open_($F,'<',@rc),2));
+if(!exists($P{id})){
+	print '<separator/>';
+	for(keys %config){
+		$x=1;
+		my @a;
+		for my $i (@a=keys %{$config{$_}}){
+			last if($i eq ${$_});
+			$x++;
+		}
+		push @a,$a[0];
+		print "<item label='${$_}'><action name='execute'><execute>$fix &quot;$a[$x] &quot; &apos;&lt;!-- ob3menuconfig:$_:&apos; ${$_}</execute></action></item>";
+	}
+	for(sort keys %menu){
+		$_=~/:/ and next;
+		$conf++;
+		print "<menu id='$MENU:$conf' label='$_' execute='$0 --menu $_'/>";
+	}
+}
+print '</openbox_pipe_menu>';

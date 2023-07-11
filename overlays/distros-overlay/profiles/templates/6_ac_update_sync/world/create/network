@@ -1,0 +1,25 @@
+# Calculate name=world format=world
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS, CDS)!=#
+net-dialup/pptpclient
+net-dialup/rp-pppoe
+net-dialup/xl2tpd
+net-firewall/shorewall
+#in#
+
+#?in(os_linux_pkglist, CLD, CLDC, CLDL, CLDM, CLDX, CLDXS)!=#
+net-vpn/networkmanager-l2tp
+net-vpn/networkmanager-openvpn
+net-vpn/networkmanager-pptp
+net-vpn/networkmanager-vpnc
+net-vpn/networkmanager-wireguard
+#in#
+
+#?in(os_linux_pkglist, CDS)!=#
+net-dialup/ppp
+net-dns/ddclient
+net-firewall/iptables
+net-misc/bridge-utils
+net-misc/ifenslave
+net-vpn/pptpd
+#in#

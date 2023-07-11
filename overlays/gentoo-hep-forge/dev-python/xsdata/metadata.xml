@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>APN-Pucky@users.noreply.github.com</email>
+		<name>APN-Pucky</name>
+	</maintainer>
+	<longdescription lang="en">
+	xsData is a complete data binding library for python allowing developers to access and use XML and JSON documents as simple objects rather than using DOM.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">tefra/xsdata</remote-id>
+		<remote-id type="pypi">xsdata</remote-id> 
+	</upstream>
+	<use>
+		<flag name="cli"> cli tools </flag>
+		<flag name="lxml"> use lxml </flag>
+	</use>
+</pkgmetadata>

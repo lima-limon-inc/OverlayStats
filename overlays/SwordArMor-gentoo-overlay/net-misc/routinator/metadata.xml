@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>alarig@swordarmor.fr</email>
+		<name>Alarig Le Lay</name>
+	</maintainer>
+	<use>
+		<flag name="rta">
+			Enables the command rta for validating Resource Tagged Assertions as
+			described in draft-michaelson-rpki-rta
+		</flag>
+	</use>
+</pkgmetadata>

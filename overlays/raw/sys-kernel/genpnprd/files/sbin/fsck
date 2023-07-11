@@ -1,0 +1,26 @@
+#!/bin/sh
+# [fsck] wrapper to initrd:chroot via /newroot
+
+case "$0" in
+*fsck*)e=8;;
+*)e=1;;
+esac
+
+ex(){
+	umount /newroot/sys /newroot/proc /newroot/dev 2>/dev/null
+	exit ${1:-$e}
+}
+
+cmd=
+for i in "${@}"; do
+	[ "$i" = "${i#/newroot}" ] || i="/${i#/newroot}"
+	cmd="$cmd $i"
+done
+mount -t proc proc /newroot/proc &&
+mount -t sysfs sysfs /newroot/sys &&
+mount --bind /dev /newroot/dev || ex
+i="$(which $0)"
+chroot /newroot ${i:-$0} $cmd
+ex $?
+
+

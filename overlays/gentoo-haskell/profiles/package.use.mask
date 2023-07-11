@@ -1,0 +1,46 @@
+# hololeap <hololeap@protonmail.com> (2023-03-09)
+# Documentation is causing build failures when using hadrian, and it isn't
+# clear why.
+# Testing hasn't been set up yet
+>=dev-lang/ghc-9.4 doc test
+
+# hololeap <hololeap@protonmail.com> (2023-01-11)
+# Enabling these flags will create cycles in the dependency graph. 
+# Maintainers may want to temporarily unmask these in order to run
+# tests for these packages, but it is necessary for each package to be
+# rebuilt with the flag disabled immediately after testing.
+# See: <https://github.com/gentoo-haskell/gentoo-haskell/pull/1375>
+dev-haskell/attoparsec test
+dev-haskell/base-orphans test
+dev-haskell/clock test
+dev-haskell/colour test
+dev-haskell/data-array-byte test
+dev-haskell/foldable1-classes-compat test
+dev-haskell/hspec-core test
+dev-haskell/hspec-discover test
+dev-haskell/http-streams test
+dev-haskell/integer-logarithms test
+dev-haskell/nanospec test
+dev-haskell/network-uri test
+dev-haskell/options test
+dev-haskell/parser-combinators test
+dev-haskell/primitive test
+dev-haskell/scientific test
+dev-haskell/splitmix test
+dev-haskell/tasty-expected-failure test
+
+# hololeap <hololeap@protonmail.com> (2022-02-26)
+# These flags depend on packages that have been masked
+dev-haskell/zxcvbn-hs tools
+
+# Sergei Trofimovich <slyfox@gentoo.org> (16 Nov 2019)
+# Needs masked dev-haskell/slave-thread
+dev-haskell/hedis test
+
+# Mark Wright <gienah@gentoo.org> (11 Oct 2018)
+# Follow ::haskell package mask of >=dev-haskell/quickcheck-2.12
+>=dev-haskell/text-show-3.7.5 test
+
+# Mark Wright <gienah@gentoo.org> (11 Oct 2018)
+# Follow ::haskell package mask of >=dev-haskell/hspec-2.5
+>=dev-haskell/http-api-data-0.3.10 test

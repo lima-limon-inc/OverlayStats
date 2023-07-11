@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>universebenzene@sina.com</email>
+		<name>Astro Benzene</name>
+	</maintainer>
+	<longdescription lang="en">
+		A Python interface for the netCDF4 file-format that reads and writes
+		local or remote HDF5 files directly via h5py or h5pyd, without
+		relying on the Unidata netCDF library.
+	</longdescription>
+	<upstream>
+		<remote-id type="pypi">h5netcdf</remote-id>
+		<remote-id type="github">h5netcdf/h5netcdf</remote-id>
+	</upstream>
+</pkgmetadata>

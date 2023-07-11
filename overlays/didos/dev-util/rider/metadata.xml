@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>sophietheopossum@yandex.ru</email>
+    <name>Seirra Blake</name>
+  </maintainer>
+    <use>
+    <flag name="mono">Include mono, needed for regular .net and guis</flag>
+  </use>
+</pkgmetadata>

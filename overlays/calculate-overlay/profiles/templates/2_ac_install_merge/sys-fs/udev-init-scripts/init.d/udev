@@ -1,0 +1,27 @@
+# Calculate dotall format=patch
+<reg>(start_pre\(\)
+\{).*?\n\}</reg>
+<text>start_pre()
+{
+	get_udevd_binary || return 1
+	return 0
+}
+</text>
+<reg> -lxc</reg>
+<text></text>
+#?ini(container.type)==desktop#
+<reg># make sure /dev is a mounted devtmpfs
+	if ! mountinfo -q -f devtmpfs /dev; then
+		eerror "Udev requires /dev to be a mounted devtmpfs."
+		eerror "Please reconfigure your system."
+		return 1
+	fi
+</reg>
+<text># make sure /dev is a mounted devtmpfs
+	#if ! mountinfo -q -f devtmpfs /dev; then
+	#	eerror "Udev requires /dev to be a mounted devtmpfs."
+	#	eerror "Please reconfigure your system."
+	#	return 1
+	#fi
+</text>
+#ini#

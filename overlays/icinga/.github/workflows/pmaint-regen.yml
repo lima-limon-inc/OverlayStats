@@ -1,0 +1,67 @@
+name: 'Regenerate metadata/md5-cache'
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: pmaint-regen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pmaint-regen:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/antonfischl1980/gentoo-ci:main
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # https://github.com/peter-evans/create-pull-request/issues/1170
+    - name: Bug workaround
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: emerge-sync
+      run: |
+        sudo -u portage git -C /var/db/repos/gentoo pull
+        emerge --sync
+
+    - name: repos.conf/icinga
+      run: |
+        mkdir -p /etc/portage/repos.conf/
+        echo -en "[icinga]\nlocation = " >/etc/portage/repos.conf/icinga.conf
+        pwd -P >> /etc/portage/repos.conf/icinga.conf
+        cat /etc/portage/repos.conf/*.conf
+
+    - name: pmaint regen
+      run: |
+        pmaint regen --force -t$(nproc) icinga
+
+    - name: update-pkg-desc
+      run: |
+        egencache --update-pkg-desc-index --write-timestamp --repo icinga
+    
+    - name: check if modified
+      id: check-modified
+      run: |
+        NUMBER_FILES_CHANGED="$(
+          git status --porcelain | \
+          grep -v metadata/timestamp.chk | \
+          wc -l
+          )"
+        echo "NUMBER_FILES_CHANGED=${NUMBER_FILES_CHANGED}" 
+        echo "::set-output name=NUMBER_FILES_CHANGED::${NUMBER_FILES_CHANGED}" 
+
+    - name: commit and push
+      if: steps.check-modified.outputs.NUMBER_FILES_CHANGED > 0
+      run: |
+        git config user.name 'Regenerate metadata/md5-cache'
+        git config user.email 'noreply@fischl-online.de'
+        git status 
+        git add metadata profiles 
+        git status 
+        git commit -m "update metadata" || echo "Nothing to commit" 
+        git push
+

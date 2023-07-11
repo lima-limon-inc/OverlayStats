@@ -1,0 +1,26 @@
+--- a/CMakeLists.txt	2023-03-27 12:46:05.379211976 +0200
++++ b/CMakeLists.txt	2023-03-27 12:48:51.953334842 +0200
+@@ -143,23 +143,6 @@
+         PRIVATE ${LIBUV_LIBRARIES}
+         )
+
+-add_executable(tests
+-        tests/main.cpp
+-        )
+-
+-target_include_directories(tests SYSTEM
+-        PRIVATE "${CMAKE_SOURCE_DIR}/3rd/catch"
+-        )
+-
+-target_include_directories(tests
+-        PRIVATE "${CMAKE_SOURCE_DIR}/tests"
+-        PRIVATE "${CMAKE_SOURCE_DIR}/flame"
+-        )
+-
+-target_link_libraries(tests
+-        PRIVATE flamecore
+-        )
+-
+ install(TARGETS flame flamecore
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION lib${LIB_SUFFIX}

@@ -1,0 +1,11 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.mail, evolution)-#
+
+[Added Associations]
+x-scheme-handler/mailto=org.gnome.Evolution.desktop;
+
+[Default Applications]
+x-scheme-handler/mailto=org.gnome.Evolution.desktop;

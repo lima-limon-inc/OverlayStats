@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM 'http://www.gentoo.org/dtd/metadata.dtd'>
+<pkgmetadata>
+	<maintainer type="person">
+		<email>phranz@subfc.net</email>
+		<name>Francesco Palumbo</name>
+	</maintainer>
+	<longdescription>
+		guish is a GUI creation and modification tool that can 
+		be used to tie different programs together using XEmbed 
+		protocol and the shell (or as standalone) to create 
+		new programs, or to make simple GUIs.
+	</longdescription>
+	<use>
+		<flag name="debug">Build with debugging support</flag>
+		<flag name="embedded-control">Enable controlling embedded external programs through key-sequences</flag>
+		<flag name="button">Enable button element</flag>
+		<flag name="input">Enable input element</flag>
+		<flag name="label">Enable label element</flag>
+		<flag name="textblock">Enable textblock element</flag>
+		<flag name="editor">Enable editor element</flag>
+		<flag name="page">Enable page element (an embedder)</flag>
+		<flag name="menu">Enable menu element</flag>
+		<flag name="tabpage">Enable tabpage element</flag>
+		<flag name="slider">Enable slider element</flag>
+		<flag name="splitter">Enable splitter element</flag>
+		<flag name="progress">Enable progress element (progress bar)</flag>
+		<flag name="tree">Enable tree element</flag>
+		<flag name="trayicon">Enable trayicon element</flag>
+		<flag name="menubar">Enable menubar element</flag>
+		<flag name="checkbox">Enable checkbox element</flag>
+		<flag name="icon">Enable icon element</flag>
+		<flag name="spinbox">Enable spinbox element</flag>
+		<flag name="listbox">Enable listbox element</flag>
+		<flag name="grip">Enable grip element (moves the parent when embedded)</flag>
+	</use>
+</pkgmetadata>
+

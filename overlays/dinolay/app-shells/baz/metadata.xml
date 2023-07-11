@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer type="person">
+        <email>ari.web.xyz@gmail.com</email>
+        <name>Ari Archer</name>
+    </maintainer>
+    <use>
+        <flag name="readline">Add support for readline via app-misc/rlwrap</flag>
+        <flag name="bash-completion">Install bash completion</flag>
+        <flag name="doc">Install extra documentation</flag>
+        <flag name="logging">Enable logging support in the loader</flag>
+        <flag name="ok">Always ensure that the loader exists with code 0</flag>
+        <flag name="nocc">never use the C loader</flag>
+    </use>
+    <decription>a fast, easy, simple and lightweight plugin manager for GNU bash</decription>
+    <longdescription>a fast, easy, simple and lightweight plugin manager for GNU bash</longdescription>
+</pkgmetadata>
+

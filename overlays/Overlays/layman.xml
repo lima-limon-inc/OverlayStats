@@ -1,0 +1,13 @@
+<repositories version="1.0">
+  <repo quality="experimental" status="unofficial">
+    <name>calendulish</name>
+    <description lang="en">calendulish's personal overlay</description>
+    <homepage>https://github.com/calendulish/Overlays</homepage>
+    <owner type="person">
+      <email>dev@lara.click</email>
+      <name>Lara Maia</name>
+    </owner>
+    <source type="git">git://github.com/calendulish/Overlays.git</source>
+    <feed>https://github.com/calendulish/Overlays/commits/master.atom</feed>
+  </repo>
+</repositories>

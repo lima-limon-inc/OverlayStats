@@ -1,0 +1,536 @@
+#!/bin/bash
+## fix genkernel initrd
+## adding PNP
+## (c) Denis Kaganovich
+## under Anarchy license
+
+#FILES="/bin/busybox"
+FILES="/bin/busybox /sbin/blkid"
+DATA="/usr/share/genpnprd"
+#UROOT="$ROOT"
+UROOT=""
+home="`pwd`"
+PNPONLY=false
+GENKERNEL=true
+STATIC=false
+LIBLOOP=true
+MAKEOPTS="-j2 -s"
+
+PNPMODE=
+PKGFILES=
+PACKAGES=
+OVERLAY=
+IMAGE=
+CLEAN=
+CRAMFS=
+LZMA=
+COMPRESS=
+susp_sig=
+SQUASH=false
+THIN="/drivers/net/\|/cifs/\|/nfs/\|/unix\|/packet/af_packet"
+THIN_INFO="/fs/\|^alias:.*:\|/unix\|/packet/af_packet"
+
+preserve="/bin/busybox /bin/mount /bin/sh /bin/uname /sbin/mdev /bin/zcat"
+
+: ${TMPDIR:="$ROOT/var/tmp"}
+tmp="$TMPDIR/genpnprd.$$"
+#tmp=`mktemp -d`
+
+
+die(){
+	echo "Error $*"
+	caller
+#	rm "$tmp" -Rf
+	exit 1
+}
+
+genpkg(){
+	"$1" "$2" "$3" "$4" "$5"
+}
+
+_modlst(){
+	for m in $* ; do
+		if $PNPONLY; then
+			modalias "${m//-/_}" && echo "$ALIAS"
+		else
+			m="${m//[_-]/[_-]}"
+			grep "/$m\..*:" "${mm}/modules.dep" || find "${mm}" -name "$m.ko"
+		fi
+	done|sort -u
+}
+
+preserve_start(){
+	echo "Preserving unpacked /lib"
+	local m mm="$rcdir/lib/modules/${KV}" d
+	$PNPONLY && {
+		source "$mm/modules.alias.sh" || die "Broken modules.alias.sh, check mod2sh.pl!"
+	}
+	_modlst "${@}" >>"$tmp/modules.lst"
+	for m in `cat $rcdir/etc/modflags/*`; do
+		[[ -z "`_modlst "$m"`" ]] && sed -i -e "/^$m\$/d" $rcdir/etc/modflags/*
+	done
+	for m in $rcdir/etc/modflags/*; do
+		[[ -s "$m" ]] || rm "$m"
+	done
+	if [[ -n "${THIN#-}" ]]; then
+		_modlst $(find "$mm" -name "*.ko*"|grep "$THIN"|while read m; do
+				modinfo --basedir=/dev/null "$m"|grep -q "$THIN_INFO" && echo "$m"
+			done|sed -e 's:^.*/::g' -e 's:\..*$::g') >>"$tmp/modules2.lst"
+	fi
+	cd "$rcdir" || die
+	mkdir "$tmp/preserve" || die
+	cd "lib/modules/$KV"
+	if grep -qx CONFIG_FW_LOADER_COMPRESS=y "$S/.config" && mv "$rcdir/lib/firmware" "$tmp/preserve/"; then
+		ln -s ../firmware "$rcdir"/lib/firmware
+	elif grep -qx CONFIG_CFG80211=y "$S"/.config; then
+		grep -qx CONFIG_CFG80211_CERTIFICATION_ONUS=y "$S"/.config &&
+			preserve+=' /lib/firmware/regulatory.db' &&
+			! grep -qx '# CONFIG_CFG80211_REQUIRE_SIGNED_REGDB is not set' "$S"/.config &&
+			preserve+=' /lib/firmware/regulatory.db.p7s'
+	fi
+	echo "$preserve" >"$tmp/preserve.lst"
+	for m in `cat $tmp/modules.lst` ; do
+		m="${m%:}"
+		echo "/lib/modules/$KV/${m#*/lib/modules/$KV/}" >>"$tmp/preserve.lst"
+		$PNPONLY || ( [[ -e "$mm/modules.dep" ]] && grep "^$m:" "$mm/modules.dep" >>"$tmp/_modules.dep" )
+	done
+	local i
+	# think more...
+	for i in "$rcdir" "$UROOT"; do
+		ROOT="$i" bash "$UROOT/usr/share/genpnprd/genpkgrd" "$tmp/preserve" "$(cat "$tmp/preserve.lst")" >/dev/null
+	done
+	mv "$tmp/_modules.dep" "$tmp/preserve/lib/modules/${KV}/modules.dep" 2>/dev/null
+	$PNPONLY || /usr/bin/perl "$UROOT/usr/share/genpnprd/mod2sh.pl" "$tmp/preserve/lib/modules/${KV}"
+	cd "$rcdir"
+	if ! $LIBLOOP; then
+		mv "$rcdir"/{etc,sys,proc,dev} "$tmp/preserve/" || die
+		mv "$rcdir"/kernel "$tmp/preserve/"
+		find .|sort|while read m; do
+			[[ "$m" == ./* ]] || continue
+			m="${m#./}"
+			if ! [[ -e "$tmp/preserve/$m" ]]; then
+#				[[ -f "$m" ]] || continue
+				[[ -L "$m" ]] && cp "$m" "$tmp/preserve" --parents -a
+			fi
+			### UNSURE about possibility async direct fw loa
+			[[ "$m" == lib/firmware/* ]] && continue
+			[[ -e "$tmp/preserve/$m" ]] && rm "$m" 2>/dev/null
+		done
+	fi
+}
+
+preserve_end(){
+	local i d
+	# gentoo no-multilib: /lib + /lib64; my: /lib + symlink. respect all
+	cp -a "$tmp"/preserve/lib* "$rcdir/" ||
+	for i in "$tmp"/preserve/lib*; do
+		d="$rcdir/${i##*/}"
+		[ -L "$d" ] && rm "$d"
+		mv "$i" "$rcdir/" -f ||
+		mv "$i"/* "$d/" -f ||
+		cp -a "$i" "$rcdir/" ||
+		die "error append $i to $rcdir"
+	done
+	rm "$tmp/preserve" -Rf
+}
+
+squashfs_enabled(){
+	[[ "$CRAMFS" != 1 ]] &&
+	    ( [[ -e "$rcdir/lib/modules/$KV/kernel/fs/squashfs" ]] ||
+	    ( [[ -d "$S" ]] && grep -sq "^CONFIG_SQUASHFS" "$S/.config" ) )
+	return $?
+}
+
+kmake(){
+	make -C "$S" $* $MAKEOPTS || die
+}
+
+clean(){
+	for i in $CLEAN; do
+		case "$i" in
+		"@"*)
+			while read j; do
+				j=`readlink -f "$rcdir/$j"` || continue
+				[[ "${j#$rcdir/}" == "$j" ]] && continue
+				rm "$j"
+			done <"${i#?}"
+			continue
+		;;
+		esac
+		i=`readlink -f "$rcdir/$i"` || continue
+		[[ "${i#$rcdir/}" == "$i" ]] && continue
+		rm "$i" -Rf
+	done
+}
+
+IMAGE=""
+PNPMODE=""
+OVERLAY=""
+S=""
+KV=""
+
+echo "Run: $0 $*"
+i=0
+while [[ -n "$*" ]]; do
+	case "$1" in
+	--*)
+		x="${1#--}"
+		shift
+		export $x="$1"
+	;;
+	*)
+		let i=i+1
+		case $i in
+		1)IMAGE="$1";;
+		2)PNPMODE="$1";;
+		3)OVERLAY="$1";;
+		4)S="$1";;
+		esac
+	;;
+	esac
+	shift
+done
+
+[[ -z "$IMAGE" ]] && {
+	echo "Usage:	$0 <image> [nopnp|pnponly|pnp [<overlay> [sources]]]
+or	$0 {--<option> <value>}
+Options: IMAGE, PNPMODE, OVERLAY, S,
+	FILES, PKGFILES, PACKAGES, CLEAN, CRAMFS, MAKEOPTS, KV
+	- and other internal variables
+Examples: $0 initrd.cpio
+	- create initrd image from current environment
+	- (required: --FILES '$FILES')
+	$0  initrd.cpio --S /usr/src/linux
+	- create initrd image from compiled '/usr/src/linux' sources
+	$0 --IMAGE initrd.cpio \\
+		--PACKAGES 'sys-apps/util-linux sys-fs/*' \\
+		--CLEAN '/usr/share/doc /usr/share/man /usr/include' \\
+		--CRAMFS 1
+	- create rescue image with fs-tools and cramfs (vs. squashfs)"
+	exit
+}
+
+rcfile="$(readlink -f $IMAGE)"
+
+[[ -e "$tmp" ]] && rm "$tmp" -Rf
+mkdir $tmp || die
+rcdir="$tmp/rc"
+[[ -e "$rcdir" ]] && rm "$tmp" -Rf
+mkdir "$rcdir" || die
+cd "$rcdir" || die
+
+if [[ -f "$rcfile" ]]; then
+	( (bzip2 -dc $rcfile ||
+		gzip -dc $rcfile ||
+		xz -dc $rcfile ||
+		lzop -dc $rcfile ||
+		lz4 -dc $rcfile ||
+		zstd -qdc $rcfile ||
+		lzma -dc $rcfile ||
+		cat $rcfile) | cpio -iv 2>&1 | grep '^bin/busybox$' >tmp.lst ) ||
+			die "must be [gzipped] cpio file"
+	rm tmp.lst
+
+	ln -s busybox "$rcdir/bin/zcat" &>/dev/null
+	for i in "$rcdir"/sbin/insmod; do
+		[ -e "$i" ] || ln -s ../bin/busybox "$i"
+	done
+	if [[ -n "$OVERLAY" ]]; then
+		if $LIBLOOP; then
+			mkdir lib/root || die
+			cp "$OVERLAY" lib/root -aT
+			mv lib/root/kernel "$rcdir" 2>/dev/null
+			for i in lib lib32 lib64; do
+				[[ -d lib/root/$i ]] && mv lib/root/$i/* $i/
+			done
+			rm lib/root/{lib,lib32,lib64} -Rf
+		else
+			cp "$OVERLAY" "$rcdir" -aT
+		fi
+	fi
+else
+	echo "Generating new image '$IMAGE'"
+	[[ -n "$OVERLAY" ]] && cp "$OVERLAY" "$rcdir" -aT
+	mkdir "$rcdir"/{etc,dev,sys,proc,bin,sbin}
+	ln -s "../etc/syspnp" "$rcdir/sbin/init"
+	ln -s "etc/syspnp" "$rcdir/linuxrc"
+	ln -s "etc/syspnp" "$rcdir/init"
+	x=""
+	for i in $FILES; do
+		[ "$STATIC" = true ] && j=$(which $i.static) ||
+			j=$(which $i) &&
+			i="$j"
+		x="$x $i"
+	done 2>/dev/null
+	bash "$UROOT/usr/share/genpnprd/genpkgrd" "$rcdir" "$x" "$PKGFILES" "$PACKAGES"
+	clean
+	for i in $MV_ROOT; do
+		mv "$rcdir/$i"/* "$rcdir"
+		rmdir "$rcdir/$i"
+	done
+	[[ -e "$rcdir/bin/busybox" ]] && for i in "[" ash cat cut echo mount sh uname zcat; do
+		ln -s busybox "$rcdir/bin/$i" &>/dev/null
+	done
+	[[ -e "$rcdir/bin/sh" ]] && ln -s sh "$rcdir/bin/ash" &>/dev/null
+	[ "$STATIC" = true ] && {
+		find "$rcdir" -name "*.static"|while read i; do
+			j="${i##*/}"
+			[ -d "$j" ] || ln -s "$j" "${i%.static}"
+		done
+	}
+	if [[ -n "$OVERLAY" ]] && [[ -e "$OVERLAY/lib/modules" ]]; then
+		echo "Using '$OVERLAY/lib/modules'"
+	elif [[ -z "$S" ]]; then
+		m="$ROOT/lib/modules/${KV:=`uname -r`}"
+		S="$m/source"
+		echo "Copying modules from $m"
+		[[ -e "$m/modules.dep" ]] || die "No $m/modules.dep"
+		mkdir -p "$rcdir/lib/modules/$KV"
+		# long path against symlinks
+		for f in "$m"/* `cat "$m/modules.dep"`; do
+			f="${f%:}"
+			[[ "${f#/}" == "$f" ]] && f="$m/$f"
+			[[ -f "$f" ]] || continue
+			x="$rcdir/${f#$ROOT}"
+			[[ -f "$x" ]] && continue
+			[[ -d "${x%/*}" ]] || mkdir -p "${x%/*}"
+			cp "$f" "$x" -aTL
+		done
+		echo "Copying firmware"
+		cp -aL "$ROOT/lib/firmware" "$rcdir/lib/firmware"
+	else
+	    c="$S/.config"
+	    if ! [[ -e "$c" ]]; then
+		echo "No '$c', configuring and build kernel"
+		kmake defconfig
+		i="$ROOT/etc/kernels/kernel.conf"
+		if [[ -e "$i" ]]; then
+			eval "$(/usr/bin/perl "${UROOT}/usr/share/genpnprd/Kconfig.pl" -config)"
+			. $i
+		fi
+		i=1
+		cfgs=( "$(cat "$c")" )
+		export S ${!KERNEL_@}
+		while true; do
+			/usr/bin/perl "${UROOT}/usr/share/genpnprd/Kconfig.pl"
+			yes '' 2>/dev/null | kmake oldconfig >/dev/null
+			cfgs[i]="$(cat "$c")"
+			j=0
+			while [[ $j < $i ]]; do
+				[[ "${cfgs[i]}" == "${cfgs[j]}" ]] && break
+				i=$[i+1]
+			done
+			[[ "${cfgs[i]}" == "${cfgs[j]}" ]] && break
+			i=$[i+1]
+		done
+		rm "$c.old"
+		kmake bzImage
+		kmake modules -i
+#		cc -Os -static "${S}/Documentation/hwmon/hpfall.c" -o "$rcdir/bin/hpfall"
+	    fi
+	    echo "Installing kernel modules from $S"
+	    kmake INSTALL_MOD_PATH="$rcdir" modules_install
+	fi
+	if [[ -d "$S" ]]; then
+		susp_sig=`grep -s '#define[ 	]*[A-Z]*_SIG[ 	]*".*"$' ${S}/kernel/power/swap.c|sed -e 's:^.*"\(.*\)":\1:'|hexdump -e '"" /1 "%x" ""'`
+		for i in `grep "^CONFIG_KERNEL_.*=y$" "$S/.config"|sed -e 's:^CONFIG_KERNEL_::' -e 's:=y$::' -e 's:^LZMA$:LZMA XZ:'`; do
+			grep -q "^CONFIG_SQUASHFS_$i=y" "$S/.config" && (mksquashfs |& grep -q "^\s*$i\s*$") && COMPRESS="${i,,}"
+		done
+	fi
+	[[ -z "$PNPMODE" ]] && PNPONLY=true
+	GENKERNEL=false
+	LIBLOOP=false
+fi
+
+#if [[ -L "lib" ]]; then
+#	i=`readlink lib`
+#	i="${i##*/}"
+#	rm lib || die
+#	mv "$i" lib || die
+#	ln -s lib "$i"
+#fi
+
+if [[ -e "$rcdir/lib.loopfs" ]]; then
+	# unsquashfs broken
+#	if unsquashfs "$rcdir/lib.loopfs"; then
+#		mv squashfs-root/* $rcdir/lib/
+#		rmdir squashfs-root || die
+#	else
+		mkdir $tmp/loop
+		mount "$rcdir/lib.loopfs" $tmp/loop -o loop || die "$rcdir/lib.loopfs mount"
+		cp $tmp/loop/* $rcdir/lib/ -Pr
+		umount $tmp/loop
+#	fi
+fi
+
+clean
+
+: ${KV:=`ls $rcdir/lib/modules`}
+
+$SQUASH || squashfs_enabled && SQUASH=true
+
+i=etc/modules/waitscan
+j="lib/modules/$KV/kernel/drivers/scsi"
+grep -sqx scsi_wait_scan $i && ! [ -e "$j"/scsi_wait_scan.ko ] && {
+	[ -e "$j"/scsi_mod.ko ] && echo scsi_mod >$i || echo -n >$i
+}
+
+cd $rcdir || die
+for i in $rcdir/lib/modules/*/modules.alias; do
+	sort -u $i >$i.1 || break
+	mv $i.1 $i
+done
+[[ "$PNPMODE" != "nopnp" ]] && /usr/bin/perl ${UROOT}/usr/share/genpnprd/mod2sh.pl $rcdir/lib/modules/* || die
+[[ "$PNPMODE" == "pnponly" ]] && PNPONLY=true
+# some aliases have spaces. may be single sed, but try multi-spaces
+grep "^alias .* .* .*" $rcdir/lib/modules/modules.alias|while read i; do
+	j="${i#* }"
+	j="${i% *}"
+	echo "${i%% *} ${j// /_} ${i##* }" >>$rcdir/lib/modules/modules.alias
+done
+rm "$rcdir/lib/modules/modules.alias.bin" -f
+cpdata(){
+	local DATA="$1" i j
+	shift
+	[[ -d "$DATA" ]] && for i in "${@}"; do
+		for j in $DATA/$i/*; do
+			cp -a $j $rcdir/$i
+			chmod 755 "$rcdir/$i${j#$DATA/$i}"
+		done
+	done
+}
+cpdata "$DATA" etc sbin
+for i in $DATA/no/*; do
+	[[ -e "$rcdir/bin/${i%.patch}" ]] || [[ -e "$rcdir/bin/busybox" ]] && continue
+	if [[ -d "$i" ]]; then
+		cpdata "$i" `ls -1 $i`
+	elif [[ -z "${i%%*.patch}" ]]; then
+		patch -p1 -std $rcdir <$i || die "Patch '$i' failed"
+	fi
+done
+[[ -n "$susp_sig" ]] && sed -i -e "s:554c53555350454e44:$susp_sig:" $rcdir/etc/blkid.sh
+$PNPONLY && rm $rcdir/lib/modules/*/modules.{alias,dep,symbols,*.bin,*map,order,builtin} $rcdir/sbin/modprobe 2>/dev/null
+[[ -e $rcdir/sbin/init ]] || ln -s /etc/syspnp $rcdir/sbin/init
+if $GENKERNEL; then
+	for i in $DATA/*.patch; do
+		[[ -e "$i" ]] || continue
+		patch -p1 -std $rcdir <$i || die "Patch '$i' failed"
+	done
+	for i in $DATA/*.fix; do
+		[[ -e "$i" ]] || continue
+		bash $i $rcdir || die "Failed fix '$i'"
+	done
+fi
+rm $rcdir/{init,etc/initrd.scripts}.{rej,orig} -f &>/dev/null
+
+# Symlinking busybox clones and moving other to archive
+find .|sort|while read i ; do
+	[[ "$i" == ./* ]] || continue
+	[[ -e "$i" ]] || continue
+	[[ -L "$i" ]] && continue
+	[[ -f "$i" ]] || continue
+	case "$i" in
+	*/busybox|*/init|*/etc/*|./lib*|*/mount|*/mdev|./kernel*) continue ;;
+	*/*/*) ;;
+	*) continue ;;
+	esac
+	if cmp "bin/busybox" "$i" &>/dev/null; then
+		ln -sf /bin/busybox "$i"
+		continue
+	fi
+	$LIBLOOP || continue
+	[[ -e "lib/root/$i" ]] || cp "$i" lib/root/ -a --parents || continue
+	rm "$i"
+done
+
+[[ -e "$rcdir/bin/zcat" ]] && for i in init etc/initrd.defaults etc/initrd.scripts etc/syspnp; do
+	[[ -L $i ]] && continue
+	read j <$i 2>/dev/null || continue
+	[[ -n "${j##\#*}" ]] && j=""
+	gzip -9 $i || continue
+	echo "$j
+eval \"\`zcat /$i.gz\`\"">$i
+	chmod 755 $i
+done
+
+rm "$rcdir/lib.loopfs" 2>/dev/null
+
+if $SQUASH ; then
+	preserve_start loop squashfs
+else
+	preserve_start loop cramfs
+fi
+$LIBLOOP && ldir='lib' || ldir=
+N=
+while true; do
+    if $SQUASH ; then
+	case "$COMPRESS" in
+	lzo)COMPRESS+=' -Xcompression-level 9';;
+	lz4)COMPRESS+=' -Xhc -mem 700m';;
+	zstd)COMPRESS+=' -Xcompression-level 19';;
+	xz)
+		COMPRESS+=' -always-use-fragments'
+		for i in X86:x86 ARM:arm,armthumb ARM64:arm,armthumb POWERPC:powerpc SPARC:sparc IA64:ia64; do
+			grep -q "^CONFIG_${i%:*}=y$" "$S/.config" && COMPRESS+=" -Xbcj ${i#*:}" && break
+		done
+	;;
+	esac
+	p=1
+	for i in ${MAKEOPTS}; do
+		[[ "$i" == -j* ]] && p=$((${i#-j}-1))
+	done
+	[ "${p:-0}" = 0 ] && p=1
+	[ "$p" = -1 ] && p=
+	mksquashfs "$rcdir/$ldir" "$tmp/${ldir:-rd}$N.loopfs" ${COMPRESS:+-comp $COMPRESS }-b 1m -all-root -no-recovery -no-exports -no-progress ${p:+-processors $p} || die "mksquashfs"
+    else
+	[[ -x /sbin/mkfs.cramfs ]] && mkcramfs(){ /sbin/mkfs.cramfs "${@}";}
+	mkcramfs "$rcdir/$ldir" "$tmp/${ldir:-rd}$N.loopfs" || die "mkcramfs"
+    fi
+    [[ -e "$tmp/modules2.lst" ]] || break
+    find "$rcdir" -name "*.ko*"|while read i; do
+	grep -qF "/${i##*/}" "$tmp/modules2.lst" || {
+		rm "$i"
+		while true; do
+			i="${i%/*}"
+			rmdir "$i" 2>/dev/null || break
+		done
+	}
+    done
+    rm "$tmp/modules2.lst"
+    N=2
+done
+cd "$rcdir" || die
+if $LIBLOOP; then
+	rm "$rcdir"/lib/* -Rf
+	preserve_end
+else
+	rm "$rcdir" -Rf || die
+	mv "$tmp/preserve" "$rcdir"
+fi
+mv "$tmp/${ldir:-rd}.loopfs" "$rcdir/"
+grep -qx CONFIG_FW_LOADER_COMPRESS=y "$S/.config" && {
+	[ -e "$rcdir"/firmware ] && ln -s ../firmware "$rcdir"/lib/firmware
+	find "$rcdir"/lib/firmware/ -type f|while read i; do
+		[[ "$i" == *.xz ]] || xz -z --check=crc32 --lzma2=dict=1MiB "$i"
+	done
+}
+
+[[ -e "$rcdir/dev" ]] && for i in 0 1 2 3; do
+	mknod -m 660 "$rcdir/dev/loop${i}" b 7 ${i}
+done
+
+for i in "" ".thin"; do
+	cd $rcdir || die
+	find . -print | cpio --quiet -o -H newc -F "$tmp/initrd-${KV}$i.cpio" || die
+	cd "$home" || die
+	if [[ "$IMAGE" == *.cpio ]]; then
+		mv "$tmp/initrd-${KV}$i.cpio" "$IMAGE$i" || die
+	else
+		gzip -c9 "$tmp/initrd-${KV}$i.cpio" >"$IMAGE$i" || die
+	fi
+	mv "$tmp/${ldir:-rd}2.loopfs" "$rcdir/${ldir:-rd}.loopfs" 2>/dev/null || break
+done
+rm "$tmp" "$rcdir" -Rf
+echo "initrd updated."
+
+exit 0

@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+# Copyright 2020-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+name="factorio daemon"
+description="2D infinite game"
+command="${FACTORIO_PATH}/bin/x64/factorio"
+command_args="${FACTORIO_OPTS}"
+retry=15
+
+command_background=1
+directory="${FACTORIO_PATH}"
+pidfile="/run/${RC_SVCNAME}.pid"
+
+command_user="${FACTORIO_USER:-root}"
+command_group="${FACTORIO_GROUP:-root}"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath -d -m 0750 -o "${command_user}:${command_group}" \
+		"${directory}"
+}

@@ -1,0 +1,23 @@
+# Calculate format=kde
+[General]
+GlobalViewProps=true
+ShowSelectionToggle=false
+Version=200
+
+
+#?cl_ver>=3.6.8.8&&install.cl_install_scaling==hi#
+#-sum(iconsize,,64)-#
+#!cl_ver#
+#-sum(iconsize,,48)-#
+#cl_ver#
+
+[IconsMode]
+FontWeight=50
+IconSize=#-sum(iconsize,iconsize)-#
+PreviewSize=#-sum(iconsize,iconsize)-#
+
+[MainWindow]
+State=AAAA/wAAAAD9AAAAAwAAAAAAAAC4AAABs/wCAAAAAvsAAAAWAGYAbwBsAGQAZQByAHMARABvAGMAawAAAAAA/////wAAAAoBAAAD+wAAABQAcABsAGEAYwBlAHMARABvAGMAawEAAABBAAABswAAAFoBAAADAAAAAQAAAAAAAAAA/AIAAAAB+wAAABAAaQBuAGYAbwBEAG8AYwBrAAAAAAD/////AAAACgEAAAMAAAADAAAAAAAAAAD8AQAAAAH7AAAAGAB0AGUAcgBtAGkAbgBhAGwARABvAGMAawAAAAAA/////wAAAAoBAAADAAACNQAAAbMAAAAEAAAABAAAAAgAAAAI/AAAAAEAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
+
+[PreviewSettings]
+Plugins=ffmpegthumbs,imagethumbnail,exrthumbnail,jpegthumbnail,windowsimagethumbnail,svgthumbnail,directorythumbnail,fontthumbnail,rawthumbnail

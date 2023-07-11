@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<description>co-maintainers welcome</description>
+		<email>lssndrbarbieri@gmail.com</email>
+		<name>Alessandro Barbieri</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">davea42/libdwarf-code</remote-id>
+	</upstream>
+	<use>
+		<flag name="dwarfexample">enable dwarfexample compilation</flag>
+		<flag name="dwarfgen">enable dwarfgen compilation</flag>
+		<flag name="elf">enable use of <pkg>virtual/libelf</pkg></flag>
+	</use>
+</pkgmetadata>

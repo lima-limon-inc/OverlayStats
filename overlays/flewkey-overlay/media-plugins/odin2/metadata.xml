@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>flewkey@2a03.party</email>
+		<name>Ryan Fox</name>
+	</maintainer>
+	<use>
+		<flag name="lv2">Enable building of LV2 plugin</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">TheWaveWarden/odin2</remote-id>
+	</upstream>
+</pkgmetadata>

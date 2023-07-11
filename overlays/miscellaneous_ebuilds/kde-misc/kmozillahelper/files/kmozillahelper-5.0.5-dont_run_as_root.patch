@@ -1,0 +1,21 @@
+--- a/main.cpp	2019-12-19 16:48:13.202509162 +0000
++++ b/main.cpp	2019-12-19 16:48:33.290810872 +0000
+@@ -28,4 +28,5 @@
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <sys/types.h>
+ 
+ #include <iostream>
+@@ -60,4 +61,12 @@
+ int main(int argc, char* argv[])
+ {
++
++    int user_id=getuid();
++    if ( user_id == 0 ) {
++#ifdef DEBUG_KDE
++        std::cerr << "User ID=" << user_id << std::endl;
++#endif
++        return 1;
++    }
+     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+ 

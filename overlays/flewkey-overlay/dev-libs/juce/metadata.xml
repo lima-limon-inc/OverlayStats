@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>flewkey@2a03.party</email>
+		<name>Ryan Fox</name>
+	</maintainer>
+	<use>
+		<flag name="projucer">Build the Projucer</flag>
+		<flag name="extras">Build all JUCE extras (including Projucer)</flag>
+		<flag name="examples">Build the JUCE examples</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">juce-framework/JUCE</remote-id>
+	</upstream>
+</pkgmetadata>

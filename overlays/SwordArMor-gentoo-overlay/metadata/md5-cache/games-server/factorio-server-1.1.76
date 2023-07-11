@@ -1,0 +1,11 @@
+DEFINED_PHASES=install postinst
+DEPEND=acct-group/factorio acct-user/factorio
+DESCRIPTION=Factorio is a game in which you build and maintain factories
+EAPI=7
+HOMEPAGE=https://www.factorio.com/
+KEYWORDS=amd64
+LICENSE=Factorio
+RESTRICT=bindist mirror
+SLOT=1.1
+SRC_URI=https://www.factorio.com/get-download/1.1.76/headless/linux64 -> factorio-server-1.1.76.tar.xz
+_md5_=c4d84868c292ce3eca9958cb82962d97

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+    <maintainer type="person">
+        <email>ari.web.xyz@gmail.com</email>
+        <name>Ari Archer</name>
+    </maintainer>
+    <use>
+        <flag name="config">Add a config file</flag>
+    </use>
+    <description>A modular shellscript for DWM bar</description>
+    <longdescription>
+        A simple, modular bash/shell script for configuring your DWM bar.
+    </longdescription>
+</pkgmetadata>
+

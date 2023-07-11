@@ -1,0 +1,11 @@
+--- pyeapi-0.8.4/docs/conf.py	2022-07-05 09:44:08.358097887 +0200
++++ pyeapi-0.8.4/docs/conf.py	2022-07-05 09:44:23.078222323 +0200
+@@ -35,7 +35,7 @@
+     'sphinx.ext.coverage',
+     'sphinx.ext.viewcode',
+     'sphinx.ext.doctest',
+-    'sphinxcontrib.napoleon'
++    'sphinx.ext.napoleon'
+ ]
+ 
+ # Add any paths that contain templates here, relative to this directory.

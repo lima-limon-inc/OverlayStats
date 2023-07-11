@@ -1,0 +1,11 @@
+# Calculate format=compiz protected
+
+# Update info
+#-ini(desktop.updating, on)-#
+#-ini(desktop.imageburn, xfburn)-#
+
+[Added Associations]
+application/x-iso9660-image=xfburn.desktop;
+
+[Default Applications]
+application/x-iso9660-image=xfburn.desktop;

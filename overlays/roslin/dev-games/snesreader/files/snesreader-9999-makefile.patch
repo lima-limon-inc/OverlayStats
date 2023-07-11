@@ -1,0 +1,21 @@
+diff --git a/snesreader/Makefile b/snesreader/Makefile
+index c53200e..acef784 100644
+--- a/snesreader/Makefile
++++ b/snesreader/Makefile
+@@ -11,7 +11,7 @@ link  :=
+ ifeq ($(DEBUG), 1)
+   flags += -O0 -g
+ else
+-  flags += -O3 -fomit-frame-pointer
++  flags += $(CXXFLAGS) -fomit-frame-pointer
+ endif
+ 
+ # silence warnings
+@@ -19,7 +19,6 @@ flags += -Wno-switch -Wno-absolute-value -Wno-parentheses
+ 
+ ifeq ($(platform),x)
+   flags := -fPIC $(flags)
+-  link += -s
+ else ifeq ($(platform),osx)
+   flags := -fPIC $(flags)
+   link += -F/usr/local/lib

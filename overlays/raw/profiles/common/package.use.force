@@ -1,0 +1,9 @@
+sys-libs/talloc python
+sys-libs/tdb python
+sys-libs/ntdb python
+sys-libs/tevent python
+dev-libs/libxml2 python
+net-fs/cifs-utils acl
+net-fs/samba acl
+media-libs/libepoxy X
+=dev-lang/lua-5.1.5-r5 readline

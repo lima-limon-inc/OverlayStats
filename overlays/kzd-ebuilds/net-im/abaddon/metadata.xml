@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<name>Kyle Dixon</name>
+		<email>kzd@56709.net</email>
+	</maintainer>
+	<use>
+		<flag name="libhandy">Support for features using gui-libs/libhandy</flag>
+	</use>
+</pkgmetadata>

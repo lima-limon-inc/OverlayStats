@@ -1,0 +1,5 @@
+#!/bin/bash
+
+LOG=/var/log/trim.log
+echo "*** $(date -R) ***" >> $LOG
+fstrim -v /home1 >> $LOG

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+
+<pkgmetadata>
+  <maintainer type="person">
+    <email>xgqt@riseup.net</email>
+    <name>Maciej Barć</name>
+  </maintainer>
+  <upstream>
+    <maintainer status="active">
+      <email>xgqt@riseup.net</email>
+      <name>Maciej Barć</name>
+    </maintainer>
+    <bugs-to>https://gitlab.com/xgqt/python-etask/</bugs-to>
+    <remote-id type="gitlab">xgqt/python-etask</remote-id>
+    <remote-id type="pypi">etask</remote-id>
+  </upstream>
+</pkgmetadata>

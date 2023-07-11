@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Tools needed for developing in gentoo
+EAPI=8
+KEYWORDS=~amd64
+RDEPEND=|| ( dev-util/pycharm-community dev-util/pycharm-professional app-editors/vscode ) dev-python/flake8 dev-python/pip
+SLOT=0
+_md5_=60d61649c30506f5921503000df34774

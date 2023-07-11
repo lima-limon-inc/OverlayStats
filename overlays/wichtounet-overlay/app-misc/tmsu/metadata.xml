@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd>no-herd</herd>
+	<maintainer>
+		<email>baptiste.wicht@gmail.com</email>
+		<name>Baptiste Wicht</name>
+	</maintainer>
+	<longdescription lang="en">
+		This package provides TMSU, a tool for tagging your files. It provides a command-line tool to manage tags and a virtual file-system
+		representing a tagged view of your files.
+	</longdescription>
+</pkgmetadata>

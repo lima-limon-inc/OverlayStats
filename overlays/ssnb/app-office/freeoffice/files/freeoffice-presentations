@@ -1,0 +1,3 @@
+#!/bin/sh
+# A script to run Softmaker Presentations.
+/usr/lib64/freeoffice/presentations "$@"

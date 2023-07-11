@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>mva@gentoo.org</email>
+    <name>Vadim A. Misbakh-Soloviov</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">keybase/client</remote-id>
+  </upstream>
+  <use>
+    <flag name="browser">Build browser native-messaging helper</flag>
+    <flag name="gui">Build Electron-based GUI app</flag>
+    <flag name="kbfs">Build KBFS FUSE mount-helper</flag>
+    <flag name="system-libglvnd">Use system libglvnd instead of bundled with Electron</flag>
+    <flag name="system-ffmpeg">Use system ffmpeg libs instead of bundled with Electron</flag>
+    <flag name="system-vulkan">Use system vulkan libraries instead of bundled with Electron</flag>
+  </use>
+</pkgmetadata>

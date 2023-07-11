@@ -1,0 +1,8 @@
+*~
+*.bak
+*.core
+*.idea
+*.kate-swp
+*.kdev4
+*.pyc
+.pytest_cache

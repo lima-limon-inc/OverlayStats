@@ -1,0 +1,149 @@
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+# VERSION: 0.3.0
+
+# DO NOT MODIFY THIS FILE DIRECTLY! CREATE A COPY AND MODIFY THAT INSTEAD!
+
+# VMTYPE is auto determined via the file prefix
+# ie: kvm.myserver would yield VMTYPE=kvm
+# the two types allowed are: qemu, kvm
+
+# Machine type
+#
+# The specific qemu binary type
+# eg. for VMTYPE=kvm, then /usr/bin/qemu-system-${QEMU_TYPE}
+# eg. for VMTYPE=qemu, then /usr/bin/qemu-${QEMU_TYPE}
+# QEMU_TYPE="x86_64"
+QEMU_TYPE="x86_64"
+
+## Network settings
+
+# MAC address
+#
+# You can generate a new one with this command:
+#
+#   echo "52:54:00:$(dd if=/dev/urandom bs=512 count=1 2>/dev/null | md5sum | sed 's/^\(..\)\(..\)\(..\).*$/\1:\2:\3/')"
+#
+MACADDR=52:54:00:10:34:35
+
+# NIC type.
+#
+# Allowed:
+#   nat   - Automatic qemu NAT network.
+#   br    - Bridged network. Requires 'net.br0' service up and running.
+#   none  - No network.
+#
+# Defaults to 'nat'.
+#
+#NIC_TYPE=br
+
+# NIC model.
+#
+# See qemu documentation.
+#
+# Defaults to 'virtio'.
+#
+#NIC_MODEL=
+
+
+## Storage settings
+
+# Disk image
+DISKIMAGE=/mnt/kvm/gentoo64.qcow2
+
+# Drive model.
+#
+# See qemu documentation.
+#
+# Defaults to 'virtio'.
+#
+#DRIVE_MODEL=
+
+# Drive format.
+#
+# See qemu documentation.
+#
+# Defaults to autodetection.
+#
+#DRIVE_FORMAT=
+
+# Drive cache type.
+#
+# See qemu documentation.
+#
+# Note for zfs filesystems
+#     ensure you have set zfs
+#     # zfs set primarycache=all ${tank}
+#     set DRIVE_CACHE=writeback
+#
+# Defaults to none.
+#
+#DRIVE_CACHE=
+
+##  General settings
+
+# The machine type to use
+# see qemu help
+# default is Standard PC (i440FX + PIIX, 1996)
+#
+#MACHINE="q35"
+
+# Enable/diasble kvm
+#
+# null value == disabled
+# non null value == enabled
+#
+ENABLE_KVM=1
+
+# cpu option
+# see qemu help
+#
+#CPU=host
+
+# RAM memory allocated for the virtual machine
+#
+# Defaults to 512M
+#
+#MEMORY=1G
+
+# Processor cores allocated for the virtual machine.
+#
+# Defaults to 1 core
+#
+#SMP=2
+
+# Foreground settings
+#
+# Allowed:
+#   vnc=:24  - Runs VNC at :24
+#   sdl=:0   - Runs SDL in X.org server running at :0
+#   none     - Disables foreground
+#
+# Defaults to 'none'.
+#
+FOREGROUND="vnc=:24"
+
+# Low privilege user that runs the virtual machine.
+#
+# Defaults to 'nobody'.
+#DROP_USER=
+
+# Timeout - How many seconds to wait before trying to hard-kill the virtual
+# machine.
+#
+# Defaults to 300 seconds.
+#
+#TIMEOUT=60
+
+# Any other qemu options you may want to use
+# live cd example
+OTHER_ARGS="-boot order=cd -cdrom /mnt/archive/gentoo.iso"
+
+# live-usb image install example, with optional boot menu, adjust the format type as needed
+# Note, initial run with an empty primary drive, initial boot fails,
+# reboot it (send Cntl-Alt-delete), use the F12 option and select the second drive, after installation
+# the primary drive should boot automatically
+#OTHER_ARGS="-drive if=virtio,file=/path/to/usb.img,format=raw,cache=writeback,media=disk -boot menu=on"
+
+

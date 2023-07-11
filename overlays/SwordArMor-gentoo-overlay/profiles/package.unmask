@@ -1,0 +1,5 @@
+# Alarig Le Lay <alarig@swordarmor.fr> (2021-05-08)
+# www-apps/netbox has been masked on ::gentoo because of py3.8 and 3.9 not
+# supported, but I support it.
+# BTW: WTF a mask on ::gentoo applies here?
+www-apps/netbox

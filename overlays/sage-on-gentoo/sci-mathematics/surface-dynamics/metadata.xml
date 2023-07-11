@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>frp.bissey@gmail.com</email>
+		<name>Francois Bissey</name>
+	</maintainer>
+	<longdescription lang="en">
+		The surface-dynamics package for SageMath adds functionality related to
+		interval exchange transformations, translation surfaces, mapping classes
+		and more.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">flatsurf/surface-dynamics</remote-id>
+		<remote-id type="pypi">surface-dynamics</remote-id>
+	</upstream>
+</pkgmetadata>

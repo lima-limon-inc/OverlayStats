@@ -1,0 +1,4 @@
+# Alarig Le Lay <alarig@swordarmor.fr> (2020-11-24)
+# Depends on dev-python/funcsigs which has been masked
+www-client/ripe-atlas-cousteau
+net-analyzer/ripe-atlas-tools

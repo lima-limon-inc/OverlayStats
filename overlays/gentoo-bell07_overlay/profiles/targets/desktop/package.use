@@ -1,0 +1,60 @@
+# Enhance user limits for desktops
+app-misc/my-gentoo-config limits
+
+# Keepassxc plugins
+app-admin/keepassxc autotype browser
+
+# Prefer xarchiver UI
+app-arch/p7zip  -wxwidgets
+
+# Gui "gitk"
+dev-vcs/git tk
+
+# Microsoft fonts still useful
+media-fonts/fonts-meta ms
+
+# at-most-one-of qt5 gtk3. I prefer gtk
+media-libs/opencv -qt5 -opengl
+
+# Pipewire sound server by default
+media-sound/pulseaudio -daemon
+media-video/pipewire sound-server
+
+# ffmpeg? ( extra )
+media-video/pipewire extra
+
+# required for net-print/hplip
+net-dns/avahi python
+
+# Samba client part
+net-fs/samba client
+
+# Usual compression
+sys-fs/squashfs-tools lzo
+
+# Set kernel symlink by default
+sys-kernel/gentoo-sources symlink
+
+# Needed for xauth to generate auth files correctly
+x11-base/xorg-server xcsecurity
+
+# Bluetooth means connection trough modem. I do not use any modems anymore
+net-misc/networkmanager -bluetooth -gtk-doc
+
+# Retroarch defaults
+games-emulation/retroarch -sdl ozone
+games-emulation/retroarch-assets ozone xmb
+
+# Required by misc gaming software
+dev-qt/qtwebchannel qml
+sys-libs/zlib minizip
+
+# Required by www-client/firefox
+media-libs/libvpx postproc
+
+# Required by media-tv/kodi
+media-video/ffmpeg openssl libxml2
+net-misc/curl http2
+
+# Required by net-ftp/filezilla
+dev-libs/libpcre2 pcre32

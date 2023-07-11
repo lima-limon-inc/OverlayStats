@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM 'http://www.gentoo.org/dtd/metadata.dtd'>
+<pkgmetadata>
+	<maintainer type="person">
+		<name>Alarig Le Lay</name>
+		<email>alarig@swordarmor.fr</email>
+	</maintainer>
+	<use>
+		<flag name="validation">Automatic validation by swagger-spec-validator</flag>
+	</use>
+</pkgmetadata>
