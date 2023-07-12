@@ -9,3 +9,4 @@ Graph per category
 
 Graph per Overlay
 ![Overlay](images/perOverlay.png)
+To my surprise, guru came 4th! I guess a lot of people use emacs and write haskell code.
